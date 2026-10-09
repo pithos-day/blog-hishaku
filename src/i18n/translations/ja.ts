@@ -94,4 +94,7 @@ export const uiStrings = {
   'code.collapse': '折りたたみ',
   'code.fullscreen': '全画面',
   'code.copy': 'コピー',
+
+  // ── 目次 ────────────────────────────────────────────────────
+  'toc.title': '目次',
 };

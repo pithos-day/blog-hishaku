@@ -152,7 +152,9 @@ const stats = getTextStats(post);
 
     // 見出しアンカーのスムーススクロール
     if (flags.smoothScroll) {
-      for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a.anchor-link[href^="#"]')) {
+      for (const anchor of document.querySelectorAll<HTMLAnchorElement>(
+        'a.anchor-link[href^="#"], .post-toc a[href^="#"]',
+      )) {
         anchor.addEventListener('click', (event) => {
           event.preventDefault();
           const target = document.getElementById(decodeURIComponent(anchor.hash.slice(1)));

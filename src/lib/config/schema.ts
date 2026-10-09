@@ -19,6 +19,7 @@ export interface ContentFlags {
   addBlankTarget: boolean;
   smoothScroll: boolean;
   addHeadingLevel: boolean;
+  enableToc: boolean;
   enhanceCodeBlock: boolean;
   enableCodeCopy: boolean;
   enableCodeFullscreen: boolean;
@@ -83,6 +84,7 @@ const contentSchema = z.object({
   addBlankTarget: z.boolean().optional(),
   smoothScroll: z.boolean().optional(),
   addHeadingLevel: z.boolean().optional(),
+  enableToc: z.boolean().optional(),
   enhanceCodeBlock: z.boolean().optional(),
   enableCodeCopy: z.boolean().optional(),
   enableCodeFullscreen: z.boolean().optional(),
@@ -100,6 +102,7 @@ export const contentDefaults: ContentFlags = {
   addBlankTarget: true,
   smoothScroll: true,
   addHeadingLevel: true,
+  enableToc: true,
   enhanceCodeBlock: true,
   enableCodeCopy: true,
   enableCodeFullscreen: false,

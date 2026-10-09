@@ -659,4 +659,51 @@ kbd {
   background: #000;
 }
 
+/* --- 目次 (post-toc) ------------------------------------------------------ */
+.prose .post-toc {
+  margin: 1.5em 0;
+  padding: 0.9em 1.2em;
+  border: 1px solid var(--hishaku-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--hishaku-fg) 4%, transparent);
+  font-size: 0.9em;
+}
+.prose .post-toc-title {
+  margin: 0 0 0.5em;
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--hishaku-fg-muted);
+}
+.prose .post-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prose .post-toc-list .post-toc-list {
+  margin-top: 0.2em;
+  padding-left: 1.1em;
+}
+.prose .post-toc-item {
+  margin: 0.25em 0;
+  line-height: 1.6;
+}
+.prose .post-toc-item:last-child {
+  margin-bottom: 0;
+}
+.prose .post-toc-item > a {
+  color: var(--hishaku-fg);
+  text-decoration: none;
+}
+.prose .post-toc-item > a:hover {
+  color: var(--hishaku-accent);
+}
+.prose .post-toc-list .post-toc-item > a {
+  color: var(--hishaku-fg-muted);
+  font-size: 0.95em;
+}
+.prose .post-toc-list .post-toc-item > a:hover {
+  color: var(--hishaku-accent);
+}
+
 /* --- 記事ヘッダのカテゴリ/タグ など (prose 外共通) ------------------------- */

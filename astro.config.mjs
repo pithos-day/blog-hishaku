@@ -13,6 +13,7 @@ import { parseSiteYaml } from './src/lib/config/site.ts';
 import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
 import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
+import { rehypeToc } from './src/lib/markdown/rehype-toc.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
 import { remarkShokaRuby } from './src/lib/markdown/remark-ruby.ts';
@@ -50,20 +51,20 @@ if (content.enableShokaSpoiler) remarkPlugins.push(remarkShokaSpoiler);
 if (content.enableShokaRuby) remarkPlugins.push(remarkShokaRuby);
 if (content.enableShokaEffects) remarkPlugins.push(remarkIns, remarkMark);
 
-// rehype プラグイン — 見出しアンカー → 属性構文 → KaTeX
-const rehypePlugins = [
-  rehypeSlug,
-  [
-    rehypeAutolinkHeadings,
-    {
-      behavior: 'append',
-      properties: {
-        className: ['anchor-link'],
-        ariaLabel: t('post.headingLink'),
-      },
+// rehype プラグイン — 見出しスラッグ → 目次 → 見出しアンカー → 属性構文 → KaTeX
+const rehypePlugins = [rehypeSlug];
+// 目次は rehype-slug の後、autolink (アンカー挿入) の前に走らせる
+if (content.enableToc) rehypePlugins.push(rehypeToc);
+rehypePlugins.push([
+  rehypeAutolinkHeadings,
+  {
+    behavior: 'append',
+    properties: {
+      className: ['anchor-link'],
+      ariaLabel: t('post.headingLink'),
     },
-  ],
-];
+  },
+]);
 if (content.enableShokaAttrs) rehypePlugins.push(rehypeShokaAttrs);
 if (content.enableMath) rehypePlugins.push(rehypeKatex);
 
