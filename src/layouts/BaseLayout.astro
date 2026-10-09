@@ -3,6 +3,7 @@ import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
 import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
+import type { TocHeading } from '@/lib/toc';
 import '@/styles/global.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -13,6 +14,8 @@ interface Props {
   type?: 'website' | 'article';
   /** 数式 (KaTeX) を含む記事か。非記事ページは false (既定) */
   math?: boolean;
+  /** 目次パネルに表示する見出し (記事ページのみ渡す) */
+  tocHeadings?: TocHeading[];
 }
 
 const {
@@ -21,6 +24,7 @@ const {
   ogImage = siteConfig.site.defaultOgImage ?? siteConfig.site.avatar,
   type = 'website',
   math = false,
+  tocHeadings,
 } = Astro.props;
 
 const hasMath = siteConfig.content.enableMath && math !== false;
@@ -95,7 +99,7 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
       </header>
 
       <div class="site-layout flex-1">
-        <SidebarLeft />
+        <SidebarLeft tocHeadings={tocHeadings} />
         <main class="site-content">
           <slot />
         </main>

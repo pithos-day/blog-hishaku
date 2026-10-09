@@ -94,6 +94,11 @@
   margin-left: 3px;
 }
 
+/* 目次パネル (左サイドバー・記事ページのみ): h3 をネストして字下げ */
+.post-toc .module-list .module-list {
+  padding-left: 0.9em;
+}
+
 .module-list-inline {
   display: flex;
   flex-wrap: wrap;

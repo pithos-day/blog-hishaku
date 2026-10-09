@@ -24,9 +24,14 @@ interface Props {
 }
 
 const { post, prev, next } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const timezone = siteConfig.site.timezone;
 const description = getPostDescription(post);
+
+// 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (2見出しから表示)
+const tocHeadings = siteConfig.content.enableToc
+  ? headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+  : [];
 
 const categoryChains = normalizeCategories(post.data.categories);
 const stats = getTextStats(post);
@@ -38,6 +43,7 @@ const stats = getTextStats(post);
   ogImage={post.data.cover}
   type="article"
   math={post.data.math !== false}
+  tocHeadings={tocHeadings}
 >
   <article data-pagefind-body>
     <header>

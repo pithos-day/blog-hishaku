@@ -104,7 +104,7 @@ content:
   addBlankTarget: true # 外部リンクを新規タブで開く
   smoothScroll: true # スムーススクロール
   addHeadingLevel: true # 見出しアンカー
-  enableToc: true # 記事冒頭の目次 (h2/h3 をツリー表示、2見出しから)
+  enableToc: true # 左サイドバーの目次パネル (記事ページのみ、h2/h3 をツリー表示)
   enhanceCodeBlock: true # コードブロック強化
   enableCodeCopy: true # コードのコピーボタン
   enableCodeFullscreen: false # コード全画面ボタン
