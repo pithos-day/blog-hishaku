@@ -261,7 +261,7 @@
 
 .entry-body {
   background: var(--hishaku-surface);
-  padding: 12px 14px;
+  padding: 5px 14px 12px;
   font-size: 0.9rem;
   line-height: 1.75;
 }
