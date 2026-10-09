@@ -120,8 +120,8 @@ export const defaultI18n: I18nConfig = {
 
 /**
  * `config/site.yaml` のスキーマ。
- * 未知のキーは Zod の既定挙動で strip されるため、astro-koharu の site.yaml を
- * そのまま読み込んでもエラーにはなりません(対応するキーだけが反映されます)。
+ * 未知のキーは Zod の既定挙動で strip されるため、対応外のキーが含まれていても
+ * エラーにはなりません(対応するキーだけが反映されます)。
  * グループ欠損時の既定値は normalize(`site.ts`)で一括補完します。
  */
 export const siteYamlSchema = z.object({

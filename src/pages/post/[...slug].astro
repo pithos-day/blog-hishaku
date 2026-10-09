@@ -10,17 +10,19 @@ import { buildTagHref } from '@/lib/tags';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
-  return posts.map((post) => ({
+  return posts.map((post, index) => ({
     params: { slug: getPostSlug(post) },
-    props: { post },
+    props: { post, prev: posts[index + 1] ?? null, next: posts[index - 1] ?? null },
   }));
 }
 
 interface Props {
   post: PostEntry;
+  prev: PostEntry | null;
+  next: PostEntry | null;
 }
 
-const { post } = Astro.props;
+const { post, prev, next } = Astro.props;
 const { Content } = await render(post);
 const timezone = siteConfig.site.timezone;
 const description = getPostDescription(post);
@@ -99,6 +101,35 @@ const stats = getTextStats(post);
         <p class="mb-3 text-sm text-accent">この記事は下書きです (本番ビルドでは非公開)。</p>
       )}
       <Content />
+      <hr class="post-nav-divider" />
+      <nav class="post-nav" aria-label="前後の記事">
+        {
+          prev ? (
+            <a href={`/post/${getPostSlug(prev)}`} class="post-nav-link post-nav-prev">
+              <span class="post-nav-label">← 前の記事</span>
+              <span class="post-nav-title">{prev.data.title}</span>
+            </a>
+          ) : (
+            <span class="post-nav-link post-nav-disabled">
+              <span class="post-nav-label">← 前の記事</span>
+              <span class="post-nav-title">ありません</span>
+            </span>
+          )
+        }
+        {
+          next ? (
+            <a href={`/post/${getPostSlug(next)}`} class="post-nav-link post-nav-next">
+              <span class="post-nav-label">次の記事 →</span>
+              <span class="post-nav-title">{next.data.title}</span>
+            </a>
+          ) : (
+            <span class="post-nav-link post-nav-disabled post-nav-next">
+              <span class="post-nav-label">次の記事 →</span>
+              <span class="post-nav-title">ありません</span>
+            </span>
+          )
+        }
+      </nav>
     </div>
   </article>
 

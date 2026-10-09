@@ -1,6 +1,6 @@
 /**
  * サイトタイムゾーン基準の日付パース/書式化。
- * astro-koharu が date-fns-tz で行っていた処理の最小実装(依存ライブラリなし)。
+ * 依存ライブラリなしの最小実装。
  */
 
 const TIMESTAMP_PATTERN =

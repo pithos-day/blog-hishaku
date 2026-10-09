@@ -8,12 +8,12 @@ categories:
   - ノート
 ---
 
-**blog-hishaku** は astro-koharu と互換性を持つ、最小構成の Astro ブログテンプレートです。
+**blog-hishaku** は最小構成の Astro ブログテンプレートです。
 
 ## できること
 
 - `config/site.yaml` でサイト情報を一元管理
-- astro-koharu 互換の frontmatter で記事を書ける
+- 拡張された frontmatter で記事を書ける
 - カテゴリ・タグ・アーカイブ・RSS・検索
 
 ## まず試すこと

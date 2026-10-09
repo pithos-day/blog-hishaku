@@ -4,7 +4,7 @@ import { z } from 'astro/zod';
 import { siteConfig } from './lib/config';
 import { parsePostDate } from './lib/date';
 
-/** `_` 始まりのファイル/ディレクトリは除外 (astro-koharu 互換) */
+/** `_` 始まりのファイル/ディレクトリは除外 */
 const BLOG_CONTENT_GLOB_PATTERN = ['**/*.{md,mdx}', '!**/_*/**', '!**/_*.{md,mdx}'];
 
 const dateInSiteTimezone = z
@@ -17,7 +17,7 @@ const blogCollection = defineCollection({
     .object({
       title: z.string().min(1),
       description: z.string().optional(),
-      /** カスタムパーマリンク (省略時はファイル名)。astro-koharu 互換 */
+      /** カスタムパーマリンク (省略時はファイル名) */
       link: z.string().optional(),
       date: dateInSiteTimezone,
       updated: dateInSiteTimezone.optional(),

@@ -1,7 +1,7 @@
 {
   "name": "blog-hishaku",
   "version": "0.1.0",
-  "description": "astro-koharu と互換性を持つ最小構成の Astro ブログテンプレート",
+  "description": "最小構成の Astro ブログテンプレート",
   "type": "module",
   "private": true,
   "scripts": {
@@ -11,9 +11,16 @@
     "astro": "astro",
     "check": "astro check",
     "postinstall": "node scripts/sync-katex.mjs",
+    "prepare": "husky",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "lint-staged": "lint-staged",
     "test": "node --test"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,astro,css}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
   },
   "keywords": [
     "astro",
@@ -60,6 +67,8 @@
     "@tailwindcss/typography": "^0.5.20",
     "@types/hast": "^3.0.5",
     "@types/mdast": "^4.0.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "pagefind": "^1.5.2",
     "typescript": "^6.0.3"
   }

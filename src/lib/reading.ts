@@ -1,6 +1,6 @@
 /**
  * 記事の文字数・読了時間。
- * astro-koharu が reading-time パッケージで行う集計に相当する最小実装 (依存なし)。
+ * 依存ライブラリなしの最小実装。
  * 日本語主体のため 1 分あたり 400 字で概算する (CJK 記事の一般的な目安)。
  */
 import { type PostEntry, toPlainText } from './posts';

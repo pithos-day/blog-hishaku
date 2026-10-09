@@ -17,4 +17,4 @@ keywords:
 
 この記事の URL は `/post/custom-permalink` です(ファイル名は `custom-link.md`)。
 
-`link` を省略した場合はファイル名が URL になります。astro-koharu と互換の挙動です。
+`link` を省略した場合はファイル名が URL になります。

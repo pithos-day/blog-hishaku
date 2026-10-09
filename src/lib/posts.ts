@@ -4,13 +4,13 @@ export type PostEntry = CollectionEntry<'blog'>;
 
 /**
  * 記事の URL スラッグ。`link` があればそれを使い、なければファイル名 (id)。
- * astro-koharu 互換のため必ず小文字化する。
+ * 小文字化する。
  */
 export function getPostSlug(post: PostEntry): string {
   return (post.data.link ?? post.id).toLowerCase();
 }
 
-/** 本番ビルドでは下書きを除外し、開発時は含める (koharu 互換) */
+/** 本番ビルドでは下書きを除外し、開発時は含める */
 function isPublished(post: PostEntry): boolean {
   return import.meta.env.DEV || !post.data.draft;
 }
@@ -44,8 +44,7 @@ export function toPlainText(markdown: string): string {
 }
 
 /**
- * 記事の表示用説明。手書き description がなければ本文の冒頭 150 字を使う
- * (astro-koharu の自動要約フォールバック互換)。
+ * 記事の表示用説明。手書き description がなければ本文の冒頭 150 字を使う。
  */
 export function getPostDescription(post: PostEntry, maxLength = 150): string {
   if (post.data.description) return post.data.description;

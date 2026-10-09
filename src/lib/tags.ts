@@ -1,6 +1,6 @@
 import { getPublishedPosts, type PostEntry } from './posts';
 
-/** タグ名の正規化 (URL スラッグ用・koharu 互換で小文字化) */
+/** タグ名の正規化 (URL スラッグ用・小文字化) */
 export function normalizeTag(tag: string): string {
   return tag.toLowerCase();
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   kameya 風レイアウト (バナー / サイドバー / エントリ)
+   レイアウト (バナー / サイドバー / エントリ)
    ========================================================================== */
 
 .site-container {
@@ -337,6 +337,83 @@
 .entry-badge-draft {
   border: 1px solid var(--hishaku-border);
   color: var(--hishaku-fg-muted);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.page-link {
+  font-size: 0.85rem;
+  color: var(--hishaku-accent);
+  text-decoration: none;
+}
+
+.page-link:hover {
+  text-decoration: underline;
+}
+
+.page-link-disabled {
+  color: var(--hishaku-fg-muted);
+  opacity: 0.5;
+}
+
+.page-status {
+  font-size: 0.85rem;
+  color: var(--hishaku-fg-muted);
+}
+
+.post-nav-divider {
+  border: none;
+  border-top: 1px solid var(--hishaku-border);
+  margin: 2em 0 1.2em;
+}
+
+.post-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.post-nav-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--hishaku-border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--hishaku-fg);
+  min-width: 0;
+}
+
+a.post-nav-link:hover {
+  border-color: var(--hishaku-accent);
+}
+
+.post-nav-next {
+  text-align: right;
+}
+
+.post-nav-disabled {
+  opacity: 0.45;
+}
+
+.post-nav-label {
+  font-size: 0.75rem;
+  color: var(--hishaku-fg-muted);
+}
+
+.post-nav-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .post-title {

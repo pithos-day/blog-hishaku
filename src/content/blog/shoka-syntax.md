@@ -1,7 +1,7 @@
 ---
 title: Shoka 構文サンプル
 date: 2026-09-10 12:00:00
-description: "astro-koharu 互換の Markdown 拡張構文 (::: ブロック、タブ、ルビ、スポイラー等) の動作サンプルです。"
+description: "Markdown 拡張構文 (::: ブロック、タブ、ルビ、スポイラー等) の動作サンプルです。"
 tags:
   - サンプル
   - Markdown
@@ -12,7 +12,7 @@ keywords:
   - Shoka
 ---
 
-この記事は astro-koharu 互換の Markdown 拡張構文を一通り試すサンプルです。
+この記事は Markdown 拡張構文を一通り試すサンプルです。
 
 ## 提醒ブロック (`:::`)
 

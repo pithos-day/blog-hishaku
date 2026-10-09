@@ -19,7 +19,6 @@ export interface CategoryNode {
  * frontmatter の categories を正規化する。
  * - `['a', 'b']`       → 1 本の階層チェーン [a > b] (Hexo 互換)
  * - `[['a'], ['b']]`   → 複数のチェーン
- * astro-koharu のスキーマと同仕様。
  */
 export function normalizeCategories(
   categories: string[] | string[][] | undefined,

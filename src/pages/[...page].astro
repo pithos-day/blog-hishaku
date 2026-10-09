@@ -1,13 +1,28 @@
 ---
+import type { Page } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
-import { getPostDescription, getPostSlug, getPublishedPosts } from '@/lib/posts';
+import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
 import { buildTagHref } from '@/lib/tags';
 
-const posts = await getPublishedPosts();
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: (data: PostEntry[], opts: { pageSize: number }) => unknown[];
+}) {
+  const posts = await getPublishedPosts();
+  return paginate(posts, { pageSize: 10 });
+}
+
+interface Props {
+  page: Page<PostEntry>;
+}
+
+const { page } = Astro.props;
+const posts = page.data;
 const timezone = siteConfig.site.timezone;
 ---
 
@@ -79,6 +94,30 @@ const timezone = siteConfig.site.timezone;
             );
           })}
         </ul>
+      )
+    }
+
+    {
+      page.lastPage > 1 && (
+        <nav class="pagination" aria-label="ページネーション">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="page-link">
+              ← 前のページ
+            </a>
+          ) : (
+            <span class="page-link page-link-disabled">← 前のページ</span>
+          )}
+          <span class="page-status">
+            {page.currentPage} / {page.lastPage}
+          </span>
+          {page.url.next ? (
+            <a href={page.url.next} class="page-link">
+              次のページ →
+            </a>
+          ) : (
+            <span class="page-link page-link-disabled">次のページ →</span>
+          )}
+        </nav>
       )
     }
   </section>
