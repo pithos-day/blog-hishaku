@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import { parseSiteYaml } from './src/lib/config/site.ts';
@@ -15,6 +16,7 @@ const siteConfig = loadSiteConfig();
 
 export default defineConfig({
   site: siteConfig.site.url,
+  integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
   },

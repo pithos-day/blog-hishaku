@@ -34,6 +34,12 @@ const socialEntries = Object.entries(siteConfig.social);
     {siteConfig.site.author && <meta name="author" content={siteConfig.site.author} />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href={siteConfig.site.avatar ?? '/favicon.svg'} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.site.title}
+      href={new URL('rss.xml', siteConfig.site.url)}
+    />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
