@@ -17,10 +17,10 @@ site:
   subtitle: つまみ食いの記録
   name: hishaku
   description: astro-koharu と互換性を持つ最小構成の Astro ブログテンプレート
-  avatar: /img/avatar.svg
+  avatar: /avatar.svg
   author: Your Name
   url: https://example.com
-  defaultOgImage: /img/avatar.svg
+  defaultOgImage: /avatar.svg
   startYear: 2026
   timezone: Asia/Tokyo # IANA 形式。日付の表示・月別アーカイブに使用
   keywords:
