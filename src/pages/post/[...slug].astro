@@ -180,6 +180,7 @@ const stats = getTextStats(post);
         frame.querySelector('.frame-btn-fold')?.addEventListener('click', () => {
           setFolded(!frame.classList.contains('code-frame--folded'));
         });
+        frame.querySelector('.fold-overlay')?.addEventListener('click', () => setFolded(false));
 
         const copyButton = frame.querySelector<HTMLButtonElement>('.frame-btn-copy');
         if (copyButton) {

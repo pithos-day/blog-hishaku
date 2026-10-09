@@ -115,6 +115,20 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
       }
       wrapperChildren.push(this.pre);
 
+      if (foldable) {
+        wrapperChildren.push({
+          type: 'element',
+          tagName: 'button',
+          properties: {
+            type: 'button',
+            class: 'fold-overlay',
+            'aria-label': '展開',
+            title: '展開',
+          },
+          children: [iconSvg(ChevronsUpDown)],
+        });
+      }
+
       root.children[preIndex] = {
         type: 'element',
         tagName: 'div',
