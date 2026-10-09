@@ -27,7 +27,9 @@ const tags = await getAllTags();
 
 <aside class="sidebar sidebar-left" aria-label={t('sidebar.leftPanel')}>
   <section id="recent-entries" class="sidebar-module" aria-label={t('sidebar.recent')}>
-    <h2 class="module-header">{t('sidebar.recent')}</h2>
+    <h2 class="module-header">
+      <a href="/posts/">{t('sidebar.recent')}</a>
+    </h2>
     <div class="module-body">
       {
         recentPosts.length > 0 ? (
@@ -48,8 +50,10 @@ const tags = await getAllTags();
   </section>
 
   <section id="archive-datebased" class="sidebar-module" aria-label={t('sidebar.archives')}>
-    <h2 class="module-header">{t('sidebar.archives')}</h2>
-    <div class="module-body">
+    <h2 class="module-header">
+        <a href="/archives/">{t('sidebar.archives')}</a>
+      </h2>
+      <div class="module-body">
       {
         backnumbers.length > 0 ? (
           <ul class="module-list">
@@ -67,7 +71,9 @@ const tags = await getAllTags();
   </section>
 
   <section id="archive-category" class="sidebar-module" aria-label={t('sidebar.categoriesAria')}>
-    <h2 class="module-header">{t('sidebar.categories')}</h2>
+    <h2 class="module-header">
+        <a href="/categories/">{t('sidebar.categories')}</a>
+    </h2>
     <div class="module-body">
       {
         categoryRoots.length > 0 ? (
@@ -87,7 +93,9 @@ const tags = await getAllTags();
   </section>
 
   <section id="tag-list" class="sidebar-module" aria-label={t('sidebar.tagsAria')}>
-    <h2 class="module-header">{t('sidebar.tags')}</h2>
+    <h2 class="module-header">
+      <a href="/tags/">{t('sidebar.tags')}</a>
+    </h2>
     <div class="module-body">
       {
         tags.length > 0 ? (
