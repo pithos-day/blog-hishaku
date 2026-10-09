@@ -1,45 +1,30 @@
 ---
-import { t } from '@/i18n';
+import { getEntry, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { siteConfig } from '@/lib/config';
 
-const socialEntries = Object.entries(siteConfig.social);
+const about = await getEntry('pages', 'about');
+if (!about) {
+  throw new Error('src/content/pages/about.md が見つかりません');
+}
+
+const { Content, headings } = await render(about);
+// 記事ページと同じく h2/h3 を左サイドバーの目次パネルに渡す
+const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 ---
 
-<BaseLayout title={t('about.title')}>
-  <header class="page-header">
-    <h1>{t('about.title')}</h1>
-  </header>
+<BaseLayout
+  title={about.data.title}
+  description={about.data.description}
+  type="article"
+  tocHeadings={tocHeadings}
+>
+  <article data-pagefind-body>
+    <header>
+      <h1 class="entry-title-bar post-title">{about.data.title}</h1>
+    </header>
 
-  <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
-    <h2>{siteConfig.site.title}</h2>
-    {siteConfig.site.subtitle && <p>{siteConfig.site.subtitle}</p>}
-    {siteConfig.site.description && <p>{siteConfig.site.description}</p>}
-
-    <h2>{t('about.author')}</h2>
-    <p>{siteConfig.site.author}</p>
-
-    {
-      socialEntries.length > 0 && (
-        <>
-          <h2>{t('about.sns')}</h2>
-          <ul>
-            {socialEntries.map(([name, social]) => (
-              <li>
-                <a href={social.url} rel="noopener noreferrer">
-                  {name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </>
-      )
-    }
-
-    <h2>{t('about.feed')}</h2>
-    <p>
-      <a href="/rss.xml">{t('about.rssLink')}</a>
-      {t('about.rssNote')}
-    </p>
-  </div>
+    <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
+      <Content />
+    </div>
+  </article>
 </BaseLayout>
