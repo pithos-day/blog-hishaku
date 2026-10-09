@@ -16,6 +16,8 @@ interface Props {
   math?: boolean;
   /** 目次パネルに表示する見出し (記事ページのみ渡す) */
   tocHeadings?: TocHeading[];
+  /** canonical / og:url に使うパス (既定: 現在の URL) */
+  canonicalPath?: string;
 }
 
 const {
@@ -25,12 +27,13 @@ const {
   type = 'website',
   math = false,
   tocHeadings,
+  canonicalPath,
 } = Astro.props;
 
 const hasMath = siteConfig.content.enableMath && math !== false;
 
 const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title;
-const canonicalUrl = new URL(Astro.url.pathname, siteConfig.site.url);
+const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, siteConfig.site.url);
 const year = new Date().getFullYear();
 const startYear = siteConfig.site.startYear;
 const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);

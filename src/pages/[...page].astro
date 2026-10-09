@@ -5,17 +5,28 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
+import { buildPostPage, POSTS_PAGE_SIZE } from '@/lib/pagination';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
 import { buildTagHref } from '@/lib/tags';
 
-export async function getStaticPaths({
-  paginate,
-}: {
-  paginate: (data: PostEntry[], opts: { pageSize: number }) => unknown[];
-}) {
+export async function getStaticPaths() {
   const posts = await getPublishedPosts();
-  return paginate(posts, { pageSize: 10 });
+  const lastPage = Math.max(1, Math.ceil(posts.length / POSTS_PAGE_SIZE));
+
+  // 1 ページ目は /・/posts/・/posts/1 の 3 URL、2 ページ目以降は /posts/{N}
+  const paths = [
+    { params: { page: undefined }, props: { page: buildPostPage(posts, 1) } },
+    { params: { page: 'posts' }, props: { page: buildPostPage(posts, 1) } },
+    { params: { page: 'posts/1' }, props: { page: buildPostPage(posts, 1) } },
+  ];
+  for (let current = 2; current <= lastPage; current++) {
+    paths.push({
+      params: { page: `posts/${current}` },
+      props: { page: buildPostPage(posts, current) },
+    });
+  }
+  return paths;
 }
 
 interface Props {
@@ -27,7 +38,7 @@ const posts = page.data;
 const timezone = siteConfig.site.timezone;
 ---
 
-<BaseLayout>
+<BaseLayout canonicalPath={page.url.current}>
   <section aria-label={t('index.listAria')}>
     {
       posts.length === 0 ? (
