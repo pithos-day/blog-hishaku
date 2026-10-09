@@ -136,8 +136,8 @@ console.log('3 行目');
 ```
 
 ```bash command:("$":1-2)
-$ pnpm install
-$ pnpm dev
+pnpm install
+pnpm dev
 ```
 
 8 行を超えるコードブロックは初期状態で折りたたまれます:
