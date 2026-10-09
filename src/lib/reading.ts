@@ -22,9 +22,9 @@ export function getTextStats(post: PostEntry): TextStats {
 }
 
 export function formatCharacterCount(characters: number): string {
-  return `${characters.toLocaleString('ja-JP')} 文字`;
+  return `${characters.toLocaleString('ja-JP')}文字`;
 }
 
 export function formatReadingTime(minutes: number): string {
-  return `約 ${minutes} 分`;
+  return `約${minutes}分`;
 }
