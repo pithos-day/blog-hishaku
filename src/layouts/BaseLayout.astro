@@ -57,15 +57,6 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
   <body class="flex min-h-screen flex-col">
     <div class="site-container flex flex-1 flex-col">
       <header class="site-banner">
-        {siteConfig.site.avatar && (
-          <img
-            src={siteConfig.site.avatar}
-            alt=""
-            width="48"
-            height="48"
-            class="banner-avatar"
-          />
-        )}
         <div class="banner-text">
           <h1><a href="/">{siteConfig.site.title}</a></h1>
           {siteConfig.site.subtitle && <p class="banner-subtitle">{siteConfig.site.subtitle}</p>}

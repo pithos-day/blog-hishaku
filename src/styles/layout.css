@@ -19,12 +19,6 @@
   border-bottom: 1px solid var(--hishaku-border);
 }
 
-.site-banner .banner-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 9999px;
-}
-
 .site-banner h1 {
   font-size: 1.65rem;
   font-weight: 700;
@@ -92,24 +86,20 @@
   margin-top: 0;
 }
 
-.module-list .menu-label {
-  font-weight: 700;
-}
-
-.module-list .menu-children {
-  list-style: none;
-  margin: 4px 0 0;
-  padding-left: 0.9em;
-}
-
-.module-list .menu-children > li {
-  margin-top: 4px;
-}
-
 .module-count {
   color: var(--hishaku-fg-muted);
   font-size: 0.72rem;
   margin-left: 3px;
+}
+
+.module-list-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.module-list-inline > li {
+  margin-top: 0;
 }
 
 .module-empty {

@@ -1,8 +1,8 @@
 ---
 import { getArchives } from '@/lib/archives';
 import { buildCategoryHref, getCategoryTree } from '@/lib/categories';
-import { siteConfig } from '@/lib/config';
 import { getPostSlug, getPublishedPosts } from '@/lib/posts';
+import { buildTagHref, getAllTags } from '@/lib/tags';
 
 const RECENT_LIMIT = 10;
 const BACKNUMBER_LIMIT = 10;
@@ -21,60 +21,10 @@ const backnumbers = archiveYears
   .slice(0, BACKNUMBER_LIMIT);
 
 const { roots: categoryRoots } = await getCategoryTree();
-const menuItems = siteConfig.navigation.filter((item) => item.path !== '/about');
+const tags = await getAllTags();
 ---
 
 <aside class="sidebar sidebar-left" aria-label="サイドパネル (左)">
-  <section id="search-module" class="sidebar-module" aria-label="検索">
-    <h2 class="module-header">検索</h2>
-    <div class="module-body">
-      <form id="sidebar-search" role="search" class="sidebar-search">
-        <input
-          type="search"
-          name="q"
-          placeholder="キーワードを入力"
-          autocomplete="off"
-          aria-label="サイト内検索"
-        />
-        <button type="submit">検索</button>
-      </form>
-    </div>
-  </section>
-
-  <section id="menu" class="sidebar-module" aria-label="メニュー">
-    <h2 class="module-header">メニュー</h2>
-    <div class="module-body">
-      <ul class="module-list">
-        {
-          menuItems.map((item) =>
-            item.children && item.children.length > 0 ? (
-              <li>
-                <span class="menu-label">{item.name}</span>
-                <ul class="menu-children">
-                  {item.children
-                    .filter((child) => child.path)
-                    .map((child) => (
-                      <li>
-                        <a href={child.path}>{child.name}</a>
-                      </li>
-                    ))}
-                </ul>
-              </li>
-            ) : item.path ? (
-              <li>
-                <a href={item.path}>{item.name}</a>
-              </li>
-            ) : (
-              <li>
-                <span class="menu-label">{item.name}</span>
-              </li>
-            ),
-          )
-        }
-      </ul>
-    </div>
-  </section>
-
   <section id="recent-entries" class="sidebar-module" aria-label="最近の記事">
     <h2 class="module-header">最近の記事</h2>
     <div class="module-body">
@@ -130,6 +80,26 @@ const menuItems = siteConfig.navigation.filter((item) => item.path !== '/about')
           </ul>
         ) : (
           <p class="module-empty">まだカテゴリがありません。</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="tag-list" class="sidebar-module" aria-label="タグ一覧">
+    <h2 class="module-header">タグ</h2>
+    <div class="module-body">
+      {
+        tags.length > 0 ? (
+          <ul class="module-list module-list-inline">
+            {tags.map((tag) => (
+              <li>
+                <a href={buildTagHref(tag.name)}>{tag.name}</a>
+                <span class="module-count">({tag.count})</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="module-empty">まだタグがありません。</p>
         )
       }
     </div>

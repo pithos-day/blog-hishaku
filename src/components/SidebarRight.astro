@@ -83,4 +83,20 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
       </table>
     </div>
   </section>
+
+  <section id="search-module" class="sidebar-module" aria-label="検索">
+    <h2 class="module-header">検索</h2>
+    <div class="module-body">
+      <form id="sidebar-search" role="search" class="sidebar-search">
+        <input
+          type="search"
+          name="q"
+          placeholder="キーワードを入力"
+          autocomplete="off"
+          aria-label="サイト内検索"
+        />
+        <button type="submit">検索</button>
+      </form>
+    </div>
+  </section>
 </aside>
