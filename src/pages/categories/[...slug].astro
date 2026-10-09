@@ -1,7 +1,7 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostRow from '@/components/PostRow.astro';
-import { buildCategoryHref, getCategoryTree, type CategoryNode } from '@/lib/categories';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildCategoryHref, type CategoryNode, getCategoryTree } from '@/lib/categories';
 
 export async function getStaticPaths() {
   const { byPath } = await getCategoryTree();

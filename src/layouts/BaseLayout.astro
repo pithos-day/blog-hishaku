@@ -20,8 +20,7 @@ const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.sit
 const canonicalUrl = new URL(Astro.url.pathname, siteConfig.site.url);
 const year = new Date().getFullYear();
 const startYear = siteConfig.site.startYear;
-const copyright =
-  startYear && startYear < year ? `${startYear}–${year}` : String(year);
+const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);
 const socialEntries = Object.entries(siteConfig.social);
 ---
 

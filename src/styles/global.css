@@ -35,8 +35,7 @@
   --color-accent-fg: var(--hishaku-accent-fg);
 
   --font-sans:
-    system-ui, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP',
-    'Yu Gothic', sans-serif;
+    system-ui, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
 }
 

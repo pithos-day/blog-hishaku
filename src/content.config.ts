@@ -28,7 +28,10 @@ const blogCollection = defineCollection({
       /** false でカテゴリツリー/件数から除外 */
       catalog: z.boolean().default(true),
       /** 単一カテゴリ名の配列 (= 階層の鎖)、または複数の鎖 [[a, b], [c]] */
-      categories: z.array(z.string()).or(z.array(z.array(z.string()))).optional(),
+      categories: z
+        .array(z.string())
+        .or(z.array(z.array(z.string())))
+        .optional(),
       sticky: z.boolean().optional(),
       draft: z.boolean().optional(),
       tocNumbering: z.boolean().default(true),

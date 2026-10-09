@@ -1,27 +1,30 @@
 import { parse as parseYaml } from 'yaml';
 import {
+  type ContentFlags,
   contentDefaults,
   defaultI18n,
-  KNOWN_TOP_LEVEL_KEYS,
-  siteYamlSchema,
-  type ContentFlags,
   type I18nConfig,
+  KNOWN_TOP_LEVEL_KEYS,
   type SiteConfig,
+  siteYamlSchema,
 } from './schema';
 
 function assertTimeZone(timezone: string): void {
   try {
     new Intl.DateTimeFormat('en-US', { timeZone: timezone });
-  }
-  catch {
+  } catch {
     throw new Error(`config/site.yaml: site.timezone "${timezone}" は不正な IANA タイムゾーンです`);
   }
 }
 
-function normalizeI18n(raw: { defaultLocale?: string; locales?: I18nConfig['locales'] } | undefined): I18nConfig {
+function normalizeI18n(
+  raw: { defaultLocale?: string; locales?: I18nConfig['locales'] } | undefined,
+): I18nConfig {
   const i18n: I18nConfig = {
     defaultLocale: raw?.defaultLocale ?? defaultI18n.defaultLocale,
-    locales: raw?.locales ? raw.locales.map((l) => ({ ...l })) : defaultI18n.locales.map((l) => ({ ...l })),
+    locales: raw?.locales
+      ? raw.locales.map((l) => ({ ...l }))
+      : defaultI18n.locales.map((l) => ({ ...l })),
   };
   const defaultEntry = i18n.locales.find((l) => l.code === i18n.defaultLocale && l.enabled);
   if (!defaultEntry) {
@@ -43,9 +46,7 @@ function warnIgnoredTopLevelKeys(doc: unknown): void {
     (key) => !(KNOWN_TOP_LEVEL_KEYS as readonly string[]).includes(key),
   );
   if (ignored.length > 0) {
-    console.warn(
-      `[site.yaml] このテンプレート未対応のキーを無視しました: ${ignored.join(', ')}`,
-    );
+    console.warn(`[site.yaml] このテンプレート未対応のキーを無視しました: ${ignored.join(', ')}`);
   }
 }
 
@@ -57,8 +58,7 @@ export function parseSiteYaml(raw: string): SiteConfig {
   let doc: unknown;
   try {
     doc = parseYaml(raw);
-  }
-  catch (err) {
+  } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     throw new Error(`config/site.yaml の YAML 解析に失敗しました: ${detail}`);
   }

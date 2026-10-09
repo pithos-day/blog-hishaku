@@ -41,10 +41,7 @@ export function buildCategorySlugPath(names: string[]): string {
 
 /** 表示名の並び → リンク先 ("/categories/note/front-end") */
 export function buildCategoryHref(names: string[]): string {
-  const encoded = buildCategorySlugPath(names)
-    .split('/')
-    .map(encodeURIComponent)
-    .join('/');
+  const encoded = buildCategorySlugPath(names).split('/').map(encodeURIComponent).join('/');
   return `/categories/${encoded}`;
 }
 
