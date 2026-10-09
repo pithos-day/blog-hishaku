@@ -284,6 +284,12 @@
   margin-right: 1px;
 }
 
+.entry-divider {
+  border: 0;
+  border-top: 1px solid var(--hishaku-border);
+  margin: 10px 0 7px;
+}
+
 .entry-meta {
   display: flex;
   flex-wrap: wrap;
@@ -291,7 +297,7 @@
   gap: 10px;
   font-size: 0.72rem;
   color: var(--hishaku-fg-muted);
-  margin: 6px 0 0;
+  margin: 0;
 }
 
 .entry-badge {
