@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --hishaku-bg: #fafafa;
+  --hishaku-surface: #ffffff;
+  --hishaku-border: #e4e4e7;
+  --hishaku-fg: #27272a;
+  --hishaku-fg-muted: #71717a;
+  --hishaku-accent: #4f46e5;
+  --hishaku-accent-fg: #ffffff;
+}
+
+.dark {
+  color-scheme: dark;
+  --hishaku-bg: #101114;
+  --hishaku-surface: #181a1f;
+  --hishaku-border: #2b2e36;
+  --hishaku-fg: #e4e4e7;
+  --hishaku-fg-muted: #a1a1aa;
+  --hishaku-accent: #818cf8;
+  --hishaku-accent-fg: #101114;
+}
+
+@theme inline {
+  --color-bg: var(--hishaku-bg);
+  --color-surface: var(--hishaku-surface);
+  --color-border: var(--hishaku-border);
+  --color-fg: var(--hishaku-fg);
+  --color-fg-muted: var(--hishaku-fg-muted);
+  --color-accent: var(--hishaku-accent);
+  --color-accent-fg: var(--hishaku-accent-fg);
+
+  --font-sans:
+    system-ui, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP',
+    'Yu Gothic', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
+}
+
+@layer base {
+  html {
+    background-color: var(--hishaku-bg);
+    color: var(--hishaku-fg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.7;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--hishaku-fg) 40%, transparent);
+  }
+
+  a:hover {
+    color: var(--hishaku-accent);
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--hishaku-accent) 30%, transparent);
+  }
+}
