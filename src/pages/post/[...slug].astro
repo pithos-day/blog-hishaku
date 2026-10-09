@@ -162,39 +162,37 @@ const stats = getTextStats(post);
 
     // コードブロック強化: 折りたたみ・コピー・全画面
     if (flags.enhanceCodeBlock) {
-      for (const wrapper of document.querySelectorAll<HTMLElement>('.code-block-wrapper')) {
-        const code = wrapper.querySelector('code');
+      for (const frame of document.querySelectorAll<HTMLElement>('.code-frame')) {
+        const code = frame.querySelector('code');
         if (!code) continue;
 
-        const setCollapsed = (collapsed: boolean) => {
-          wrapper.classList.toggle('code-collapsed', collapsed);
-          const toggle = wrapper.querySelector<HTMLButtonElement>('.code-btn-collapse');
+        const setFolded = (folded: boolean) => {
+          frame.classList.toggle('code-frame--folded', folded);
+          const toggle = frame.querySelector<HTMLButtonElement>('.frame-btn-fold');
           if (toggle) {
-            const label = collapsed ? '展開' : '折りたたみ';
+            const label = folded ? '展開' : '折りたたみ';
             const labelNode = toggle.querySelector('span');
             if (labelNode) labelNode.textContent = label;
             toggle.setAttribute('aria-label', label);
             toggle.title = label;
-            toggle.setAttribute('aria-expanded', String(!collapsed));
+            toggle.setAttribute('aria-expanded', String(!folded));
           }
         };
 
-        wrapper.querySelector('.code-btn-collapse')?.addEventListener('click', () => {
-          setCollapsed(!wrapper.classList.contains('code-collapsed'));
+        frame.querySelector('.frame-btn-fold')?.addEventListener('click', () => {
+          setFolded(!frame.classList.contains('code-frame--folded'));
         });
-        wrapper.querySelector('.code-block-expand-overlay')?.addEventListener('click', () =>
-          setCollapsed(false),
-        );
+        frame.querySelector('.fold-overlay')?.addEventListener('click', () => setFolded(false));
 
         // ツールバーのボタン以外の部分クリックでも折りたたみを切り替える
-        wrapper.querySelector('.code-block-toolbar')?.addEventListener('click', (event) => {
+        frame.querySelector('.code-frame-bar')?.addEventListener('click', (event) => {
           if ((event.target as Element).closest('button, a')) return;
-          if (wrapper.classList.contains('code-collapsible')) {
-            setCollapsed(!wrapper.classList.contains('code-collapsed'));
+          if (frame.classList.contains('code-frame--foldable')) {
+            setFolded(!frame.classList.contains('code-frame--folded'));
           }
         });
 
-        const copyButton = wrapper.querySelector<HTMLButtonElement>('.code-btn-copy');
+        const copyButton = frame.querySelector<HTMLButtonElement>('.frame-btn-copy');
         if (copyButton) {
           let resetTimer: ReturnType<typeof setTimeout> | undefined;
           copyButton.addEventListener('click', async () => {
@@ -205,20 +203,20 @@ const stats = getTextStats(post);
             }
             const labelNode = copyButton.querySelector('span');
             if (labelNode) labelNode.textContent = 'コピー済み';
-            copyButton.classList.add('copied');
+            copyButton.classList.add('is-copied');
             if (resetTimer) clearTimeout(resetTimer);
             resetTimer = setTimeout(() => {
               if (labelNode) labelNode.textContent = 'コピー';
-              copyButton.classList.remove('copied');
+              copyButton.classList.remove('is-copied');
             }, 2000);
           });
         }
 
-        wrapper.querySelector('.code-btn-fullscreen')?.addEventListener('click', () => {
+        frame.querySelector('.frame-btn-full')?.addEventListener('click', () => {
           if (document.fullscreenElement) {
             void document.exitFullscreen();
           } else {
-            void wrapper.requestFullscreen();
+            void frame.requestFullscreen();
           }
         });
       }

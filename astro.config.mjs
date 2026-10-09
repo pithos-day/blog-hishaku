@@ -9,13 +9,13 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkMath from 'remark-math';
 import { parseSiteYaml } from './src/lib/config/site.ts';
+import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
+import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
 import { remarkShokaRuby } from './src/lib/markdown/remark-ruby.ts';
 import { remarkShokaSpoiler } from './src/lib/markdown/remark-spoiler.ts';
-import { shokaMetaTransformer } from './src/lib/markdown/shiki-meta.ts';
-import { codeBlockWrapperTransformer } from './src/lib/markdown/shiki-wrapper.ts';
 
 // astro.config は Vite プラグインが有効化される前に読み込まれるため、
 // site.yaml は Node の fs で直接読む(パースは src/lib/config と共有)。
@@ -69,10 +69,10 @@ if (content.enableMath) rehypePlugins.push(rehypeKatex);
 // Shiki transformers — meta が data-title 等を付け、wrapper がそれを使って
 // ツールバーを組み立てるため、meta を先に登録する。
 const shikiTransformers = [];
-if (content.enableCodeMeta) shikiTransformers.push(shokaMetaTransformer());
+if (content.enableCodeMeta) shikiTransformers.push(codeMetaTransformer());
 if (content.enhanceCodeBlock) {
   shikiTransformers.push(
-    codeBlockWrapperTransformer({
+    codeFrameTransformer({
       copy: content.enableCodeCopy,
       fullscreen: content.enableCodeFullscreen,
     }),
