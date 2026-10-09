@@ -171,8 +171,6 @@ const stats = getTextStats(post);
           const toggle = frame.querySelector<HTMLButtonElement>('.frame-btn-fold');
           if (toggle) {
             const label = folded ? '展開' : '折りたたみ';
-            const labelNode = toggle.querySelector('span');
-            if (labelNode) labelNode.textContent = label;
             toggle.setAttribute('aria-label', label);
             toggle.title = label;
             toggle.setAttribute('aria-expanded', String(!folded));
@@ -181,15 +179,6 @@ const stats = getTextStats(post);
 
         frame.querySelector('.frame-btn-fold')?.addEventListener('click', () => {
           setFolded(!frame.classList.contains('code-frame--folded'));
-        });
-        frame.querySelector('.fold-overlay')?.addEventListener('click', () => setFolded(false));
-
-        // ツールバーのボタン以外の部分クリックでも折りたたみを切り替える
-        frame.querySelector('.code-frame-bar')?.addEventListener('click', (event) => {
-          if ((event.target as Element).closest('button, a')) return;
-          if (frame.classList.contains('code-frame--foldable')) {
-            setFolded(!frame.classList.contains('code-frame--folded'));
-          }
         });
 
         const copyButton = frame.querySelector<HTMLButtonElement>('.frame-btn-copy');
@@ -201,12 +190,9 @@ const stats = getTextStats(post);
             } catch {
               return; // クリップボードが使えない環境
             }
-            const labelNode = copyButton.querySelector('span');
-            if (labelNode) labelNode.textContent = 'コピー済み';
             copyButton.classList.add('is-copied');
             if (resetTimer) clearTimeout(resetTimer);
             resetTimer = setTimeout(() => {
-              if (labelNode) labelNode.textContent = 'コピー';
               copyButton.classList.remove('is-copied');
             }, 2000);
           });

@@ -1,11 +1,12 @@
 /**
- * Shiki transformer: コードブロックの枠とツールバー生成
+ * Shiki transformer: コードブロックの枠と操作ボタン生成
  *
- * <pre> を div.code-frame で包み、ビルド時にツールバー HTML を組み立てる。
+ * <pre> を div.code-frame で包み、右上に操作ボタン (Lucide アイコン) を並べる。
  * 8 行を超えるブロックは code-frame--foldable + code-frame--folded (初期折りたたみ)。
  * 折りたたみ・コピー・全画面の挙動はクライアント側スクリプトが担当。
  */
-import type { Element, ElementContent } from 'hast';
+import type { Element, ElementContent, Properties } from 'hast';
+import { Check, ChevronsDownUp, ChevronsUpDown, Copy, type IconNode, Maximize } from 'lucide';
 import type { ShikiTransformer } from 'shiki';
 
 /** これ以上の行数は初期折りたたみ対象 */
@@ -18,13 +19,39 @@ interface FrameOptions {
   fullscreen?: boolean;
 }
 
-function textNode(value: string): ElementContent {
-  return { type: 'text', value };
+/** Lucide の IconNode から静的 SVG 要素を組み立てる */
+function iconSvg(icon: IconNode, className?: string): Element {
+  const properties: Properties = {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: 16,
+    height: 16,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': 2,
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
+    'aria-hidden': 'true',
+  };
+  if (className) properties.class = className;
+
+  return {
+    type: 'element',
+    tagName: 'svg',
+    properties,
+    children: icon.map(([tag, attrs]) => ({
+      type: 'element',
+      tagName: tag,
+      properties: { ...attrs },
+      children: [],
+    })),
+  };
 }
 
-function makeButton(
+function iconButton(
   modifier: string,
   label: string,
+  icons: Element[],
   extraProps: Record<string, string> = {},
 ): Element {
   return {
@@ -37,7 +64,7 @@ function makeButton(
       title: label,
       ...extraProps,
     },
-    children: [{ type: 'element', tagName: 'span', properties: {}, children: [textNode(label)] }],
+    children: icons,
   };
 }
 
@@ -51,98 +78,42 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
 
       const lineCount = this.source.replace(/\n$/, '').split('\n').length;
       const foldable = lineCount > FOLD_LINE_THRESHOLD;
+      const multiline = lineCount > 1;
 
       const wrapperProperties: Record<string, string> = { class: 'code-frame' };
+      if (multiline) wrapperProperties.class += ' code-frame--multiline';
       if (foldable) wrapperProperties.class += ' code-frame--foldable code-frame--folded';
 
-      const language = String(this.options.lang ?? '');
-      const title = this.pre.properties['data-code-title'];
-      const url = this.pre.properties['data-code-url'];
-      const linkText = this.pre.properties['data-code-link'];
-
-      const barChildren: ElementContent[] = [
-        {
-          type: 'element',
-          tagName: 'span',
-          properties: { class: 'frame-dots', 'aria-hidden': 'true' },
-          children: [
-            { type: 'element', tagName: 'i', properties: {}, children: [] },
-            { type: 'element', tagName: 'i', properties: {}, children: [] },
-            { type: 'element', tagName: 'i', properties: {}, children: [] },
-          ],
-        },
-        {
-          type: 'element',
-          tagName: 'span',
-          properties: { class: 'frame-lang' },
-          children: [textNode(language)],
-        },
-      ];
-      if (title) {
-        barChildren.push({
-          type: 'element',
-          tagName: 'span',
-          properties: { class: 'frame-title' },
-          children: [textNode(String(title))],
-        });
-      }
-      if (url && /^https?:\/\//.test(String(url))) {
-        barChildren.push({
-          type: 'element',
-          tagName: 'a',
-          properties: {
-            class: 'frame-link',
-            href: String(url),
-            rel: ['noopener', 'noreferrer'],
-          },
-          children: [textNode(String(linkText || url))],
-        });
-      }
-      barChildren.push({
-        type: 'element',
-        tagName: 'span',
-        properties: { class: 'frame-spacer' },
-        children: [],
-      });
+      const controls: Element[] = [];
       if (foldable) {
-        barChildren.push(makeButton('fold', '展開', { 'aria-expanded': 'false' }));
+        controls.push(
+          iconButton(
+            'fold',
+            '展開',
+            [iconSvg(ChevronsDownUp, 'icon-fold'), iconSvg(ChevronsUpDown, 'icon-unfold')],
+            { 'aria-expanded': 'false' },
+          ),
+        );
       }
       if (options?.fullscreen) {
-        barChildren.push(makeButton('full', '全画面'));
+        controls.push(iconButton('full', '全画面', [iconSvg(Maximize)]));
       }
       if (options?.copy) {
-        barChildren.push(makeButton('copy', 'コピー'));
+        controls.push(
+          iconButton('copy', 'コピー', [iconSvg(Copy, 'icon-copy'), iconSvg(Check, 'icon-copied')]),
+        );
       }
 
-      const bar: Element = {
-        type: 'element',
-        tagName: 'div',
-        properties: { class: 'code-frame-bar' },
-        children: barChildren,
-      };
-
-      const wrapperChildren: ElementContent[] = [bar, this.pre];
-
-      if (foldable) {
+      const wrapperChildren: ElementContent[] = [];
+      if (controls.length > 0) {
         wrapperChildren.push({
           type: 'element',
-          tagName: 'button',
-          properties: {
-            type: 'button',
-            class: 'fold-overlay',
-            'aria-label': '展開',
-            title: '展開',
-          },
-          children: [
-            {
-              type: 'element',
-              tagName: 'span',
-              properties: { class: 'fold-overlay-chip' },
-              children: [textNode('展開 ▾')],
-            },
-          ],
+          tagName: 'div',
+          properties: { class: 'frame-controls' },
+          children: controls,
         });
       }
+      wrapperChildren.push(this.pre);
 
       root.children[preIndex] = {
         type: 'element',
