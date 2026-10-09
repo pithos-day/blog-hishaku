@@ -105,28 +105,20 @@ const stats = getTextStats(post);
       <nav class="post-nav" aria-label="前後の記事">
         {
           prev ? (
-            <a href={`/post/${getPostSlug(prev)}`} class="post-nav-link post-nav-prev">
-              <span class="post-nav-label">← 前の記事</span>
-              <span class="post-nav-title">{prev.data.title}</span>
+            <a href={`/post/${getPostSlug(prev)}`} class="post-nav-link">
+              « {prev.data.title}
             </a>
           ) : (
-            <span class="post-nav-link post-nav-disabled">
-              <span class="post-nav-label">← 前の記事</span>
-              <span class="post-nav-title">ありません</span>
-            </span>
+            <span />
           )
         }
         {
           next ? (
             <a href={`/post/${getPostSlug(next)}`} class="post-nav-link post-nav-next">
-              <span class="post-nav-label">次の記事 →</span>
-              <span class="post-nav-title">{next.data.title}</span>
+              {next.data.title} »
             </a>
           ) : (
-            <span class="post-nav-link post-nav-disabled post-nav-next">
-              <span class="post-nav-label">次の記事 →</span>
-              <span class="post-nav-title">ありません</span>
-            </span>
+            <span />
           )
         }
       </nav>
