@@ -1,6 +1,7 @@
 ---
 import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
+import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
 import '@/styles/global.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -31,7 +32,7 @@ const startYear = siteConfig.site.startYear;
 const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);
 ---
 
-<html lang="ja">
+<html lang={defaultLocale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -107,8 +108,8 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
             type="button"
             id="theme-toggle"
             class="theme-toggle"
-            aria-label="テーマを切り替え"
-            title="テーマを切り替え"
+            aria-label={t('common.themeToggle')}
+            title={t('common.themeToggle')}
           >
             <i data-lucide="sun" class="theme-icon theme-icon-sun" aria-hidden="true"></i>
             <i data-lucide="moon" class="theme-icon theme-icon-moon" aria-hidden="true"></i>
@@ -122,19 +123,19 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
 
     <dialog
       id="search-dialog"
-      aria-label="サイト内検索"
+      aria-label={t('search.label')}
       class="m-auto w-[min(92vw,36rem)] rounded-lg border border-border bg-surface p-4 shadow-xl [&::backdrop]:bg-black/50"
     >
       <div class="mb-3 flex items-center gap-2">
         <input
           id="search-input"
           type="search"
-          placeholder="記事を検索…"
+          placeholder={t('search.placeholder')}
           autocomplete="off"
           class="w-full rounded border border-border bg-bg px-3 py-2 outline-none focus:border-accent"
         />
         <button type="button" id="search-close" class="shrink-0 text-sm text-fg-muted hover:text-accent">
-          閉じる
+          {t('common.close')}
         </button>
       </div>
       <div id="search-results" class="max-h-[60vh] space-y-2 overflow-y-auto"></div>
@@ -142,6 +143,7 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
 
     <script>
       import { createIcons, Moon, Sun } from 'lucide';
+      import { t } from '@/i18n';
 
       interface PagefindSearchResult {
         data(): Promise<{ url: string; meta: { title?: string }; excerpt: string }>;
@@ -179,13 +181,13 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
           if (!query) return;
           const pagefind = await loadPagefind();
           if (!pagefind) {
-            resultsBox.textContent = '検索インデックスが見つかりません。ビルド後のサイトで利用できます。';
+            resultsBox.textContent = t('search.noIndex');
             return;
           }
           const found = await pagefind.search(query);
           const entries = await Promise.all(found.results.slice(0, 10).map((result) => result.data()));
           if (entries.length === 0) {
-            resultsBox.textContent = '一致する記事がありません。';
+            resultsBox.textContent = t('search.noResults');
             return;
           }
           for (const entry of entries) {

@@ -1,4 +1,5 @@
 ---
+import { t } from '@/i18n';
 import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
 import { siteConfig } from '@/lib/config';
 
@@ -8,12 +9,12 @@ const socialEntries = Object.entries(siteConfig.social);
 const aboutEntry = siteConfig.navigation.find((item) => item.path === '/about');
 const profileName = siteConfig.site.author || siteConfig.site.title;
 
-const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
+const weekdays = t('calendar.weekdays').split(',');
 ---
 
-<aside class="sidebar sidebar-right" aria-label="サイドパネル (右)">
-  <section id="profile" class="sidebar-module" aria-label="プロフィール">
-    <h2 class="module-header">プロフィール</h2>
+<aside class="sidebar sidebar-right" aria-label={t('sidebar.rightPanel')}>
+  <section id="profile" class="sidebar-module" aria-label={t('sidebar.profile')}>
+    <h2 class="module-header">{t('sidebar.profile')}</h2>
     <div class="module-body profile-body">
       {
         siteConfig.site.avatar && (
@@ -41,16 +42,16 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
         )
       }
       <p class="profile-about">
-        <a href={aboutEntry?.path ?? '/about'}>{aboutEntry?.name ?? 'このサイトについて'}</a>
+        <a href={aboutEntry?.path ?? '/about'}>{aboutEntry?.name ?? t('about.title')}</a>
       </p>
     </div>
   </section>
 
-  <section id="calendar" class="sidebar-module" aria-label="カレンダー">
+  <section id="calendar" class="sidebar-module" aria-label={t('sidebar.calendar')}>
     <div class="module-body calendar-body">
       <table class="calendar">
         <caption class="module-header">
-          <a href="/archives">{calendar.year}年{calendar.month}月</a>
+          <a href="/archives">{t('common.yearMonth', { year: calendar.year, month: calendar.month })}</a>
         </caption>
         <thead>
           <tr>
@@ -67,7 +68,7 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
                   return (
                     <td class={href ? 'calendar-post' : undefined}>
                       {href ? (
-                        <a href={href} title={`${cell.posts.length} 件の記事`}>
+                        <a href={href} title={t('calendar.dayPosts', { count: cell.posts.length })}>
                           {cell.day}
                         </a>
                       ) : (
@@ -84,18 +85,18 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
     </div>
   </section>
 
-  <section id="search-module" class="sidebar-module" aria-label="検索">
-    <h2 class="module-header">検索</h2>
+  <section id="search-module" class="sidebar-module" aria-label={t('common.search')}>
+    <h2 class="module-header">{t('common.search')}</h2>
     <div class="module-body">
       <form id="sidebar-search" role="search" class="sidebar-search">
         <input
           type="search"
           name="q"
-          placeholder="キーワードを入力"
+          placeholder={t('search.sidebarPlaceholder')}
           autocomplete="off"
-          aria-label="サイト内検索"
+          aria-label={t('search.label')}
         />
-        <button type="submit">検索</button>
+        <button type="submit">{t('common.search')}</button>
       </form>
     </div>
   </section>

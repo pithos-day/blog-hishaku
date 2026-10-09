@@ -3,6 +3,7 @@
  * 依存ライブラリなしの最小実装。
  * 日本語主体のため 1 分あたり 400 字で概算する (CJK 記事の一般的な目安)。
  */
+import { t } from '../i18n';
 import { type PostEntry, toPlainText } from './posts';
 
 export interface TextStats {
@@ -22,9 +23,9 @@ export function getTextStats(post: PostEntry): TextStats {
 }
 
 export function formatCharacterCount(characters: number): string {
-  return `${characters.toLocaleString('ja-JP')}文字`;
+  return t('post.charCount', { count: characters.toLocaleString('ja-JP') });
 }
 
 export function formatReadingTime(minutes: number): string {
-  return `約${minutes}分`;
+  return t('post.readingTime', { minutes });
 }

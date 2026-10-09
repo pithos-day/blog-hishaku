@@ -1,4 +1,5 @@
 ---
+import { t } from '@/i18n';
 import { getArchives } from '@/lib/archives';
 import { buildCategoryHref, getCategoryTree } from '@/lib/categories';
 import { getPostSlug, getPublishedPosts } from '@/lib/posts';
@@ -14,7 +15,7 @@ const archiveYears = await getArchives();
 const backnumbers = archiveYears
   .flatMap((year) =>
     year.months.map((month) => ({
-      label: `${year.year}年${month.month}月`,
+      label: t('common.yearMonth', { year: year.year, month: month.month }),
       href: `/archives#month-${month.year}-${String(month.month).padStart(2, '0')}`,
     })),
   )
@@ -24,9 +25,9 @@ const { roots: categoryRoots } = await getCategoryTree();
 const tags = await getAllTags();
 ---
 
-<aside class="sidebar sidebar-left" aria-label="サイドパネル (左)">
-  <section id="recent-entries" class="sidebar-module" aria-label="最近の記事">
-    <h2 class="module-header">最近の記事</h2>
+<aside class="sidebar sidebar-left" aria-label={t('sidebar.leftPanel')}>
+  <section id="recent-entries" class="sidebar-module" aria-label={t('sidebar.recent')}>
+    <h2 class="module-header">{t('sidebar.recent')}</h2>
     <div class="module-body">
       {
         recentPosts.length > 0 ? (
@@ -40,14 +41,14 @@ const tags = await getAllTags();
             ))}
           </ul>
         ) : (
-          <p class="module-empty">まだ記事がありません。</p>
+          <p class="module-empty">{t('common.noPosts')}</p>
         )
       }
     </div>
   </section>
 
-  <section id="archive-datebased" class="sidebar-module" aria-label="バックナンバー">
-    <h2 class="module-header">バックナンバー</h2>
+  <section id="archive-datebased" class="sidebar-module" aria-label={t('sidebar.backnumber')}>
+    <h2 class="module-header">{t('sidebar.backnumber')}</h2>
     <div class="module-body">
       {
         backnumbers.length > 0 ? (
@@ -59,14 +60,14 @@ const tags = await getAllTags();
             ))}
           </ul>
         ) : (
-          <p class="module-empty">まだ記事がありません。</p>
+          <p class="module-empty">{t('common.noPosts')}</p>
         )
       }
     </div>
   </section>
 
-  <section id="archive-category" class="sidebar-module" aria-label="カテゴリー一覧">
-    <h2 class="module-header">カテゴリー</h2>
+  <section id="archive-category" class="sidebar-module" aria-label={t('sidebar.categoriesAria')}>
+    <h2 class="module-header">{t('sidebar.categories')}</h2>
     <div class="module-body">
       {
         categoryRoots.length > 0 ? (
@@ -79,14 +80,14 @@ const tags = await getAllTags();
             ))}
           </ul>
         ) : (
-          <p class="module-empty">まだカテゴリがありません。</p>
+          <p class="module-empty">{t('common.noCategories')}</p>
         )
       }
     </div>
   </section>
 
-  <section id="tag-list" class="sidebar-module" aria-label="タグ一覧">
-    <h2 class="module-header">タグ</h2>
+  <section id="tag-list" class="sidebar-module" aria-label={t('sidebar.tagsAria')}>
+    <h2 class="module-header">{t('sidebar.tags')}</h2>
     <div class="module-body">
       {
         tags.length > 0 ? (
@@ -99,7 +100,7 @@ const tags = await getAllTags();
             ))}
           </ul>
         ) : (
-          <p class="module-empty">まだタグがありません。</p>
+          <p class="module-empty">{t('common.noTags')}</p>
         )
       }
     </div>

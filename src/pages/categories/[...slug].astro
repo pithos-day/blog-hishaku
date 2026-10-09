@@ -1,5 +1,6 @@
 ---
 import PostRow from '@/components/PostRow.astro';
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, type CategoryNode, getCategoryTree } from '@/lib/categories';
 
@@ -22,10 +23,13 @@ const breadcrumbs = node.names.map((_, index) => {
 });
 ---
 
-<BaseLayout title={node.names.join(' / ')} description={`${node.name} の記事一覧 (${node.posts.length} 件)`}>
+<BaseLayout
+  title={node.names.join(' / ')}
+  description={t('category.listDescription', { name: node.name, count: node.posts.length })}
+>
   <header class="page-header">
-    <nav aria-label="パンくず" class="page-breadcrumb">
-      <a href="/categories">カテゴリ</a>
+    <nav aria-label={t('common.breadcrumb')} class="page-breadcrumb">
+      <a href="/categories">{t('category.title')}</a>
       {breadcrumbs.map((crumb) => (
         <>
           <span class="mx-1">›</span>
@@ -34,7 +38,7 @@ const breadcrumbs = node.names.map((_, index) => {
       ))}
     </nav>
     <h1>{node.name}</h1>
-    <p>{node.posts.length} 件</p>
+    <p>{t('common.postCount', { count: node.posts.length })}</p>
   </header>
 
   {

@@ -8,6 +8,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkMath from 'remark-math';
+import { t } from './src/i18n/index.ts';
 import { parseSiteYaml } from './src/lib/config/site.ts';
 import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
 import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
@@ -58,7 +59,7 @@ const rehypePlugins = [
       behavior: 'append',
       properties: {
         className: ['anchor-link'],
-        ariaLabel: 'このセクションへのリンク',
+        ariaLabel: t('post.headingLink'),
       },
     },
   ],

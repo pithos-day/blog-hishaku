@@ -1,13 +1,14 @@
 ---
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { siteConfig } from '@/lib/config';
 
 const socialEntries = Object.entries(siteConfig.social);
 ---
 
-<BaseLayout title="このサイトについて">
+<BaseLayout title={t('about.title')}>
   <header class="page-header">
-    <h1>このサイトについて</h1>
+    <h1>{t('about.title')}</h1>
   </header>
 
   <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
@@ -15,13 +16,13 @@ const socialEntries = Object.entries(siteConfig.social);
     {siteConfig.site.subtitle && <p>{siteConfig.site.subtitle}</p>}
     {siteConfig.site.description && <p>{siteConfig.site.description}</p>}
 
-    <h2>著者</h2>
+    <h2>{t('about.author')}</h2>
     <p>{siteConfig.site.author}</p>
 
     {
       socialEntries.length > 0 && (
         <>
-          <h2>SNS</h2>
+          <h2>{t('about.sns')}</h2>
           <ul>
             {socialEntries.map(([name, social]) => (
               <li>
@@ -35,10 +36,10 @@ const socialEntries = Object.entries(siteConfig.social);
       )
     }
 
-    <h2>フィード</h2>
+    <h2>{t('about.feed')}</h2>
     <p>
-      <a href="/rss.xml">RSS フィード</a>
-      も配信しています。新着記事の購読はこちらから。
+      <a href="/rss.xml">{t('about.rssLink')}</a>
+      {t('about.rssNote')}
     </p>
   </div>
 </BaseLayout>

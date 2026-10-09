@@ -1,5 +1,6 @@
 ---
 import PostRow from '@/components/PostRow.astro';
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getArchives } from '@/lib/archives';
 
@@ -10,17 +11,17 @@ const total = years.reduce(
 );
 ---
 
-<BaseLayout title="アーカイブ">
+<BaseLayout title={t('archives.title')}>
   <header class="page-header">
-    <h1>アーカイブ</h1>
-    <p>{total} 件</p>
+    <h1>{t('archives.title')}</h1>
+    <p>{t('common.postCount', { count: total })}</p>
   </header>
   <div class="mt-6 space-y-8">
     {
       years.map((year) => (
         <section id={`year-${year.year}`}>
           <h2 class="text-xl font-bold">
-            <a href={`#year-${year.year}`} class="hover:text-accent">{year.year} 年</a>
+            <a href={`#year-${year.year}`} class="hover:text-accent">{t('archives.year', { year: year.year })}</a>
           </h2>
           <div class="mt-3 space-y-5">
             {year.months.map((month) => (
@@ -30,7 +31,7 @@ const total = years.reduce(
                     href={`#month-${month.year}-${String(month.month).padStart(2, '0')}`}
                     class="hover:text-accent"
                   >
-                    {month.year} 年 {month.month} 月
+                    {t('archives.month', { year: month.year, month: month.month })}
                   </a>
                   <span class="ml-1">({month.posts.length})</span>
                 </h3>
@@ -45,6 +46,6 @@ const total = years.reduce(
         </section>
       ))
     }
-    {years.length === 0 && <p class="text-fg-muted">まだ記事がありません。</p>}
+    {years.length === 0 && <p class="text-fg-muted">{t('common.noPosts')}</p>}
   </div>
 </BaseLayout>

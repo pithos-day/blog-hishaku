@@ -1,4 +1,9 @@
 import { z } from 'astro/zod';
+import type { I18nConfig } from '../../i18n/config';
+
+// ロケール設定の型と既定値は i18n モジュールが所有する
+// (site.yaml の i18n はこの既定値を基準に補完される)
+export { defaultI18n, type I18nConfig } from '../../i18n/config';
 
 export interface NavItem {
   name: string;
@@ -25,11 +30,6 @@ export interface ContentFlags {
   enableShokaHexoTags: boolean;
   enableMath: boolean;
   enableCodeMeta: boolean;
-}
-
-export interface I18nConfig {
-  defaultLocale: string;
-  locales: { code: string; label: string; enabled: boolean }[];
 }
 
 export interface SiteConfig {
@@ -111,11 +111,6 @@ export const contentDefaults: ContentFlags = {
   enableShokaHexoTags: true,
   enableMath: true,
   enableCodeMeta: true,
-};
-
-export const defaultI18n: I18nConfig = {
-  defaultLocale: 'ja',
-  locales: [{ code: 'ja', label: '日本語', enabled: true }],
 };
 
 /**

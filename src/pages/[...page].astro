@@ -1,5 +1,6 @@
 ---
 import type { Page } from 'astro';
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
@@ -27,10 +28,10 @@ const timezone = siteConfig.site.timezone;
 ---
 
 <BaseLayout>
-  <section aria-label="記事一覧">
+  <section aria-label={t('index.listAria')}>
     {
       posts.length === 0 ? (
-        <p class="text-fg-muted">まだ記事がありません。src/content/blog/ に記事を追加してください。</p>
+        <p class="text-fg-muted">{t('index.empty')}</p>
       ) : (
         <ul>
           {posts.map((post) => {
@@ -51,7 +52,7 @@ const timezone = siteConfig.site.timezone;
                     {post.data.updated && (
                       <span class="meta-item">
                         <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-                        更新 {formatDate(post.data.updated, timezone)}
+                        {t('post.updated', { date: formatDate(post.data.updated, timezone) })}
                       </span>
                     )}
                     <span class="meta-item">
@@ -99,23 +100,23 @@ const timezone = siteConfig.site.timezone;
 
     {
       page.lastPage > 1 && (
-        <nav class="pagination" aria-label="ページネーション">
+        <nav class="pagination" aria-label={t('index.paginationAria')}>
           {page.url.prev ? (
             <a href={page.url.prev} class="page-link">
-              ← 前のページ
+              {t('index.prevPage')}
             </a>
           ) : (
-            <span class="page-link page-link-disabled">← 前のページ</span>
+            <span class="page-link page-link-disabled">{t('index.prevPage')}</span>
           )}
           <span class="page-status">
             {page.currentPage} / {page.lastPage}
           </span>
           {page.url.next ? (
             <a href={page.url.next} class="page-link">
-              次のページ →
+              {t('index.nextPage')}
             </a>
           ) : (
-            <span class="page-link page-link-disabled">次のページ →</span>
+            <span class="page-link page-link-disabled">{t('index.nextPage')}</span>
           )}
         </nav>
       )

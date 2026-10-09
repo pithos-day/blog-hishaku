@@ -1,5 +1,6 @@
 ---
 import { render } from 'astro:content';
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
@@ -56,7 +57,7 @@ const stats = getTextStats(post);
           post.data.updated && (
             <span class="meta-item">
               <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-              更新: {formatDate(post.data.updated, timezone)}
+              {t('post.updatedAt', { date: formatDate(post.data.updated, timezone) })}
             </span>
           )
         }
@@ -98,11 +99,11 @@ const stats = getTextStats(post);
         )}
       </p>
       {!import.meta.env.PROD && post.data.draft && (
-        <p class="mb-3 text-sm text-accent">この記事は下書きです (本番ビルドでは非公開)。</p>
+        <p class="mb-3 text-sm text-accent">{t('post.draftNotice')}</p>
       )}
       <Content />
       <hr class="post-nav-divider" />
-      <nav class="post-nav" aria-label="前後の記事">
+      <nav class="post-nav" aria-label={t('post.contextNavAria')}>
         {
           prev ? (
             <a href={`/post/${getPostSlug(prev)}`} class="post-nav-link">
@@ -126,6 +127,7 @@ const stats = getTextStats(post);
   </article>
 
   <script>
+    import { t } from '@/i18n';
     import { siteConfig } from '@/lib/config';
 
     const flags = siteConfig.content;
@@ -193,7 +195,7 @@ const stats = getTextStats(post);
           frame.classList.toggle('code-frame--folded', folded);
           const toggle = frame.querySelector<HTMLButtonElement>('.frame-btn-fold');
           if (toggle) {
-            const label = folded ? '展開' : '折りたたみ';
+            const label = folded ? t('code.expand') : t('code.collapse');
             toggle.setAttribute('aria-label', label);
             toggle.title = label;
             toggle.setAttribute('aria-expanded', String(!folded));

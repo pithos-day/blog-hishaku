@@ -1,11 +1,12 @@
 ---
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="ページが見つかりません" description="404 Not Found">
+<BaseLayout title={t('notFound.title')} description={t('notFound.description')}>
   <div class="py-16 text-center">
     <p class="text-6xl font-bold text-accent">404</p>
-    <p class="mt-4">お探しのページは見つかりませんでした。</p>
-    <a href="/" class="mt-6 inline-block text-accent underline">ホームへ戻る</a>
+    <p class="mt-4">{t('notFound.message')}</p>
+    <a href="/" class="mt-6 inline-block text-accent underline">{t('notFound.backHome')}</a>
   </div>
 </BaseLayout>

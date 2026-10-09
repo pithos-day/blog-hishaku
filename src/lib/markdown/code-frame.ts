@@ -8,6 +8,7 @@
 import type { Element, ElementContent, Properties } from 'hast';
 import { Check, ChevronsDownUp, ChevronsUpDown, Copy, type IconNode, Maximize } from 'lucide';
 import type { ShikiTransformer } from 'shiki';
+import { t } from '../../i18n';
 
 /** これ以上の行数は初期折りたたみ対象 */
 const FOLD_LINE_THRESHOLD = 8;
@@ -89,18 +90,21 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
         controls.push(
           iconButton(
             'fold',
-            '展開',
+            t('code.expand'),
             [iconSvg(ChevronsDownUp, 'icon-fold'), iconSvg(ChevronsUpDown, 'icon-unfold')],
             { 'aria-expanded': 'false' },
           ),
         );
       }
       if (options?.fullscreen) {
-        controls.push(iconButton('full', '全画面', [iconSvg(Maximize)]));
+        controls.push(iconButton('full', t('code.fullscreen'), [iconSvg(Maximize)]));
       }
       if (options?.copy) {
         controls.push(
-          iconButton('copy', 'コピー', [iconSvg(Copy, 'icon-copy'), iconSvg(Check, 'icon-copied')]),
+          iconButton('copy', t('code.copy'), [
+            iconSvg(Copy, 'icon-copy'),
+            iconSvg(Check, 'icon-copied'),
+          ]),
         );
       }
 
@@ -122,8 +126,8 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
           properties: {
             type: 'button',
             class: 'fold-overlay',
-            'aria-label': '展開',
-            title: '展開',
+            'aria-label': t('code.expand'),
+            title: t('code.expand'),
           },
           children: [iconSvg(ChevronsUpDown)],
         });

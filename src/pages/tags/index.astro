@@ -1,19 +1,20 @@
 ---
+import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildTagHref, getAllTags } from '@/lib/tags';
 
 const tags = await getAllTags();
 ---
 
-<BaseLayout title="タグ">
+<BaseLayout title={t('tag.title')}>
   <header class="page-header">
-    <h1>タグ</h1>
-    <p>{tags.length} 個</p>
+    <h1>{t('tag.title')}</h1>
+    <p>{t('tag.total', { count: tags.length })}</p>
   </header>
   <div class="mt-6">
     {
       tags.length === 0 ? (
-        <p class="text-fg-muted">タグ付きの記事がまだありません。</p>
+        <p class="text-fg-muted">{t('tag.empty')}</p>
       ) : (
         <ul class="flex flex-wrap gap-2">
           {tags.map((tag) => (
