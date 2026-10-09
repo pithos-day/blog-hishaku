@@ -97,4 +97,9 @@ export const uiStrings = {
 
   // ── 目次 ────────────────────────────────────────────────────
   'toc.title': '目次',
+
+  // ── フローティングツールバー ────────────────────────────────
+  'floating.backToTop': 'ページ上部へ移動',
+  'floating.scrollToBottom': 'ページ下部へ移動',
+  'floating.toggleToolbar': 'ツールバーを切り替え',
 };

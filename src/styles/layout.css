@@ -483,3 +483,117 @@
     display: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   フローティングツールバー (右下)
+   -------------------------------------------------------------------------- */
+.floating-group {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--hishaku-accent);
+}
+
+.floating-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0.25s;
+}
+
+.floating-group[data-expanded='true'] .floating-actions {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.floating-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--hishaku-bg) 85%, transparent);
+  color: var(--hishaku-accent);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.floating-btn:hover {
+  transform: translateY(-2px);
+  background: var(--hishaku-bg);
+}
+
+.floating-btn:active {
+  transform: scale(0.9);
+}
+
+.floating-btn .fi {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* 展開時: 手前 (下) のボタンから順に出現 */
+.floating-actions .floating-btn {
+  opacity: 0;
+  transform: translateY(0.5rem) scale(0.7);
+}
+
+.floating-group[data-expanded='true'] .floating-actions .floating-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.floating-group[data-expanded='true'] .floating-actions .floating-btn:hover {
+  transform: translateY(-2px) scale(1);
+}
+
+.floating-group[data-expanded='true'] .floating-actions .floating-btn:active {
+  transform: scale(0.9);
+}
+
+.floating-group[data-expanded='true'] .floating-actions .floating-btn:nth-child(2) {
+  transition-delay: 0.04s;
+}
+
+.floating-group[data-expanded='true'] .floating-actions .floating-btn:nth-child(1) {
+  transition-delay: 0.08s;
+}
+
+/* トグルのアイコンを展開状態で切り替え */
+.floating-toggle .fi-expanded {
+  display: none;
+}
+
+.floating-group[data-expanded='true'] .floating-toggle .fi-collapsed {
+  display: none;
+}
+
+.floating-group[data-expanded='true'] .floating-toggle .fi-expanded {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-actions,
+  .floating-btn {
+    transition: none;
+  }
+  .floating-group[data-expanded='true'] .floating-actions .floating-btn {
+    transition-delay: 0s;
+  }
+}

@@ -141,8 +141,43 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
       <div id="search-results" class="max-h-[60vh] space-y-2 overflow-y-auto"></div>
     </dialog>
 
+    <div id="floating-group" class="floating-group" data-expanded="false">
+      <div id="floating-actions" class="floating-actions">
+        <button
+          type="button"
+          id="floating-top"
+          class="floating-btn"
+          aria-label={t('floating.backToTop')}
+          title={t('floating.backToTop')}
+        >
+          <i data-lucide="arrow-up" class="fi" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          id="floating-bottom"
+          class="floating-btn"
+          aria-label={t('floating.scrollToBottom')}
+          title={t('floating.scrollToBottom')}
+        >
+          <i data-lucide="arrow-down" class="fi" aria-hidden="true"></i>
+        </button>
+      </div>
+      <button
+        type="button"
+        id="floating-toggle"
+        class="floating-btn floating-toggle"
+        aria-label={t('floating.toggleToolbar')}
+        title={t('floating.toggleToolbar')}
+        aria-expanded="false"
+        aria-controls="floating-actions"
+      >
+        <i data-lucide="sparkles" class="fi fi-collapsed" aria-hidden="true"></i>
+        <i data-lucide="x" class="fi fi-expanded" aria-hidden="true"></i>
+      </button>
+    </div>
+
     <script>
-      import { createIcons, Moon, Sun } from 'lucide';
+      import { ArrowDown, ArrowUp, createIcons, Moon, Sparkles, Sun, X } from 'lucide';
       import { t } from '@/i18n';
 
       interface PagefindSearchResult {
@@ -249,8 +284,27 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
         setTimeout(() => root.classList.remove('theme-transition'), 400);
       });
 
-      // Lucide アイコンの置換 (テーマトグルの太陽 / 月)
-      createIcons({ icons: { Sun, Moon } });
+      // フローティングツールバー (右下): 展開切替とページ内スクロール
+      const floatingGroup = document.getElementById('floating-group');
+      const floatingToggle = document.getElementById('floating-toggle');
+      if (floatingGroup && floatingToggle) {
+        floatingToggle.addEventListener('click', () => {
+          const expanded = floatingGroup.dataset.expanded !== 'true';
+          floatingGroup.dataset.expanded = String(expanded);
+          floatingToggle.setAttribute('aria-expanded', String(expanded));
+        });
+        const scrollBehavior = (): ScrollBehavior =>
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        document.getElementById('floating-top')?.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: scrollBehavior() });
+        });
+        document.getElementById('floating-bottom')?.addEventListener('click', () => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: scrollBehavior() });
+        });
+      }
+
+      // Lucide アイコンの置換 (テーマトグルの太陽 / 月、フローティングツールバー)
+      createIcons({ icons: { Sun, Moon, Sparkles, X, ArrowUp, ArrowDown } });
     </script>
   </body>
 </html>
