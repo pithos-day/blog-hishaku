@@ -104,16 +104,6 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
 
       <footer>
         <div class="flex flex-col items-center gap-2 px-4 py-6 text-sm text-fg-muted">
-          <button
-            type="button"
-            id="theme-toggle"
-            class="theme-toggle"
-            aria-label={t('common.themeToggle')}
-            title={t('common.themeToggle')}
-          >
-            <i data-lucide="sun" class="theme-icon theme-icon-sun" aria-hidden="true"></i>
-            <i data-lucide="moon" class="theme-icon theme-icon-moon" aria-hidden="true"></i>
-          </button>
           <p>
             © {copyright} {siteConfig.site.author}
           </p>
@@ -143,6 +133,16 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
 
     <div id="floating-group" class="floating-group" data-expanded="false">
       <div id="floating-actions" class="floating-actions">
+        <button
+          type="button"
+          id="theme-toggle"
+          class="theme-toggle floating-btn"
+          aria-label={t('common.themeToggle')}
+          title={t('common.themeToggle')}
+        >
+          <i data-lucide="sun" class="theme-icon theme-icon-sun" aria-hidden="true"></i>
+          <i data-lucide="moon" class="theme-icon theme-icon-moon" aria-hidden="true"></i>
+        </button>
         <button
           type="button"
           id="floating-top"

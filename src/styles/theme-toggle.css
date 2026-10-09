@@ -1,25 +1,8 @@
 /* ==========================================================================
    テーマ切り替えトグル (Lucide の太陽 / 月 アイコン)
    ライト時は太陽、ダーク時は月を表示 (html.dark クラスで制御)
+   フローティングツールバー内に配置し、ボタンの見た目は .floating-btn に任せる
    ========================================================================== */
-
-.theme-toggle {
-  background: none;
-  border: 0;
-  padding: 0.35rem;
-  cursor: pointer;
-  line-height: 0;
-  border-radius: 9999px;
-  color: inherit;
-  transition:
-    transform 0.25s ease,
-    color 0.25s ease;
-}
-
-.theme-toggle:hover {
-  transform: scale(1.15);
-  color: var(--hishaku-accent);
-}
 
 .theme-toggle:focus-visible {
   outline: 2px solid var(--hishaku-accent);
