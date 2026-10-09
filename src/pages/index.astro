@@ -1,16 +1,78 @@
 ---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPostDescription, getPostSlug, getPublishedPosts } from '@/lib/posts';
+import { formatDate } from '@/lib/date';
 import { siteConfig } from '@/lib/config';
-import '@/styles/global.css';
+
+const posts = await getPublishedPosts();
+const timezone = siteConfig.site.timezone;
 ---
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={siteConfig.site.description} />
-    <title>{siteConfig.site.title}</title>
-  </head>
-  <body>
-    <h1 class="text-2xl font-bold text-accent">{siteConfig.site.title}</h1>
-    <p class="text-fg-muted">{siteConfig.site.subtitle}</p>
-  </body>
-</html>
+
+<BaseLayout>
+  <section aria-label="記事一覧">
+    {
+      posts.length === 0 ? (
+        <p class="text-fg-muted">まだ記事がありません。src/content/blog/ に記事を追加してください。</p>
+      ) : (
+        <ul class="space-y-6">
+          {posts.map((post) => (
+            <li>
+              <article class="overflow-hidden rounded-lg border border-border bg-surface">
+                {post.data.cover && (
+                  <a href={`/post/${getPostSlug(post)}`} tabindex={-1} aria-hidden="true">
+                    <img
+                      src={post.data.cover}
+                      alt=""
+                      class="aspect-[16/7] w-full object-cover"
+                      loading="lazy"
+                    />
+                  </a>
+                )}
+                <div class="p-5">
+                  <div class="mb-2 flex flex-wrap items-center gap-2 text-sm">
+                    {post.data.sticky && (
+                      <span class="rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-fg">
+                        PIN
+                      </span>
+                    )}
+                    {!import.meta.env.PROD && post.data.draft && (
+                      <span class="rounded border border-border px-1.5 py-0.5 text-xs text-fg-muted">
+                        DRAFT
+                      </span>
+                    )}
+                    <time datetime={post.data.date.toISOString()} class="text-fg-muted">
+                      {formatDate(post.data.date, timezone)}
+                    </time>
+                    {post.data.updated && (
+                      <span class="text-fg-muted">
+                        (更新: {formatDate(post.data.updated, timezone)})
+                      </span>
+                    )}
+                  </div>
+                  <h2 class="text-xl font-bold">
+                    <a href={`/post/${getPostSlug(post)}`} class="hover:text-accent">
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  {post.data.subtitle && (
+                    <p class="mt-1 text-sm text-fg-muted">{post.data.subtitle}</p>
+                  )}
+                  <p class="mt-2 text-sm text-fg-muted">{getPostDescription(post)}</p>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <ul class="mt-3 flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => (
+                        <li class="rounded border border-border px-1.5 py-0.5 text-xs text-fg-muted">
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</BaseLayout>

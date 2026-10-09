@@ -1,0 +1,115 @@
+---
+import { siteConfig } from '@/lib/config';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = siteConfig.site.description ?? '',
+  ogImage = siteConfig.site.defaultOgImage ?? siteConfig.site.avatar,
+  type = 'website',
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title;
+const canonicalUrl = new URL(Astro.url.pathname, siteConfig.site.url);
+const year = new Date().getFullYear();
+const startYear = siteConfig.site.startYear;
+const copyright =
+  startYear && startYear < year ? `${startYear}–${year}` : String(year);
+const socialEntries = Object.entries(siteConfig.social);
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {siteConfig.site.author && <meta name="author" content={siteConfig.site.author} />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href={siteConfig.site.avatar ?? '/favicon.svg'} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, siteConfig.site.url)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <header class="border-b border-border bg-surface">
+      <div class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3">
+        <a href="/" class="flex items-center gap-2 text-lg font-bold">
+          {siteConfig.site.avatar && (
+            <img src={siteConfig.site.avatar} alt="" class="h-8 w-8 rounded-full" />
+          )}
+          <span>{siteConfig.site.title}</span>
+        </a>
+        <nav aria-label="メインナビゲーション">
+          <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+            {siteConfig.navigation.map((item) =>
+              item.children && item.children.length > 0 ? (
+                <li>
+                  <details class="group relative">
+                    <summary class="cursor-pointer list-none rounded px-1 py-0.5 hover:text-accent">
+                      {item.name}
+                    </summary>
+                    <ul class="absolute right-0 z-20 mt-1 w-40 rounded border border-border bg-surface py-1 shadow-lg">
+                      {item.children
+                        .filter((child) => child.path)
+                        .map((child) => (
+                          <li>
+                            <a
+                              href={child.path}
+                              class="block px-3 py-1.5 hover:bg-bg hover:text-accent"
+                            >
+                              {child.name}
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  </details>
+                </li>
+              ) : item.path ? (
+                <li>
+                  <a href={item.path} class="rounded px-1 py-0.5 hover:text-accent">
+                    {item.name}
+                  </a>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+      <slot />
+    </main>
+
+    <footer class="border-t border-border bg-surface">
+      <div class="mx-auto flex max-w-3xl flex-col items-center gap-3 px-4 py-6 text-sm text-fg-muted">
+        {socialEntries.length > 0 && (
+          <ul class="flex flex-wrap justify-center gap-4">
+            {socialEntries.map(([name, social]) => (
+              <li>
+                <a href={social.url} rel="noopener noreferrer" class="hover:text-accent">
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p>
+          © {copyright} {siteConfig.site.author}
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
