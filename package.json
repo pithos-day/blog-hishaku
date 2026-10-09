@@ -1,14 +1,28 @@
 {
   "name": "blog-hishaku",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "astro-koharu と互換性を持つ最小構成の Astro ブログテンプレート",
+  "type": "module",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "node --test"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "astro",
+    "blog",
+    "template"
+  ],
   "license": "ISC",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -17,5 +31,13 @@
     }
   },
   "packageManager": "pnpm@12.10.1",
-  "type": "module"
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "astro": "^7.3.7",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
+  }
 }
