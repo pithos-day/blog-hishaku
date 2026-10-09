@@ -1,0 +1,365 @@
+/* ==========================================================================
+   kameya 風レイアウト (バナー / サイドバー / エントリ)
+   ========================================================================== */
+
+.site-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* --------------------------------------------------------------------------
+   バナー (サイトタイトル + タグライン)
+   -------------------------------------------------------------------------- */
+.site-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 0 14px;
+  border-bottom: 1px solid var(--hishaku-border);
+}
+
+.site-banner .banner-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+}
+
+.site-banner h1 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.site-banner .banner-subtitle {
+  font-size: 0.8rem;
+  color: var(--hishaku-fg-muted);
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   3 カラム相当 (サイドバー左 + 本文)
+   -------------------------------------------------------------------------- */
+.site-layout {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  padding-top: 20px;
+}
+
+.site-content {
+  min-width: 0;
+  padding-bottom: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   サイドバーモジュール
+   -------------------------------------------------------------------------- */
+.sidebar-module {
+  margin-bottom: 30px;
+}
+
+.sidebar-module .module-header {
+  background: var(--hishaku-border);
+  color: var(--hishaku-fg);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 8px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sidebar-module .module-body {
+  background: var(--hishaku-surface);
+  padding: 10px;
+}
+
+.module-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.module-list > li {
+  margin-top: 7px;
+}
+
+.module-list > li:first-child {
+  margin-top: 0;
+}
+
+.module-list .menu-label {
+  font-weight: 700;
+}
+
+.module-list .menu-children {
+  list-style: none;
+  margin: 4px 0 0;
+  padding-left: 0.9em;
+}
+
+.module-list .menu-children > li {
+  margin-top: 4px;
+}
+
+.module-count {
+  color: var(--hishaku-fg-muted);
+  font-size: 0.72rem;
+  margin-left: 3px;
+}
+
+.module-empty {
+  font-size: 0.75rem;
+  color: var(--hishaku-fg-muted);
+  margin: 0;
+}
+
+.link-note {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  padding: 6px 8px;
+  border: 1px solid var(--hishaku-border);
+  background: var(--hishaku-bg);
+}
+
+/* --------------------------------------------------------------------------
+   検索フォーム (サイドバー)
+   -------------------------------------------------------------------------- */
+.sidebar-search {
+  display: flex;
+  gap: 6px;
+}
+
+.sidebar-search input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--hishaku-border);
+  background: var(--hishaku-bg);
+  color: var(--hishaku-fg);
+  font-size: 0.8rem;
+  padding: 4px 6px;
+  outline: none;
+}
+
+.sidebar-search input:focus {
+  border-color: var(--hishaku-accent);
+}
+
+.sidebar-search button {
+  border: 1px solid var(--hishaku-border);
+  background: var(--hishaku-border);
+  color: var(--hishaku-fg);
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.sidebar-search button:hover {
+  border-color: var(--hishaku-accent);
+  color: var(--hishaku-accent);
+}
+
+/* --------------------------------------------------------------------------
+   カレンダー
+   -------------------------------------------------------------------------- */
+.calendar-body {
+  padding: 6px 8px;
+}
+
+.calendar {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  table-layout: fixed;
+}
+
+.calendar .module-header {
+  caption-side: top;
+  text-align: left;
+  padding-left: 4px;
+}
+
+.calendar th {
+  color: var(--hishaku-fg-muted);
+  font-weight: normal;
+  padding: 4px 0 3px;
+}
+
+.calendar td {
+  text-align: center;
+  padding: 3px 0;
+  color: var(--hishaku-fg);
+}
+
+.calendar-post a {
+  color: var(--hishaku-accent);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   ページ見出し (アーカイブ等)
+   -------------------------------------------------------------------------- */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  border-left: 6px solid var(--hishaku-border);
+  padding-left: 10px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.page-header p {
+  font-size: 0.8rem;
+  color: var(--hishaku-fg-muted);
+  margin-top: 6px;
+  padding-left: 16px;
+}
+
+.page-breadcrumb {
+  font-size: 0.78rem;
+  color: var(--hishaku-fg-muted);
+  margin-bottom: 4px;
+  padding-left: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   エントリ (記事カード / 記事ページ)
+   -------------------------------------------------------------------------- */
+.entry {
+  margin-bottom: 36px;
+}
+
+.entry-date {
+  font-size: 0.78rem;
+  color: var(--hishaku-fg-muted);
+  margin: 0 0 6px;
+}
+
+.entry-title-bar {
+  background: var(--hishaku-border);
+  color: var(--hishaku-fg);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  padding: 6px 10px;
+  margin: 0;
+}
+
+.entry-title-bar a {
+  color: inherit;
+}
+
+.entry-title-bar a:hover {
+  color: var(--hishaku-accent);
+}
+
+.entry-body {
+  background: var(--hishaku-surface);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.entry-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.entry-subtitle {
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.entry-desc {
+  margin: 0;
+  color: var(--hishaku-fg-muted);
+  font-size: 0.82rem;
+}
+
+.entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 0.75rem;
+}
+
+.entry-tags a::before {
+  content: '#';
+  margin-right: 1px;
+}
+
+.entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72rem;
+  color: var(--hishaku-fg-muted);
+  margin: 6px 0 0;
+}
+
+.entry-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0 5px;
+  line-height: 1.7;
+}
+
+.entry-badge-pin {
+  background: var(--hishaku-accent);
+  color: var(--hishaku-accent-fg);
+}
+
+.entry-badge-draft {
+  border: 1px solid var(--hishaku-border);
+  color: var(--hishaku-fg-muted);
+}
+
+.post-title {
+  font-size: 1.3rem;
+}
+
+.post-subtitle {
+  font-size: 0.9rem;
+  color: var(--hishaku-fg-muted);
+  margin: 8px 0 0;
+}
+
+.entry-posted {
+  font-size: 0.75rem;
+  color: var(--hishaku-fg-muted);
+  margin: 8px 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.post-body {
+  background: var(--hishaku-surface);
+  padding: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   モバイル: サイドバーを上に単純積み重ね
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .site-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -23,18 +23,18 @@ const breadcrumbs = node.names.map((_, index) => {
 ---
 
 <BaseLayout title={node.names.join(' / ')} description={`${node.name} の記事一覧 (${node.posts.length} 件)`}>
-  <header class="border-b border-border pb-4">
-    <nav aria-label="パンくず" class="mb-1 text-sm text-fg-muted">
-      <a href="/categories" class="hover:text-accent">カテゴリ</a>
+  <header class="page-header">
+    <nav aria-label="パンくず" class="page-breadcrumb">
+      <a href="/categories">カテゴリ</a>
       {breadcrumbs.map((crumb) => (
         <>
           <span class="mx-1">›</span>
-          <a href={crumb.href} class="hover:text-accent">{crumb.name}</a>
+          <a href={crumb.href}>{crumb.name}</a>
         </>
       ))}
     </nav>
-    <h1 class="text-2xl font-bold">{node.name}</h1>
-    <p class="text-sm text-fg-muted">{node.posts.length} 件</p>
+    <h1>{node.name}</h1>
+    <p>{node.posts.length} 件</p>
   </header>
 
   {

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { siteConfig } from '@/lib/config';
+
+const socialEntries = Object.entries(siteConfig.social);
+---
+
+<BaseLayout title="このサイトについて">
+  <header class="page-header">
+    <h1>このサイトについて</h1>
+  </header>
+
+  <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
+    <h2>{siteConfig.site.title}</h2>
+    {siteConfig.site.subtitle && <p>{siteConfig.site.subtitle}</p>}
+    {siteConfig.site.description && <p>{siteConfig.site.description}</p>}
+
+    <h2>著者</h2>
+    <p>{siteConfig.site.author}</p>
+
+    {
+      socialEntries.length > 0 && (
+        <>
+          <h2>SNS</h2>
+          <ul>
+            {socialEntries.map(([name, social]) => (
+              <li>
+                <a href={social.url} rel="noopener noreferrer">
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+
+    <h2>フィード</h2>
+    <p>
+      <a href="/rss.xml">RSS フィード</a>
+      も配信しています。新着記事の購読はこちらから。
+    </p>
+  </div>
+</BaseLayout>

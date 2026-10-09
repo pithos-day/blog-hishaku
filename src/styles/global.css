@@ -1,17 +1,18 @@
 @import 'tailwindcss';
 @import './markdown.css';
+@import './layout.css';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   color-scheme: light;
-  --hishaku-bg: #fafafa;
-  --hishaku-surface: #ffffff;
-  --hishaku-border: #e4e4e7;
-  --hishaku-fg: #27272a;
-  --hishaku-fg-muted: #71717a;
-  --hishaku-accent: #4f46e5;
+  --hishaku-bg: #ffffff;
+  --hishaku-surface: #f3f3f3;
+  --hishaku-border: #d7d7d7;
+  --hishaku-fg: #666666;
+  --hishaku-fg-muted: #707070;
+  --hishaku-accent: #4b6887;
   --hishaku-accent-fg: #ffffff;
 }
 

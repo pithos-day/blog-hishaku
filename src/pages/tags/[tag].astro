@@ -20,14 +20,14 @@ const posts = await getPostsByTag(tagInfo.slug);
 ---
 
 <BaseLayout title={`タグ: ${tagInfo.name}`} description={`タグ「${tagInfo.name}」の記事一覧 (${posts.length} 件)`}>
-  <header class="border-b border-border pb-4">
-    <nav aria-label="パンくず" class="mb-1 text-sm text-fg-muted">
-      <a href="/tags" class="hover:text-accent">タグ</a>
+  <header class="page-header">
+    <nav aria-label="パンくず" class="page-breadcrumb">
+      <a href="/tags">タグ</a>
       <span class="mx-1">›</span>
       <span>{tagInfo.name}</span>
     </nav>
-    <h1 class="text-2xl font-bold">{tagInfo.name}</h1>
-    <p class="text-sm text-fg-muted">{posts.length} 件</p>
+    <h1>{tagInfo.name}</h1>
+    <p>{posts.length} 件</p>
   </header>
   <div class="mt-6">
     {posts.map((post) => <PostRow post={post} />)}
