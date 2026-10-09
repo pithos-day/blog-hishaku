@@ -93,9 +93,9 @@ const timezone = siteConfig.site.timezone;
                   )}
                   <hr class="entry-divider" />
                   <p class="entry-meta">
-                    {post.data.sticky && <span class="entry-badge entry-badge-pin">PIN</span>}
+                    {post.data.sticky && <span class="entry-badge entry-badge-pin">{t('post.badgePin')}</span>}
                     {!import.meta.env.PROD && post.data.draft && (
-                      <span class="entry-badge entry-badge-draft">DRAFT</span>
+                      <span class="entry-badge entry-badge-draft">{t('post.badgeDraft')}</span>
                     )}
                     {normalizeCategories(post.data.categories).map((chain) => (
                       <a href={buildCategoryHref(chain)}>{chain.join(' › ')}</a>

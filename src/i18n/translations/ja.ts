@@ -46,6 +46,8 @@ export const uiStrings = {
   'post.draftNotice': 'この記事は下書きです (本番ビルドでは非公開)。',
   'post.contextNavAria': '前後の記事',
   'post.headingLink': 'このセクションへのリンク',
+  'post.badgePin': 'PIN',
+  'post.badgeDraft': 'DRAFT',
 
   // ── カテゴリー ──────────────────────────────────────────────
   'category.title': 'カテゴリ',
