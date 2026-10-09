@@ -6,7 +6,6 @@ import { siteConfig } from '@/lib/config';
 const calendar = await getSidebarCalendar();
 
 const socialEntries = Object.entries(siteConfig.social);
-const aboutEntry = siteConfig.navigation.find((item) => item.path === '/about');
 const profileName = siteConfig.site.author || siteConfig.site.title;
 
 const weekdays = t('calendar.weekdays').split(',');
@@ -48,7 +47,7 @@ const weekdays = t('calendar.weekdays').split(',');
         )
       }
       <p class="profile-about">
-        <a href={aboutEntry?.path ?? '/about'}>{aboutEntry?.name ?? t('about.title')}</a>
+        <a href="/about">{t('about.title')}</a>
       </p>
     </div>
   </section>

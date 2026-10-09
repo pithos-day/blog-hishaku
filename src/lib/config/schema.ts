@@ -5,16 +5,6 @@ import type { I18nConfig } from '../../i18n/config';
 // (site.yaml の i18n はこの既定値を基準に補完される)
 export { defaultI18n, type I18nConfig } from '../../i18n/config';
 
-export interface NavItem {
-  name: string;
-  nameKey?: string;
-  path?: string;
-  icon?: string;
-  feature?: string;
-  localeIndependent?: boolean;
-  children?: NavItem[];
-}
-
 export interface ContentFlags {
   addBlankTarget: boolean;
   smoothScroll: boolean;
@@ -51,22 +41,9 @@ export interface SiteConfig {
   i18n: I18nConfig;
   categoryMap: Record<string, string>;
   social: Record<string, { url: string; icon?: string; color?: string }>;
-  navigation: NavItem[];
   seo: { robots?: string };
   content: ContentFlags;
 }
-
-const navItemSchema: z.ZodType<NavItem> = z.lazy(() =>
-  z.object({
-    name: z.string().min(1),
-    nameKey: z.string().optional(),
-    path: z.string().optional(),
-    icon: z.string().optional(),
-    feature: z.string().optional(),
-    localeIndependent: z.boolean().optional(),
-    children: z.array(navItemSchema).optional(),
-  }),
-);
 
 const localeSchema = z.object({
   code: z.string().min(1),
@@ -145,7 +122,6 @@ export const siteYamlSchema = z.object({
     .optional(),
   categoryMap: z.record(z.string(), z.string()).default({}),
   social: z.record(z.string(), socialLinkSchema).default({}),
-  navigation: z.array(navItemSchema).default([]),
   seo: z
     .object({
       robots: z.string().optional(),
@@ -162,7 +138,6 @@ export const KNOWN_TOP_LEVEL_KEYS = [
   'i18n',
   'categoryMap',
   'social',
-  'navigation',
   'seo',
   'content',
 ] as const;

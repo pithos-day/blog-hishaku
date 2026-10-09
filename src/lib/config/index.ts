@@ -7,7 +7,6 @@ export const siteConfig = parseSiteYaml(rawSiteYaml);
 export type {
   ContentFlags,
   I18nConfig,
-  NavItem,
   SiteConfig,
 } from './schema';
 export { parseSiteYaml } from './site';

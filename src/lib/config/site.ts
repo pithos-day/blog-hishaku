@@ -81,7 +81,6 @@ export function parseSiteYaml(raw: string): SiteConfig {
     i18n: normalizeI18n(parsed.i18n),
     categoryMap: parsed.categoryMap,
     social: parsed.social,
-    navigation: parsed.navigation,
     seo: parsed.seo ?? {},
     content: normalizeContent(parsed.content),
   };
