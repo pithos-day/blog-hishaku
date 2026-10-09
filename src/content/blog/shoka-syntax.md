@@ -109,6 +109,36 @@ $$
 \int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}
 $$
 
+## コードブロック
+
+メタ文字列でタイトル・行ハイライト・コマンドプロンプトを付けています:
+
+```js title="hello.js" url="https://example.com/source" linkText="Source" mark:1,3
+console.log('1 行目');
+const answer = 42;
+console.log('3 行目');
+```
+
+```bash command:("$":1-2)
+$ pnpm install
+$ pnpm dev
+```
+
+8 行を超えるコードブロックは初期状態で折りたたまれます:
+
+```text
+1 行目
+2 行目
+3 行目
+4 行目
+5 行目
+6 行目
+7 行目
+8 行目
+9 行目
+10 行目
+```
+
 ## 通常の Markdown
 
 見出しには `#` アンカーが付きます。外部リンクは自動で新規タブになります

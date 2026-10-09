@@ -14,6 +14,8 @@ import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
 import { remarkShokaRuby } from './src/lib/markdown/remark-ruby.ts';
 import { remarkShokaSpoiler } from './src/lib/markdown/remark-spoiler.ts';
+import { shokaMetaTransformer } from './src/lib/markdown/shiki-meta.ts';
+import { codeBlockWrapperTransformer } from './src/lib/markdown/shiki-wrapper.ts';
 
 // astro.config は Vite プラグインが有効化される前に読み込まれるため、
 // site.yaml は Node の fs で直接読む(パースは src/lib/config と共有)。
@@ -64,6 +66,19 @@ const rehypePlugins = [
 if (content.enableShokaAttrs) rehypePlugins.push(rehypeShokaAttrs);
 if (content.enableMath) rehypePlugins.push(rehypeKatex);
 
+// Shiki transformers — meta が data-title 等を付け、wrapper がそれを使って
+// ツールバーを組み立てるため、meta を先に登録する。
+const shikiTransformers = [];
+if (content.enableCodeMeta) shikiTransformers.push(shokaMetaTransformer());
+if (content.enhanceCodeBlock) {
+  shikiTransformers.push(
+    codeBlockWrapperTransformer({
+      copy: content.enableCodeCopy,
+      fullscreen: content.enableCodeFullscreen,
+    }),
+  );
+}
+
 export default defineConfig({
   site: siteConfig.site.url,
   integrations: [sitemap()],
@@ -73,6 +88,12 @@ export default defineConfig({
       remarkPlugins,
       rehypePlugins,
     }),
+    syntaxHighlight: {
+      type: 'shiki',
+    },
+    shikiConfig: {
+      transformers: shikiTransformers,
+    },
   },
   vite: {
     plugins: [tailwindcss()],

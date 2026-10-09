@@ -137,5 +137,69 @@ const categoryChains = normalizeCategories(post.data.categories);
     for (const spoiler of document.querySelectorAll('.spoiler')) {
       spoiler.addEventListener('click', () => spoiler.classList.toggle('revealed'));
     }
+
+    // コードブロック強化: 折りたたみ・コピー・全画面
+    if (flags.enhanceCodeBlock) {
+      for (const wrapper of document.querySelectorAll<HTMLElement>('.code-block-wrapper')) {
+        const code = wrapper.querySelector('code');
+        if (!code) continue;
+
+        const setCollapsed = (collapsed: boolean) => {
+          wrapper.classList.toggle('code-collapsed', collapsed);
+          const toggle = wrapper.querySelector<HTMLButtonElement>('.code-btn-collapse');
+          if (toggle) {
+            const label = collapsed ? '展開' : '折りたたみ';
+            const labelNode = toggle.querySelector('span');
+            if (labelNode) labelNode.textContent = label;
+            toggle.setAttribute('aria-label', label);
+            toggle.title = label;
+            toggle.setAttribute('aria-expanded', String(!collapsed));
+          }
+        };
+
+        wrapper.querySelector('.code-btn-collapse')?.addEventListener('click', () => {
+          setCollapsed(!wrapper.classList.contains('code-collapsed'));
+        });
+        wrapper.querySelector('.code-block-expand-overlay')?.addEventListener('click', () =>
+          setCollapsed(false),
+        );
+
+        // ツールバーのボタン以外の部分クリックでも折りたたみを切り替える
+        wrapper.querySelector('.code-block-toolbar')?.addEventListener('click', (event) => {
+          if ((event.target as Element).closest('button, a')) return;
+          if (wrapper.classList.contains('code-collapsible')) {
+            setCollapsed(!wrapper.classList.contains('code-collapsed'));
+          }
+        });
+
+        const copyButton = wrapper.querySelector<HTMLButtonElement>('.code-btn-copy');
+        if (copyButton) {
+          let resetTimer: ReturnType<typeof setTimeout> | undefined;
+          copyButton.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code.textContent ?? '');
+            } catch {
+              return; // クリップボードが使えない環境
+            }
+            const labelNode = copyButton.querySelector('span');
+            if (labelNode) labelNode.textContent = 'コピー済み';
+            copyButton.classList.add('copied');
+            if (resetTimer) clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => {
+              if (labelNode) labelNode.textContent = 'コピー';
+              copyButton.classList.remove('copied');
+            }, 2000);
+          });
+        }
+
+        wrapper.querySelector('.code-btn-fullscreen')?.addEventListener('click', () => {
+          if (document.fullscreenElement) {
+            void document.exitFullscreen();
+          } else {
+            void wrapper.requestFullscreen();
+          }
+        });
+      }
+    }
   </script>
 </BaseLayout>
