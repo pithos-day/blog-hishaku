@@ -24,8 +24,8 @@ export const uiStrings = {
   'sidebar.rightPanel': 'サイドパネル (右)',
   'sidebar.recent': '最近の記事',
   'sidebar.archives': 'アーカイブ',
-  'sidebar.categories': 'カテゴリー',
-  'sidebar.categoriesAria': 'カテゴリー一覧',
+  'sidebar.categories': 'カテゴリ',
+  'sidebar.categoriesAria': 'カテゴリ一覧',
   'sidebar.tags': 'タグ',
   'sidebar.tagsAria': 'タグ一覧',
   'sidebar.profile': 'プロフィール',
@@ -33,7 +33,7 @@ export const uiStrings = {
 
   // ── 記事一覧 (トップページ) ──────────────────────────────────
   'index.listAria': '記事一覧',
-  'index.empty': 'まだ記事がありません。src/content/blog/ に記事を追加してください。',
+  'index.empty': 'まだ記事がありません。',
   'index.paginationAria': 'ページネーション',
   'index.prevPage': '← 前のページ',
   'index.nextPage': '次のページ →',
@@ -43,11 +43,11 @@ export const uiStrings = {
   'post.updatedAt': '更新: {date}',
   'post.charCount': '{count}文字',
   'post.readingTime': '約{minutes}分',
-  'post.draftNotice': 'この記事は下書きです (本番ビルドでは非公開)。',
+  'post.draftNotice': 'この記事は下書きです。',
   'post.contextNavAria': '前後の記事',
   'post.headingLink': 'このセクションへのリンク',
-  'post.badgePin': 'PIN',
-  'post.badgeDraft': 'DRAFT',
+  'post.badgePin': 'ピン留め',
+  'post.badgeDraft': '下書き',
 
   // ── カテゴリー ──────────────────────────────────────────────
   'category.title': 'カテゴリ',
@@ -73,7 +73,7 @@ export const uiStrings = {
   // ── 検索 ────────────────────────────────────────────────────
   'search.label': 'サイト内検索',
   'search.placeholder': '記事を検索…',
-  'search.sidebarPlaceholder': 'キーワードを入力',
+  'search.sidebarPlaceholder': '記事を検索…',
   'search.noIndex': '検索インデックスが見つかりません。ビルド後のサイトで利用できます。',
   'search.noResults': '一致する記事がありません。',
 

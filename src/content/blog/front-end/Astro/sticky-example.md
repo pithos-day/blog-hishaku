@@ -1,5 +1,5 @@
 ---
-title: 置き上げ記事のサンプル
+title: ピン留め記事のサンプル
 date: 2026-10-05 12:00:00
 sticky: true
 cover: /img/covers/sticky.svg
