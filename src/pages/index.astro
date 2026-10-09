@@ -1,13 +1,16 @@
 ---
+import { siteConfig } from '@/lib/config';
 import '@/styles/global.css';
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>blog-hishaku</title>
+    <meta name="description" content={siteConfig.site.description} />
+    <title>{siteConfig.site.title}</title>
   </head>
   <body>
-    <h1 class="text-2xl font-bold text-accent">blog-hishaku</h1>
+    <h1 class="text-2xl font-bold text-accent">{siteConfig.site.title}</h1>
+    <p class="text-fg-muted">{siteConfig.site.subtitle}</p>
   </body>
 </html>

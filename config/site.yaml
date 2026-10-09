@@ -1,0 +1,118 @@
+# =============================================================================
+# blog-hishaku サイト設定
+# =============================================================================
+# astro-koharu の config/site.yaml と同一スキーマを共有します。
+# このテンプレートが未対応の機能キー (weekly / bangumi / music / comment /
+# bgm / christmas / friends / moments / editor / colophon 等)が含まれていても
+# 読み込みは成功し、対応するキーだけが反映されます。
+# 変更後は dev server の再起動 (または再ビルド) が必要です。
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# サイト基本情報
+# -----------------------------------------------------------------------------
+site:
+  title: ひしゃく
+  alternate: hishaku
+  subtitle: つまみ食いの記録
+  name: hishaku
+  description: astro-koharu と互換性を持つ最小構成の Astro ブログテンプレート
+  avatar: /img/avatar.svg
+  author: Your Name
+  url: https://example.com
+  defaultOgImage: /img/avatar.svg
+  startYear: 2026
+  timezone: Asia/Tokyo # IANA 形式。日付の表示・月別アーカイブに使用
+  keywords:
+    - ブログ
+    - Astro
+
+# -----------------------------------------------------------------------------
+# 国際化 (i18n)
+# defaultLocale: URL プレフィックスを付けない既定言語
+# locales: 対応言語一覧 (code は BCP 47 短形式)
+# このテンプレートは日本語のみ。将来言語を足す場合は locales への追加に加え、
+# src/pages/[lang]/ に各ページのミラーを作成してください。
+# -----------------------------------------------------------------------------
+i18n:
+  defaultLocale: ja
+  locales:
+    - code: ja
+      label: 日本語
+
+# -----------------------------------------------------------------------------
+# カテゴリ対応表
+# 記事 frontmatter のカテゴリ表示名 → URL スラッグ (koharu 互換)
+# -----------------------------------------------------------------------------
+categoryMap:
+  ライフ: life
+  ノート: note
+  ツール: tools
+  フロントエンド: front-end
+
+# -----------------------------------------------------------------------------
+# SNS リンク (キー: 表示用 ID)
+#   url   : リンク先 (mailto: や /rss.xml も可)
+#   icon  : 任意。アイコン ID (現状は未使用。将来 astro-icon 等で利用)
+#   color : 任意。16 進カラー
+# -----------------------------------------------------------------------------
+social:
+  github:
+    url: https://github.com/your-username
+    icon: github
+    color: '#191717'
+  email:
+    url: mailto:you@example.com
+    icon: mail
+    color: '#55acd5'
+  rss:
+    url: /rss.xml
+    icon: rss
+    color: '#ff6600'
+
+# -----------------------------------------------------------------------------
+# ナビゲーション
+#   name     : 表示名 (必須)
+#   nameKey  : 任意。UI 翻訳キー (koharu 互換。未翻訳時は name を表示)
+#   path     : リンク先。子メニューを持つ親には省略可
+#   icon     : 任意 (koharu 互換・現状未使用)
+# -----------------------------------------------------------------------------
+navigation:
+  - name: ホーム
+    path: /
+  - name: 記事
+    children:
+      - name: カテゴリ
+        path: /categories
+      - name: タグ
+        path: /tags
+      - name: アーカイブ
+        path: /archives
+  - name: このサイトについて
+    path: /about
+
+# -----------------------------------------------------------------------------
+# SEO
+#   robots: robots.txt に転記する追加ディレクティブ (任意)
+# -----------------------------------------------------------------------------
+seo: {}
+
+# -----------------------------------------------------------------------------
+# コンテンツ (Markdown 拡張) 設定
+# Phase 2 の Shoka 系構文のオンオフ。未実装のキーは無視されます。
+# -----------------------------------------------------------------------------
+content:
+  addBlankTarget: true # 外部リンクを新規タブで開く
+  smoothScroll: true # スムーススクロール
+  addHeadingLevel: true # 見出しアンカー
+  enhanceCodeBlock: true # コードブロック強化
+  enableCodeCopy: true # コードのコピーボタン
+  enableCodeFullscreen: false # コード全画面ボタン
+  enableShokaContainers: true # ::: 提醒ブロック ;;; タブ +++ 折りたたみ
+  enableShokaAttrs: true # [text]{.class} 属性構文
+  enableShokaEffects: true # ++下線++ ==ハイライト== ~下添字~ ^上添字^
+  enableShokaSpoiler: true # !!隠し文字!!
+  enableShokaRuby: true # {漢字^かんじ} ルビ
+  enableShokaHexoTags: true # {% links %} {% media %} Hexo タグ
+  enableMath: true # $数式$ KaTeX
+  enableCodeMeta: true # コードブロックメタ (title, mark)
