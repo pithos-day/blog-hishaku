@@ -33,8 +33,14 @@ const weekdays = t('calendar.weekdays').split(',');
           <ul class="profile-social">
             {socialEntries.map(([name, social]) => (
               <li>
-                <a href={social.url} rel="noopener noreferrer">
-                  {name}
+                <a
+                  href={social.url}
+                  rel="noopener noreferrer"
+                  aria-label={name}
+                  title={name}
+                  style={social.color ? `color: ${social.color}` : undefined}
+                >
+                  {social.icon ? <iconify-icon icon={social.icon} aria-hidden="true" /> : name}
                 </a>
               </li>
             ))}
