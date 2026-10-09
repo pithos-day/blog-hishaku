@@ -42,7 +42,7 @@ const stats = getTextStats(post);
       {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
       <p class="entry-posted">
         <span class="meta-item">
-          <i class="ri-calendar-2-line" aria-hidden="true"></i>
+          <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
           <time datetime={post.data.date.toISOString()}>
             {formatDate(post.data.date, timezone)}
           </time>
@@ -50,17 +50,17 @@ const stats = getTextStats(post);
         {
           post.data.updated && (
             <span class="meta-item">
-              <i class="ri-edit-2-line" aria-hidden="true"></i>
+              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
               更新: {formatDate(post.data.updated, timezone)}
             </span>
           )
         }
         <span class="meta-item">
-          <i class="ri-pen-nib-line" aria-hidden="true"></i>
+          <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
           {formatCharacterCount(stats.characters)}
         </span>
         <span class="meta-item">
-          <i class="ri-time-line" aria-hidden="true"></i>
+          <i class="fa-solid fa-clock" aria-hidden="true"></i>
           {formatReadingTime(stats.minutes)}
         </span>
         {

@@ -249,6 +249,17 @@
   color: var(--hishaku-accent);
 }
 
+.entry-submeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72rem;
+  color: var(--hishaku-fg-muted);
+  margin: 7px 0 9px;
+  padding-left: 2px;
+}
+
 .entry-body {
   background: var(--hishaku-surface);
   padding: 12px 14px;
