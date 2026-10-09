@@ -110,7 +110,8 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
             aria-label="テーマを切り替え"
             title="テーマを切り替え"
           >
-            <span class="toggle-indicator" aria-hidden="true"></span>
+            <i data-lucide="sun" class="theme-icon theme-icon-sun" aria-hidden="true"></i>
+            <i data-lucide="moon" class="theme-icon theme-icon-moon" aria-hidden="true"></i>
           </button>
           <p>
             © {copyright} {siteConfig.site.author}
@@ -140,6 +141,8 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
     </dialog>
 
     <script>
+      import { createIcons, Moon, Sun } from 'lucide';
+
       interface PagefindSearchResult {
         data(): Promise<{ url: string; meta: { title?: string }; excerpt: string }>;
       }
@@ -243,6 +246,9 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
         }
         setTimeout(() => root.classList.remove('theme-transition'), 400);
       });
+
+      // Lucide アイコンの置換 (テーマトグルの太陽 / 月)
+      createIcons({ icons: { Sun, Moon } });
     </script>
   </body>
 </html>

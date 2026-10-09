@@ -25,29 +25,29 @@ const timezone = siteConfig.site.timezone;
                 <h2 class="entry-title-bar">
                   <a href={`/post/${getPostSlug(post)}`}>{post.data.title}</a>
                 </h2>
-                <p class="entry-submeta">
-                  <span class="meta-item">
-                    <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
-                    <time datetime={post.data.date.toISOString()}>
-                      {formatDate(post.data.date, timezone)}
-                    </time>
-                  </span>
-                  {post.data.updated && (
-                    <span class="meta-item">
-                      <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-                      更新 {formatDate(post.data.updated, timezone)}
-                    </span>
-                  )}
-                  <span class="meta-item">
-                    <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
-                    {formatCharacterCount(stats.characters)}
-                  </span>
-                  <span class="meta-item">
-                    <i class="fa-solid fa-clock" aria-hidden="true"></i>
-                    {formatReadingTime(stats.minutes)}
-                  </span>
-                </p>
                 <div class="entry-body">
+                  <p class="entry-submeta">
+                    <span class="meta-item">
+                      <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                      <time datetime={post.data.date.toISOString()}>
+                        {formatDate(post.data.date, timezone)}
+                      </time>
+                    </span>
+                    {post.data.updated && (
+                      <span class="meta-item">
+                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                        更新 {formatDate(post.data.updated, timezone)}
+                      </span>
+                    )}
+                    <span class="meta-item">
+                      <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                      {formatCharacterCount(stats.characters)}
+                    </span>
+                    <span class="meta-item">
+                      <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                      {formatReadingTime(stats.minutes)}
+                    </span>
+                  </p>
                   {post.data.cover && (
                     <a href={`/post/${getPostSlug(post)}`} tabindex={-1} aria-hidden="true">
                       <img src={post.data.cover} alt="" class="entry-cover" loading="lazy" />

@@ -212,6 +212,9 @@ importers:
       katex:
         specifier: ^0.19.0
         version: 0.19.0
+      lucide:
+        specifier: ^1.53.0
+        version: 1.53.0
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
@@ -1908,6 +1911,9 @@ packages:
   lru-cache@11.5.3:
     resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
     engines: {node: 20 || >=22}
+
+  lucide@1.53.0:
+    resolution: {integrity: sha512-5bBZofL4QmNhY6YIXe3sSJKvO2gMZ1fOMEcOyVsT5/7k6KR8IizWUhWVuQtVnrN/TRLKDKEr4Ln0a7CZ8dQMMA==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -4368,6 +4374,8 @@ snapshots:
   longest-streak@3.1.0: {}
 
   lru-cache@11.5.3: {}
+
+  lucide@1.53.0: {}
 
   magic-string@0.30.21:
     dependencies:
