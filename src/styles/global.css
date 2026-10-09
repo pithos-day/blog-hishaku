@@ -16,6 +16,15 @@
   --hishaku-fg-muted: hsl(0 0% 35%);
   --hishaku-accent: hsl(206 77% 62%);
   --hishaku-accent-fg: hsl(210.7 100% 97.3%);
+  --color-red: #e74c3c;
+  --color-pink-text: #e91e63;
+  --color-orange: #f39c12;
+  --color-yellow: #d4a017;
+  --color-green: #27ae60;
+  --color-aqua: #1abc9c;
+  --color-blue: #2e86c1;
+  --color-purple: #8e44ad;
+  --color-grey: #7f8c8d;
 }
 
 .dark {
@@ -27,6 +36,15 @@
   --hishaku-fg-muted: hsl(0 0% 63%);
   --hishaku-accent: hsl(205 77% 70%);
   --hishaku-accent-fg: hsl(210.7 100% 97.3%);
+  --color-red: #f87171;
+  --color-pink-text: #f472b6;
+  --color-orange: #fbbf24;
+  --color-yellow: #facc15;
+  --color-green: #4ade80;
+  --color-aqua: #2dd4bf;
+  --color-blue: #60a5fa;
+  --color-purple: #c084fc;
+  --color-grey: #9ca3af;
 }
 
 @theme inline {

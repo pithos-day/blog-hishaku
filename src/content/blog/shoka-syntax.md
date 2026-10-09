@@ -16,8 +16,16 @@ keywords:
 
 ## 提醒ブロック (`:::`)
 
+:::default
+default ブロックです。デフォルトのスタイルで表示されます。
+:::
+
 :::info
 info ブロックです。型名は `default` / `primary` / `info` / `success` / `warning` / `danger` があります。
+:::
+
+:::success
+success ブロックです。完了や成功のメッセージに使います。
 :::
 
 :::warning no-icon
@@ -67,6 +75,14 @@ npm install astro
 - 上下付き: H~2~O、E = mc^2^
 - スポイザー: !!この文章はクリックすると表示されます!! と !!ぼかし表示!!{.blur}
 - ルビ: {漢字^かんじ} / 全体注音 {漢字^=かんじ} / 着重点 {漢字^*}
+
+色付きテキスト: [赤]{.red} [ピンク]{.pink} [オレンジ]{.orange} [黄]{.yellow} [緑]{.green} [アクア]{.aqua} [青]{.blue} [紫]{.purple} [灰]{.grey}
+
+[このテキストは虹色にグラデーションします]{.rainbow}
+
+キーボード: [Ctrl]{.kbd} + [C]{.kbd} でコピー、[Ctrl]{.kbd} + [V]{.kbd} で貼り付け
+
+ラベル: [デフォルト]{.label .default} [プライマリ]{.label .primary} [情報]{.label .info} [成功]{.label .success} [警告]{.label .warning} [危険]{.label .danger}
 
 エスケープもできます: \++これは効果になりません++ \==この強調も無効です==
 
