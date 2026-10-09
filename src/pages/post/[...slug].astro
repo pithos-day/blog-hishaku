@@ -39,10 +39,10 @@ const stats = getTextStats(post);
   <article data-pagefind-body>
     <header>
       <h1 data-pagefind-meta="title" class="entry-title-bar post-title">{post.data.title}</h1>
-      {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
     </header>
 
     <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
+      {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
       <p class="entry-posted">
         <span class="meta-item">
           <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>

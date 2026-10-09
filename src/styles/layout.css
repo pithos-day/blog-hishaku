@@ -227,8 +227,11 @@
 }
 
 .meta-item i {
-  font-size: 0.95em;
+  display: inline-block;
+  width: 1em;
   line-height: 1;
+  font-size: 0.95em;
+  text-align: center;
 }
 
 .entry-title-bar {
@@ -341,7 +344,7 @@
 .post-subtitle {
   font-size: 0.9rem;
   color: var(--hishaku-fg-muted);
-  margin: 8px 0 0;
+  margin: 0 0 6px;
 }
 
 .entry-posted {
