@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildTagHref, getAllTags } from '@/lib/tags';
+
+const tags = await getAllTags();
+---
+
+<BaseLayout title="タグ">
+  <header class="border-b border-border pb-4">
+    <h1 class="text-2xl font-bold">タグ</h1>
+    <p class="text-sm text-fg-muted">{tags.length} 個</p>
+  </header>
+  <div class="mt-6">
+    {
+      tags.length === 0 ? (
+        <p class="text-fg-muted">タグ付きの記事がまだありません。</p>
+      ) : (
+        <ul class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <li class="rounded border border-border px-2 py-1 text-sm">
+              <a href={buildTagHref(tag.name)} class="hover:text-accent">
+                {tag.name}
+              </a>
+              <span class="ml-1 text-fg-muted">{tag.count}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</BaseLayout>

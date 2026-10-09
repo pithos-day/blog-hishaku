@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { normalizeCategories } from '@/lib/categories';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 import { formatDate } from '@/lib/date';
 import { siteConfig } from '@/lib/config';
@@ -22,14 +23,6 @@ const { Content } = await render(post);
 const timezone = siteConfig.site.timezone;
 const description = getPostDescription(post);
 
-type CategoryChain = string[];
-function normalizeCategories(
-  categories: string[] | string[][] | undefined,
-): CategoryChain[] {
-  if (!categories || categories.length === 0) return [];
-  if (Array.isArray(categories[0])) return categories as CategoryChain[];
-  return [categories as string[]];
-}
 const categoryChains = normalizeCategories(post.data.categories);
 ---
 

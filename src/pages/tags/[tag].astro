@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostRow from '@/components/PostRow.astro';
+import { getAllTags, getPostsByTag, type TagInfo } from '@/lib/tags';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    params: { tag: tag.slug },
+    props: { tagInfo: tag },
+  }));
+}
+
+interface Props {
+  tagInfo: TagInfo;
+}
+
+const { tagInfo } = Astro.props;
+const posts = await getPostsByTag(tagInfo.slug);
+---
+
+<BaseLayout title={`タグ: ${tagInfo.name}`} description={`タグ「${tagInfo.name}」の記事一覧 (${posts.length} 件)`}>
+  <header class="border-b border-border pb-4">
+    <nav aria-label="パンくず" class="mb-1 text-sm text-fg-muted">
+      <a href="/tags" class="hover:text-accent">タグ</a>
+      <span class="mx-1">›</span>
+      <span>{tagInfo.name}</span>
+    </nav>
+    <h1 class="text-2xl font-bold">{tagInfo.name}</h1>
+    <p class="text-sm text-fg-muted">{posts.length} 件</p>
+  </header>
+  <div class="mt-6">
+    {posts.map((post) => <PostRow post={post} />)}
+  </div>
+</BaseLayout>

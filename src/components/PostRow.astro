@@ -1,0 +1,26 @@
+---
+import { siteConfig } from '@/lib/config';
+import { formatDate } from '@/lib/date';
+import { getPostSlug, type PostEntry } from '@/lib/posts';
+
+interface Props {
+  post: PostEntry;
+}
+
+const { post } = Astro.props;
+const timezone = siteConfig.site.timezone;
+---
+
+<div class="flex items-baseline gap-3 py-1 text-sm">
+  <time datetime={post.data.date.toISOString()} class="shrink-0 tabular-nums text-fg-muted">
+    {formatDate(post.data.date, timezone, 'ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })}
+  </time>
+  <a href={`/post/${getPostSlug(post)}`} class="hover:text-accent">{post.data.title}</a>
+  {!import.meta.env.PROD && post.data.draft && (
+    <span class="shrink-0 rounded border border-border px-1 py-px text-xs text-fg-muted">DRAFT</span>
+  )}
+</div>

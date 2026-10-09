@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CategoryTree from '@/components/CategoryTree.astro';
+import { getCategoryTree } from '@/lib/categories';
+
+const { roots } = await getCategoryTree();
+---
+
+<BaseLayout title="カテゴリ">
+  <header class="border-b border-border pb-4">
+    <h1 class="text-2xl font-bold">カテゴリ</h1>
+  </header>
+  <div class="mt-6">
+    {
+      roots.length === 0 ? (
+        <p class="text-fg-muted">カテゴリ付きの記事がまだありません。</p>
+      ) : (
+        <CategoryTree nodes={roots} />
+      )
+    }
+  </div>
+</BaseLayout>

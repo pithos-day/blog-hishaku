@@ -1,0 +1,27 @@
+---
+import { buildCategoryHref, type CategoryNode } from '@/lib/categories';
+
+interface Props {
+  nodes: CategoryNode[];
+}
+
+const { nodes } = Astro.props;
+---
+
+<ul class="space-y-1">
+  {
+    nodes.map((node) => (
+      <li class="rounded px-1 py-0.5 hover:bg-surface">
+        <a href={buildCategoryHref(node.names)} class="font-medium hover:text-accent">
+          {node.name}
+        </a>
+        <span class="ml-1 text-sm text-fg-muted">({node.posts.length})</span>
+        {node.children.length > 0 && (
+          <div class="ml-4 mt-1 border-l border-border pl-3">
+            <Astro.self nodes={node.children} />
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ul>

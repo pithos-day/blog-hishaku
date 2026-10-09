@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostRow from '@/components/PostRow.astro';
+import { buildCategoryHref, getCategoryTree, type CategoryNode } from '@/lib/categories';
+
+export async function getStaticPaths() {
+  const { byPath } = await getCategoryTree();
+  return [...byPath.values()].map((node) => ({
+    params: { slug: node.slugPath },
+    props: { node },
+  }));
+}
+
+interface Props {
+  node: CategoryNode;
+}
+
+const { node } = Astro.props;
+const breadcrumbs = node.names.map((_, index) => {
+  const names = node.names.slice(0, index + 1);
+  return { names, href: buildCategoryHref(names), name: names[names.length - 1] };
+});
+---
+
+<BaseLayout title={node.names.join(' / ')} description={`${node.name} の記事一覧 (${node.posts.length} 件)`}>
+  <header class="border-b border-border pb-4">
+    <nav aria-label="パンくず" class="mb-1 text-sm text-fg-muted">
+      <a href="/categories" class="hover:text-accent">カテゴリ</a>
+      {breadcrumbs.map((crumb) => (
+        <>
+          <span class="mx-1">›</span>
+          <a href={crumb.href} class="hover:text-accent">{crumb.name}</a>
+        </>
+      ))}
+    </nav>
+    <h1 class="text-2xl font-bold">{node.name}</h1>
+    <p class="text-sm text-fg-muted">{node.posts.length} 件</p>
+  </header>
+
+  {
+    node.children.length > 0 && (
+      <ul class="mt-4 flex flex-wrap gap-2">
+        {node.children.map((child) => (
+          <li class="rounded border border-border px-2 py-1 text-sm">
+            <a href={buildCategoryHref(child.names)} class="hover:text-accent">
+              {child.name}
+            </a>
+            <span class="ml-1 text-fg-muted">({child.posts.length})</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="mt-6">
+    {node.posts.map((post) => <PostRow post={post} />)}
+  </div>
+</BaseLayout>
