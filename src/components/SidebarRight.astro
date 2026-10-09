@@ -1,0 +1,86 @@
+---
+import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
+import { siteConfig } from '@/lib/config';
+
+const calendar = await getSidebarCalendar();
+
+const socialEntries = Object.entries(siteConfig.social);
+const aboutEntry = siteConfig.navigation.find((item) => item.path === '/about');
+const profileName = siteConfig.site.author || siteConfig.site.title;
+
+const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
+---
+
+<aside class="sidebar sidebar-right" aria-label="サイドパネル (右)">
+  <section id="profile" class="sidebar-module" aria-label="プロフィール">
+    <h2 class="module-header">プロフィール</h2>
+    <div class="module-body profile-body">
+      {
+        siteConfig.site.avatar && (
+          <img
+            src={siteConfig.site.avatar}
+            alt=""
+            width="72"
+            height="72"
+            class="profile-avatar"
+          />
+        )
+      }
+      <p class="profile-name">{profileName}</p>
+      {
+        socialEntries.length > 0 && (
+          <ul class="profile-social">
+            {socialEntries.map(([name, social]) => (
+              <li>
+                <a href={social.url} rel="noopener noreferrer">
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <p class="profile-about">
+        <a href={aboutEntry?.path ?? '/about'}>{aboutEntry?.name ?? 'このサイトについて'}</a>
+      </p>
+    </div>
+  </section>
+
+  <section id="calendar" class="sidebar-module" aria-label="カレンダー">
+    <div class="module-body calendar-body">
+      <table class="calendar">
+        <caption class="module-header">
+          <a href="/archives">{calendar.year}年{calendar.month}月</a>
+        </caption>
+        <thead>
+          <tr>
+            {weekdays.map((day) => <th scope="col">{day}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            calendar.weeks.map((week) => (
+              <tr>
+                {week.map((cell) => {
+                  const href = getDayLink(cell);
+                  if (!cell) return <td class="calendar-blank" />;
+                  return (
+                    <td class={href ? 'calendar-post' : undefined}>
+                      {href ? (
+                        <a href={href} title={`${cell.posts.length} 件の記事`}>
+                          {cell.day}
+                        </a>
+                      ) : (
+                        cell.day
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</aside>

@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .site-container {
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -39,11 +39,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   3 カラム相当 (サイドバー左 + 本文)
+   3 カラム (サイドバー左 + 本文 + サイドバー右)
    -------------------------------------------------------------------------- */
 .site-layout {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr) 200px;
   gap: 24px;
   align-items: start;
   padding-top: 20px;
@@ -116,15 +116,6 @@
   font-size: 0.75rem;
   color: var(--hishaku-fg-muted);
   margin: 0;
-}
-
-.link-note {
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.6;
-  padding: 6px 8px;
-  border: 1px solid var(--hishaku-border);
-  background: var(--hishaku-bg);
 }
 
 /* --------------------------------------------------------------------------
@@ -356,9 +347,59 @@
 }
 
 /* --------------------------------------------------------------------------
+   プロフィール (右サイドバー)
+   -------------------------------------------------------------------------- */
+.profile-body {
+  text-align: center;
+}
+
+.profile-avatar {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+  margin: 0 auto 8px;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.profile-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  font-size: 0.75rem;
+}
+
+.profile-about {
+  margin: 12px 0 0;
+}
+
+.profile-about a {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border: 1px solid var(--hishaku-border);
+  background: var(--hishaku-bg);
+  color: var(--hishaku-fg);
+}
+
+.profile-about a:hover {
+  border-color: var(--hishaku-accent);
+  color: var(--hishaku-accent);
+}
+
+/* --------------------------------------------------------------------------
    モバイル: サイドバーを上に単純積み重ね
    -------------------------------------------------------------------------- */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .site-layout {
     grid-template-columns: minmax(0, 1fr);
   }

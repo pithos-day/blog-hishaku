@@ -1,6 +1,5 @@
 ---
 import { getArchives } from '@/lib/archives';
-import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
 import { buildCategoryHref, getCategoryTree } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { getPostSlug, getPublishedPosts } from '@/lib/posts';
@@ -21,16 +20,11 @@ const backnumbers = archiveYears
   )
   .slice(0, BACKNUMBER_LIMIT);
 
-const calendar = await getSidebarCalendar();
 const { roots: categoryRoots } = await getCategoryTree();
-
-const aboutEntry = siteConfig.navigation.find((item) => item.path === '/about');
 const menuItems = siteConfig.navigation.filter((item) => item.path !== '/about');
-
-const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
 ---
 
-<aside class="sidebar" aria-label="サイドパネル">
+<aside class="sidebar sidebar-left" aria-label="サイドパネル (左)">
   <section id="search-module" class="sidebar-module" aria-label="検索">
     <h2 class="module-header">検索</h2>
     <div class="module-body">
@@ -121,44 +115,6 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
     </div>
   </section>
 
-  <section id="calendar" class="sidebar-module" aria-label="カレンダー">
-    <div class="module-body calendar-body">
-      <table class="calendar">
-        <caption class="module-header">
-          <a href="/archives">{calendar.year}年{calendar.month}月</a>
-        </caption>
-        <thead>
-          <tr>
-            {weekdays.map((day) => <th scope="col">{day}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {
-            calendar.weeks.map((week) => (
-              <tr>
-                {week.map((cell) => {
-                  const href = getDayLink(cell);
-                  if (!cell) return <td class="calendar-blank" />;
-                  return (
-                    <td class={href ? 'calendar-post' : undefined}>
-                      {href ? (
-                        <a href={href} title={`${cell.posts.length} 件の記事`}>
-                          {cell.day}
-                        </a>
-                      ) : (
-                        cell.day
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
   <section id="archive-category" class="sidebar-module" aria-label="カテゴリー一覧">
     <h2 class="module-header">カテゴリー</h2>
     <div class="module-body">
@@ -178,17 +134,4 @@ const weekdays = ['日', '月', '火', '水', '木', '金', '土'] as const;
       }
     </div>
   </section>
-
-  {
-    aboutEntry && (
-      <section id="profile" class="sidebar-module" aria-label={aboutEntry.name}>
-        <h2 class="module-header">{aboutEntry.name}</h2>
-        <div class="module-body">
-          <p class="link-note">
-            <a href={aboutEntry.path}>{siteConfig.site.description ?? aboutEntry.name}</a>
-          </p>
-        </div>
-      </section>
-    )
-  }
 </aside>

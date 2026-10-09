@@ -1,5 +1,6 @@
 ---
-import Sidebar from '@/components/Sidebar.astro';
+import SidebarLeft from '@/components/SidebarLeft.astro';
+import SidebarRight from '@/components/SidebarRight.astro';
 import { siteConfig } from '@/lib/config';
 import '@/styles/global.css';
 
@@ -27,7 +28,6 @@ const canonicalUrl = new URL(Astro.url.pathname, siteConfig.site.url);
 const year = new Date().getFullYear();
 const startYear = siteConfig.site.startYear;
 const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);
-const socialEntries = Object.entries(siteConfig.social);
 ---
 
 <html lang="ja">
@@ -73,25 +73,15 @@ const socialEntries = Object.entries(siteConfig.social);
       </header>
 
       <div class="site-layout flex-1">
-        <Sidebar />
+        <SidebarLeft />
         <main class="site-content">
           <slot />
         </main>
+        <SidebarRight />
       </div>
 
       <footer class="border-t border-border bg-surface">
         <div class="flex flex-col items-center gap-3 px-4 py-6 text-sm text-fg-muted">
-          {socialEntries.length > 0 && (
-            <ul class="flex flex-wrap justify-center gap-4">
-              {socialEntries.map(([name, social]) => (
-                <li>
-                  <a href={social.url} rel="noopener noreferrer" class="hover:text-accent">
-                    {name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
           <p>
             © {copyright} {siteConfig.site.author}
           </p>
