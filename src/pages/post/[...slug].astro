@@ -78,4 +78,63 @@ const categoryChains = normalizeCategories(post.data.categories);
       <Content />
     </div>
   </article>
+
+  <script>
+    import { siteConfig } from '@/lib/config';
+
+    const flags = siteConfig.content;
+
+    // 外部リンクを新規タブで開く
+    if (flags.addBlankTarget) {
+      for (const anchor of document.querySelectorAll<HTMLAnchorElement>('.prose a[href]')) {
+        const href = anchor.getAttribute('href') ?? '';
+        if (/^(https?:)?\/\//.test(href)) {
+          anchor.target = '_blank';
+          anchor.rel = 'noopener noreferrer';
+        }
+      }
+    }
+
+    // 見出しにレベル表示用の data-level を付与
+    if (flags.addHeadingLevel) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        heading.setAttribute('data-level', `H${heading.tagName[1]}`);
+      }
+    }
+
+    // 見出しアンカーのスムーススクロール
+    if (flags.smoothScroll) {
+      for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a.anchor-link[href^="#"]')) {
+        anchor.addEventListener('click', (event) => {
+          event.preventDefault();
+          const target = document.getElementById(decodeURIComponent(anchor.hash.slice(1)));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            history.pushState(null, '', anchor.hash);
+          }
+        });
+      }
+    }
+
+    // ;;; タブの切替
+    for (const group of document.querySelectorAll('.tab-group')) {
+      const headers = group.querySelectorAll<HTMLButtonElement>('.tab-header');
+      const panels = group.querySelectorAll<HTMLElement>('.tab-panel');
+      headers.forEach((header, index) => {
+        header.addEventListener('click', () => {
+          headers.forEach((item, i) => {
+            const active = i === index;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', String(active));
+          });
+          panels.forEach((panel, i) => panel.classList.toggle('active', i === index));
+        });
+      });
+    }
+
+    // スポイザーのクリックで表示切替
+    for (const spoiler of document.querySelectorAll('.spoiler')) {
+      spoiler.addEventListener('click', () => spoiler.classList.toggle('revealed'));
+    }
+  </script>
 </BaseLayout>
