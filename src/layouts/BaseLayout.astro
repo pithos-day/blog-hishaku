@@ -256,6 +256,16 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
 
         let searchTimer: ReturnType<typeof setTimeout> | undefined;
         closeButton.addEventListener('click', () => dialog.close());
+        // バックドロップ (ウインドウ外側) をクリックしたら閉じる
+        dialog.addEventListener('click', (event) => {
+          const rect = dialog.getBoundingClientRect();
+          const inside =
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom;
+          if (!inside) dialog.close();
+        });
         input.addEventListener('input', () => {
           if (searchTimer) clearTimeout(searchTimer);
           searchTimer = setTimeout(() => void runSearch(), 150);
