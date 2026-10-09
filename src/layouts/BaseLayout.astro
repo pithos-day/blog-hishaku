@@ -56,43 +56,73 @@ const socialEntries = Object.entries(siteConfig.social);
           )}
           <span>{siteConfig.site.title}</span>
         </a>
-        <nav aria-label="メインナビゲーション">
-          <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
-            {siteConfig.navigation.map((item) =>
-              item.children && item.children.length > 0 ? (
-                <li>
-                  <details class="group relative">
-                    <summary class="cursor-pointer list-none rounded px-1 py-0.5 hover:text-accent">
+        <div class="flex items-center gap-4">
+          <button
+            type="button"
+            id="search-open"
+            aria-haspopup="dialog"
+            class="rounded border border-border px-2 py-1 text-sm hover:border-accent hover:text-accent"
+          >
+            検索
+          </button>
+          <nav aria-label="メインナビゲーション">
+            <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+              {siteConfig.navigation.map((item) =>
+                item.children && item.children.length > 0 ? (
+                  <li>
+                    <details class="group relative">
+                      <summary class="cursor-pointer list-none rounded px-1 py-0.5 hover:text-accent">
+                        {item.name}
+                      </summary>
+                      <ul class="absolute right-0 z-20 mt-1 w-40 rounded border border-border bg-surface py-1 shadow-lg">
+                        {item.children
+                          .filter((child) => child.path)
+                          .map((child) => (
+                            <li>
+                              <a
+                                href={child.path}
+                                class="block px-3 py-1.5 hover:bg-bg hover:text-accent"
+                              >
+                                {child.name}
+                              </a>
+                            </li>
+                          ))}
+                      </ul>
+                    </details>
+                  </li>
+                ) : item.path ? (
+                  <li>
+                    <a href={item.path} class="rounded px-1 py-0.5 hover:text-accent">
                       {item.name}
-                    </summary>
-                    <ul class="absolute right-0 z-20 mt-1 w-40 rounded border border-border bg-surface py-1 shadow-lg">
-                      {item.children
-                        .filter((child) => child.path)
-                        .map((child) => (
-                          <li>
-                            <a
-                              href={child.path}
-                              class="block px-3 py-1.5 hover:bg-bg hover:text-accent"
-                            >
-                              {child.name}
-                            </a>
-                          </li>
-                        ))}
-                    </ul>
-                  </details>
-                </li>
-              ) : item.path ? (
-                <li>
-                  <a href={item.path} class="rounded px-1 py-0.5 hover:text-accent">
-                    {item.name}
-                  </a>
-                </li>
-              ) : null,
-            )}
-          </ul>
-        </nav>
+                    </a>
+                  </li>
+                ) : null,
+              )}
+            </ul>
+          </nav>
+        </div>
       </div>
     </header>
+
+    <dialog
+      id="search-dialog"
+      aria-label="サイト内検索"
+      class="w-[min(92vw,36rem)] rounded-lg border border-border bg-surface p-4 shadow-xl [&::backdrop]:bg-black/50"
+    >
+      <div class="mb-3 flex items-center gap-2">
+        <input
+          id="search-input"
+          type="search"
+          placeholder="記事を検索…"
+          autocomplete="off"
+          class="w-full rounded border border-border bg-bg px-3 py-2 outline-none focus:border-accent"
+        />
+        <button type="button" id="search-close" class="shrink-0 text-sm text-fg-muted hover:text-accent">
+          閉じる
+        </button>
+      </div>
+      <div id="search-results" class="max-h-[60vh] space-y-2 overflow-y-auto"></div>
+    </dialog>
 
     <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
       <slot />
@@ -116,5 +146,87 @@ const socialEntries = Object.entries(siteConfig.social);
         </p>
       </div>
     </footer>
+
+    <script>
+      interface PagefindSearchResult {
+        data(): Promise<{ url: string; meta: { title?: string }; excerpt: string }>;
+      }
+      interface PagefindApi {
+        init(): Promise<void>;
+        search(query: string): Promise<{ results: PagefindSearchResult[] }>;
+      }
+
+      const dialog = document.getElementById('search-dialog');
+      const openButton = document.getElementById('search-open');
+      const closeButton = document.getElementById('search-close');
+      const input = document.getElementById('search-input');
+      const resultsBox = document.getElementById('search-results');
+
+      if (dialog instanceof HTMLDialogElement && openButton && closeButton && input instanceof HTMLInputElement && resultsBox) {
+        let pagefindPromise: Promise<PagefindApi | null> | undefined;
+
+        const loadPagefind = (): Promise<PagefindApi | null> => {
+          if (!pagefindPromise) {
+            const baseUrl = import.meta.env.BASE_URL;
+            pagefindPromise = import(/* @vite-ignore */ `${baseUrl}pagefind/pagefind.js`)
+              .then(async (module) => {
+                const pagefind = module as unknown as PagefindApi;
+                await pagefind.init();
+                return pagefind;
+              })
+              .catch(() => null);
+          }
+          return pagefindPromise;
+        };
+
+        const runSearch = async (): Promise<void> => {
+          const query = input.value.trim();
+          resultsBox.replaceChildren();
+          if (!query) return;
+          const pagefind = await loadPagefind();
+          if (!pagefind) {
+            resultsBox.textContent = '検索インデックスが見つかりません。ビルド後のサイトで利用できます。';
+            return;
+          }
+          const found = await pagefind.search(query);
+          const entries = await Promise.all(found.results.slice(0, 10).map((result) => result.data()));
+          if (entries.length === 0) {
+            resultsBox.textContent = '一致する記事がありません。';
+            return;
+          }
+          for (const entry of entries) {
+            const link = document.createElement('a');
+            link.href = entry.url;
+            link.className = 'block rounded border border-border px-3 py-2 hover:border-accent';
+            const title = document.createElement('div');
+            title.className = 'font-medium';
+            title.textContent = entry.meta.title ?? entry.url;
+            const excerpt = document.createElement('div');
+            excerpt.className = 'text-sm text-fg-muted';
+            excerpt.innerHTML = entry.excerpt;
+            link.append(title, excerpt);
+            resultsBox.append(link);
+          }
+        };
+
+        let searchTimer: ReturnType<typeof setTimeout> | undefined;
+        openButton.addEventListener('click', () => {
+          dialog.showModal();
+          void loadPagefind();
+          input.focus();
+        });
+        closeButton.addEventListener('click', () => dialog.close());
+        input.addEventListener('input', () => {
+          if (searchTimer) clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => void runSearch(), 150);
+        });
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            void runSearch();
+          }
+        });
+      }
+    </script>
   </body>
 </html>
