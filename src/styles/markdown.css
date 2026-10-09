@@ -308,4 +308,15 @@
   margin-bottom: 0.3em;
 }
 
+/* --- 数式 (KaTeX) --------------------------------------------------------- */
+.prose .katex {
+  color: inherit;
+}
+.prose .katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+
 /* --- 記事ヘッダのカテゴリ/タグ など (prose 外共通) ------------------------- */

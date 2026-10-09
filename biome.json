@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "includes": ["**", "!**/dist", "!**/.astro", "!**/node_modules"]
+    "includes": ["**", "!**/dist", "!**/.astro", "!**/node_modules", "!**/public/katex"]
   },
   "formatter": {
     "enabled": true,

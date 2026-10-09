@@ -99,6 +99,16 @@ npm install astro
   desc: もう一つのサンプル
 {% endlinks %}
 
+## 数式 (KaTeX)
+
+インライン数式: $E = mc^2$、$\alpha + \beta = \gamma$
+
+ブロック数式:
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}
+$$
+
 ## 通常の Markdown
 
 見出しには `#` アンカーが付きます。外部リンクは自動で新規タブになります

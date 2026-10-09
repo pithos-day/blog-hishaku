@@ -2,6 +2,9 @@
 dist/
 .sonda/
 
+# generated assets (postinstall で同期)
+public/katex/
+
 # generated types
 .astro/
 

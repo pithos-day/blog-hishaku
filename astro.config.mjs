@@ -5,7 +5,9 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
+import remarkMath from 'remark-math';
 import { parseSiteYaml } from './src/lib/config/site.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
@@ -25,7 +27,9 @@ const content = siteConfig.content;
 
 // remark プラグイン — 順序が重要:
 // 1. remarkShokaPreprocess は必ず先頭 (原文を再パースして GFM 衝突を解消)
-// 2. スポイザー → ルビ → 効果 の順でテキストノードを走査
+// 2. 数式は spoiler/ruby/効果より先に走らせる — $...$ が math ノードへ
+//    変換済みなので、それらのテキスト走査プラグインの対象外になる。
+// 3. スポイザー → ルビ → 効果 の順でテキストノードを走査
 const remarkPlugins = [];
 if (content.enableShokaContainers || content.enableShokaHexoTags || content.enableShokaEffects) {
   remarkPlugins.push([
@@ -34,14 +38,16 @@ if (content.enableShokaContainers || content.enableShokaHexoTags || content.enab
       containers: content.enableShokaContainers,
       hexoTags: content.enableShokaHexoTags,
       superSub: content.enableShokaEffects,
+      math: content.enableMath,
     },
   ]);
 }
+if (content.enableMath) remarkPlugins.push(remarkMath);
 if (content.enableShokaSpoiler) remarkPlugins.push(remarkShokaSpoiler);
 if (content.enableShokaRuby) remarkPlugins.push(remarkShokaRuby);
 if (content.enableShokaEffects) remarkPlugins.push(remarkIns, remarkMark);
 
-// rehype プラグイン — 見出しアンカー → 属性構文
+// rehype プラグイン — 見出しアンカー → 属性構文 → KaTeX
 const rehypePlugins = [
   rehypeSlug,
   [
@@ -56,6 +62,7 @@ const rehypePlugins = [
   ],
 ];
 if (content.enableShokaAttrs) rehypePlugins.push(rehypeShokaAttrs);
+if (content.enableMath) rehypePlugins.push(rehypeKatex);
 
 export default defineConfig({
   site: siteConfig.site.url,

@@ -28,6 +28,8 @@ export interface PreprocessOptions {
   hexoTags?: boolean;
   /** `~sub~` `^sup^` を有効化 (enableShokaEffects がゲート) */
   superSub?: boolean;
+  /** 再パース側の math 拡張 (remarkShokaPreprocess 専用 — preprocessor では未使用) */
+  math?: boolean;
 }
 
 /** ブロック入れ子の最大深度 (暴走防止) */

@@ -7,6 +7,8 @@ interface Props {
   description?: string;
   ogImage?: string;
   type?: 'website' | 'article';
+  /** 数式 (KaTeX) を含む記事か。非記事ページは false (既定) */
+  math?: boolean;
 }
 
 const {
@@ -14,7 +16,10 @@ const {
   description = siteConfig.site.description ?? '',
   ogImage = siteConfig.site.defaultOgImage ?? siteConfig.site.avatar,
   type = 'website',
+  math = false,
 } = Astro.props;
+
+const hasMath = siteConfig.content.enableMath && math !== false;
 
 const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title;
 const canonicalUrl = new URL(Astro.url.pathname, siteConfig.site.url);
@@ -46,6 +51,7 @@ const socialEntries = Object.entries(siteConfig.social);
     {ogImage && <meta property="og:image" content={new URL(ogImage, siteConfig.site.url)} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="generator" content={Astro.generator} />
+    {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
   </head>
   <body class="flex min-h-screen flex-col">
     <header class="border-b border-border bg-surface">
