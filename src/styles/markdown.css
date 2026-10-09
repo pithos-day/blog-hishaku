@@ -46,6 +46,34 @@
   font-size: 1.1em;
   line-height: 1;
 }
+.note-block:has(.note-icon)::before {
+  display: none;
+}
+.note-icon {
+  position: absolute;
+  left: 0.5em;
+  top: 0.85em;
+  line-height: 1;
+  pointer-events: none;
+}
+.note-icon-default {
+  color: var(--hishaku-fg-muted);
+}
+.note-icon-primary {
+  color: #6366f1;
+}
+.note-icon-info {
+  color: #0ea5e9;
+}
+.note-icon-success {
+  color: #22c55e;
+}
+.note-icon-warning {
+  color: #f59e0b;
+}
+.note-icon-danger {
+  color: #ef4444;
+}
 .note-block.note-default::before {
   content: '💬';
 }

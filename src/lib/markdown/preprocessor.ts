@@ -21,6 +21,26 @@ import {
 } from './renderers';
 import { SHOKA_RUBY_PATTERN } from './ruby-pattern';
 
+/** Remix Icon (ri) の SVG path — note ブロックのアイコン (ビルド時インジェクト) */
+const NOTE_ICON_PATHS: Record<string, string> = {
+  default:
+    'M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2m0 9H8v2h4v3l4-4l-4-4z',
+  primary:
+    'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-11H7v2h4v4h2v-4h4v-2h-4V7h-2z',
+  info: 'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-11v6h2v-6zm0-4v2h2V7z',
+  success:
+    'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2S2 6.477 2 12s4.477 10 10 10m5.457-12.543L11 15.914l-4.207-4.207l1.414-1.414L11 13.086l5.043-5.043z',
+  warning:
+    'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-7v2h2v-2zm0-8v6h2V7z',
+  danger: 'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10M7 11v2h10v-2z',
+};
+
+/** note ブロック用の SVG アイコン文字列を生成 */
+function noteIconSvg(style: string): string {
+  const path = NOTE_ICON_PATHS[style] ?? NOTE_ICON_PATHS.default;
+  return `<svg class="note-icon note-icon-${style}" xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${path}"/></svg>`;
+}
+
 export interface PreprocessOptions {
   /** `:::` `+++` `;;;` ブロック構文を有効化 */
   containers?: boolean;
@@ -155,6 +175,9 @@ function processBlocks(text: string, opts: PreprocessOptions, depth = 0): string
       const noIconClass = noIcon ? ' no-icon' : '';
       output.push('');
       output.push(`<div class="note-block note-${style}${noIconClass}">`);
+      if (!noIcon) {
+        output.push(noteIconSvg(style));
+      }
       output.push('');
       output.push(processBlocks(inner.join('\n'), opts, depth + 1));
       output.push('');
