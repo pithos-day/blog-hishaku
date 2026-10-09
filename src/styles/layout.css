@@ -45,6 +45,8 @@
 
 .site-content {
   min-width: 0;
+  max-width: 640px;
+  width: 100%;
   padding-bottom: 40px;
 }
 
@@ -237,7 +239,7 @@
 .entry-title-bar {
   background: var(--hishaku-border);
   color: var(--hishaku-fg);
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.5;
   padding: 6px 10px;
@@ -257,7 +259,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--hishaku-fg-muted);
   margin: 0 0 10px;
 }
