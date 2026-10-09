@@ -23,7 +23,7 @@ export const uiStrings = {
   'sidebar.leftPanel': 'サイドパネル (左)',
   'sidebar.rightPanel': 'サイドパネル (右)',
   'sidebar.recent': '最近の記事',
-  'sidebar.backnumber': 'バックナンバー',
+  'sidebar.archives': 'アーカイブ',
   'sidebar.categories': 'カテゴリー',
   'sidebar.categoriesAria': 'カテゴリー一覧',
   'sidebar.tags': 'タグ',
