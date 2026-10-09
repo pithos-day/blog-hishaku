@@ -219,10 +219,16 @@
   margin-bottom: 36px;
 }
 
-.entry-date {
-  font-size: 0.78rem;
-  color: var(--hishaku-fg-muted);
-  margin: 0 0 6px;
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.meta-item i {
+  font-size: 0.95em;
+  line-height: 1;
 }
 
 .entry-title-bar {

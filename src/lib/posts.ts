@@ -29,7 +29,8 @@ export async function getPublishedPosts(): Promise<PostEntry[]> {
   return posts.sort(comparePosts);
 }
 
-function toPlainText(markdown: string): string {
+/** Markdown 本文から表示用のプレーンテキストを取り出す */
+export function toPlainText(markdown: string): string {
   return markdown
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`([^`]*)`/g, '$1')

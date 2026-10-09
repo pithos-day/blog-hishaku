@@ -5,6 +5,7 @@ import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
 import { buildTagHref } from '@/lib/tags';
 
 export async function getStaticPaths() {
@@ -25,6 +26,7 @@ const timezone = siteConfig.site.timezone;
 const description = getPostDescription(post);
 
 const categoryChains = normalizeCategories(post.data.categories);
+const stats = getTextStats(post);
 ---
 
 <BaseLayout
@@ -39,14 +41,28 @@ const categoryChains = normalizeCategories(post.data.categories);
       <h1 data-pagefind-meta="title" class="entry-title-bar post-title">{post.data.title}</h1>
       {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
       <p class="entry-posted">
-        <time datetime={post.data.date.toISOString()}>
-          {formatDate(post.data.date, timezone)}
-        </time>
+        <span class="meta-item">
+          <i class="ri-calendar-2-line" aria-hidden="true"></i>
+          <time datetime={post.data.date.toISOString()}>
+            {formatDate(post.data.date, timezone)}
+          </time>
+        </span>
         {
           post.data.updated && (
-            <span>更新: {formatDate(post.data.updated, timezone)}</span>
+            <span class="meta-item">
+              <i class="ri-edit-2-line" aria-hidden="true"></i>
+              更新: {formatDate(post.data.updated, timezone)}
+            </span>
           )
         }
+        <span class="meta-item">
+          <i class="ri-pen-nib-line" aria-hidden="true"></i>
+          {formatCharacterCount(stats.characters)}
+        </span>
+        <span class="meta-item">
+          <i class="ri-time-line" aria-hidden="true"></i>
+          {formatReadingTime(stats.minutes)}
+        </span>
         {
           categoryChains.length > 0 && (
             <span>

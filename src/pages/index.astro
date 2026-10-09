@@ -4,6 +4,7 @@ import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
 import { getPostDescription, getPostSlug, getPublishedPosts } from '@/lib/posts';
+import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
 import { buildTagHref } from '@/lib/tags';
 
 const posts = await getPublishedPosts();
@@ -17,49 +18,64 @@ const timezone = siteConfig.site.timezone;
         <p class="text-fg-muted">まだ記事がありません。src/content/blog/ に記事を追加してください。</p>
       ) : (
         <ul>
-          {posts.map((post) => (
-            <li class="entry">
-              <p class="entry-date">
-                <time datetime={post.data.date.toISOString()}>
-                  {formatDate(post.data.date, timezone)}
-                </time>
-                {post.data.updated && (
-                  <span> (更新: {formatDate(post.data.updated, timezone)})</span>
-                )}
-              </p>
-              <h2 class="entry-title-bar">
-                <a href={`/post/${getPostSlug(post)}`}>{post.data.title}</a>
-              </h2>
-              <div class="entry-body">
-                {post.data.cover && (
-                  <a href={`/post/${getPostSlug(post)}`} tabindex={-1} aria-hidden="true">
-                    <img src={post.data.cover} alt="" class="entry-cover" loading="lazy" />
-                  </a>
-                )}
-                {post.data.subtitle && <p class="entry-subtitle">{post.data.subtitle}</p>}
-                <p class="entry-desc">{getPostDescription(post)}</p>
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <ul class="entry-tags">
-                    {post.data.tags.map((tag) => (
-                      <li>
-                        <a href={buildTagHref(tag)}>{tag}</a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <hr class="entry-divider" />
-                <p class="entry-meta">
-                  {post.data.sticky && <span class="entry-badge entry-badge-pin">PIN</span>}
-                  {!import.meta.env.PROD && post.data.draft && (
-                    <span class="entry-badge entry-badge-draft">DRAFT</span>
+          {posts.map((post) => {
+            const stats = getTextStats(post);
+            return (
+              <li class="entry">
+                <h2 class="entry-title-bar">
+                  <a href={`/post/${getPostSlug(post)}`}>{post.data.title}</a>
+                </h2>
+                <div class="entry-body">
+                  {post.data.cover && (
+                    <a href={`/post/${getPostSlug(post)}`} tabindex={-1} aria-hidden="true">
+                      <img src={post.data.cover} alt="" class="entry-cover" loading="lazy" />
+                    </a>
                   )}
-                  {normalizeCategories(post.data.categories).map((chain) => (
-                    <a href={buildCategoryHref(chain)}>{chain.join(' › ')}</a>
-                  ))}
-                </p>
-              </div>
-            </li>
-          ))}
+                  {post.data.subtitle && <p class="entry-subtitle">{post.data.subtitle}</p>}
+                  <p class="entry-desc">{getPostDescription(post)}</p>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <ul class="entry-tags">
+                      {post.data.tags.map((tag) => (
+                        <li>
+                          <a href={buildTagHref(tag)}>{tag}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <hr class="entry-divider" />
+                  <p class="entry-meta">
+                    {post.data.sticky && <span class="entry-badge entry-badge-pin">PIN</span>}
+                    {!import.meta.env.PROD && post.data.draft && (
+                      <span class="entry-badge entry-badge-draft">DRAFT</span>
+                    )}
+                    <span class="meta-item">
+                      <i class="ri-calendar-2-line" aria-hidden="true"></i>
+                      <time datetime={post.data.date.toISOString()}>
+                        {formatDate(post.data.date, timezone)}
+                      </time>
+                    </span>
+                    {post.data.updated && (
+                      <span class="meta-item">
+                        <i class="ri-edit-2-line" aria-hidden="true"></i>
+                        更新 {formatDate(post.data.updated, timezone)}
+                      </span>
+                    )}
+                    <span class="meta-item">
+                      <i class="ri-pen-nib-line" aria-hidden="true"></i>
+                      {formatCharacterCount(stats.characters)}
+                    </span>
+                    <span class="meta-item">
+                      <i class="ri-time-line" aria-hidden="true"></i>
+                      {formatReadingTime(stats.minutes)}
+                    </span>
+                    {normalizeCategories(post.data.categories).map((chain) => (
+                      <a href={buildCategoryHref(chain)}>{chain.join(' › ')}</a>
+                    ))}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )
     }
