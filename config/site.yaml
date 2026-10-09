@@ -56,17 +56,17 @@ categoryMap:
 #   color : 任意。16 進カラー
 # -----------------------------------------------------------------------------
 social:
-  github:
-    url: https://github.com/your-username
-    icon: github
+  codeberg:
+    url: https://example.com/codeberg
+    icon: devicon:codeberg
     color: '#191717'
   email:
     url: mailto:you@example.com
-    icon: mail
+    icon: ri:mail-line
     color: '#55acd5'
   rss:
     url: /rss.xml
-    icon: rss
+    icon: ri:rss-line
     color: '#ff6600'
 
 # -----------------------------------------------------------------------------
