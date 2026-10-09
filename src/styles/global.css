@@ -1,30 +1,32 @@
 @import 'tailwindcss';
 @import './markdown.css';
 @import './layout.css';
+@import './theme-toggle.css';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* カラーパレットは astro-pithos (shadcn 準拠) の HSL 値を参照 */
 :root {
   color-scheme: light;
-  --hishaku-bg: #ffffff;
-  --hishaku-surface: #f3f3f3;
-  --hishaku-border: #d7d7d7;
-  --hishaku-fg: #666666;
-  --hishaku-fg-muted: #707070;
-  --hishaku-accent: #4b6887;
-  --hishaku-accent-fg: #ffffff;
+  --hishaku-bg: hsl(0 12% 99%);
+  --hishaku-surface: hsl(240 4.8% 95.9%);
+  --hishaku-border: hsl(240 5.9% 90%);
+  --hishaku-fg: hsl(0 0% 20%);
+  --hishaku-fg-muted: hsl(0 0% 35%);
+  --hishaku-accent: hsl(206 77% 62%);
+  --hishaku-accent-fg: hsl(210.7 100% 97.3%);
 }
 
 .dark {
   color-scheme: dark;
-  --hishaku-bg: #101114;
-  --hishaku-surface: #181a1f;
-  --hishaku-border: #2b2e36;
-  --hishaku-fg: #e4e4e7;
-  --hishaku-fg-muted: #a1a1aa;
-  --hishaku-accent: #818cf8;
-  --hishaku-accent-fg: #101114;
+  --hishaku-bg: hsl(216 13% 15%);
+  --hishaku-surface: hsl(216 13% 22%);
+  --hishaku-border: hsl(216 13% 25%);
+  --hishaku-fg: hsl(0 0% 95%);
+  --hishaku-fg-muted: hsl(0 0% 63%);
+  --hishaku-accent: hsl(205 77% 70%);
+  --hishaku-accent-fg: hsl(210.7 100% 97.3%);
 }
 
 @theme inline {

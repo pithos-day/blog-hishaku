@@ -1,0 +1,106 @@
+/* ==========================================================================
+   テーマ切り替えトグル (太陽 ↔ 月)
+   明: 黄色い円 + 8 方向の光条 (太陽) / 暗: 円の重ね付けで三日月を表現
+   ========================================================================== */
+
+.theme-toggle {
+  background: none;
+  border: 0;
+  padding: 0.3rem;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 9999px;
+  transition: transform 0.25s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--hishaku-accent);
+  outline-offset: 2px;
+}
+
+.toggle-indicator {
+  position: relative;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffbb52;
+  transition:
+    transform 0.4s ease,
+    background-color 0.4s ease;
+}
+
+/* 光条 (太陽の周りの点) */
+.toggle-indicator::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  box-shadow:
+    0 -19px 0 #ffbb52,
+    0 19px 0 #ffbb52,
+    19px 0 0 #ffbb52,
+    -19px 0 0 #ffbb52,
+    13px 13px 0 #ffbb52,
+    -13px -13px 0 #ffbb52,
+    13px -13px 0 #ffbb52,
+    -13px 13px 0 #ffbb52;
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+
+/* 三日月用の重ね円 (ダーク時のみ表示) */
+.toggle-indicator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #17181c;
+  transform: translate(8px, -6px);
+  opacity: 0;
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
+}
+
+/* ダーク: 小さくして三日月 + 光条を隠す */
+:root.dark .toggle-indicator {
+  transform: scale(0.85);
+}
+
+:root.dark .toggle-indicator::before {
+  opacity: 1;
+}
+
+:root.dark .toggle-indicator::after {
+  transform: scale(0);
+  opacity: 0;
+}
+
+/* テーマ切替直後の色トランジション (JS が一時的に付与) */
+html.theme-transition,
+html.theme-transition * {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle,
+  .toggle-indicator,
+  .toggle-indicator::before,
+  .toggle-indicator::after,
+  html.theme-transition,
+  html.theme-transition * {
+    transition: none;
+  }
+}

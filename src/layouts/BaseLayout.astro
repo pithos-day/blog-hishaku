@@ -34,6 +34,35 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // テーマ初期化 (FOUC 防止)。優先順位: localStorage の明示指定 > システム設定
+      (function () {
+        var storageKey = 'theme';
+        function getTheme() {
+          try {
+            var stored = window.localStorage.getItem(storageKey);
+            if (stored === 'dark' || stored === 'light') return stored;
+          } catch (e) {}
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function applyTheme(theme) {
+          var root = document.documentElement;
+          root.classList.toggle('dark', theme === 'dark');
+          root.dataset.theme = theme;
+        }
+        applyTheme(getTheme());
+        try {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+            // ユーザーが明示的に選択していない場合のみシステム設定に追従
+            try {
+              if (!window.localStorage.getItem(storageKey)) applyTheme(getTheme());
+            } catch (e) {
+              applyTheme(getTheme());
+            }
+          });
+        } catch (e) {}
+      })();
+    </script>
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {siteConfig.site.author && <meta name="author" content={siteConfig.site.author} />}
@@ -72,7 +101,16 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
       </div>
 
       <footer class="border-t border-border bg-surface">
-        <div class="flex flex-col items-center gap-3 px-4 py-6 text-sm text-fg-muted">
+        <div class="flex flex-col items-center gap-2 px-4 py-6 text-sm text-fg-muted">
+          <button
+            type="button"
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label="テーマを切り替え"
+            title="テーマを切り替え"
+          >
+            <span class="toggle-indicator" aria-hidden="true"></span>
+          </button>
           <p>
             © {copyright} {siteConfig.site.author}
           </p>
@@ -189,6 +227,21 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
           void runSearch();
         });
       }
+
+      const themeToggle = document.getElementById('theme-toggle');
+      themeToggle?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.classList.contains('dark') ? 'light' : 'dark';
+        root.classList.add('theme-transition');
+        root.classList.toggle('dark', next === 'dark');
+        root.dataset.theme = next;
+        try {
+          window.localStorage.setItem('theme', next);
+        } catch {
+          // localStorage が使えない環境ではセッション内のみ反映
+        }
+        setTimeout(() => root.classList.remove('theme-transition'), 400);
+      });
     </script>
   </body>
 </html>
