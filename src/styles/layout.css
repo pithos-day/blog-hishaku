@@ -99,6 +99,12 @@
   padding-left: 0.9em;
 }
 
+/* ツリー内で h2↔h3 / h3↔h3 / h3↔h2 の行間を揃える
+   (ネスト先の先頭 li のみ first-child: 0 が効いて間隔が詰まっていた) */
+.post-toc .module-list .module-list > li:first-child {
+  margin-top: 7px;
+}
+
 .module-list-inline {
   display: flex;
   flex-wrap: wrap;
