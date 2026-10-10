@@ -1,7 +1,7 @@
 /**
  * AI記事summary生成スクリプト
  *
- * src/content/posts/ の markdown からプレーンテキストを抽出し、
+ * src/content/blog/ の markdown からプレーンテキストを抽出し、
  * OpenAI互換LLM APIで要約を生成して .cache/summaries.json に保存する。
  *
  * 使い方:
@@ -22,7 +22,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
 
-const CONTENT_GLOB = 'src/content/posts/**/*.md';
+const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILE = '.cache/summaries-cache.json';
 const OUTPUT_FILE = '.cache/summaries.json';
 const CACHE_VERSION = '1';
@@ -134,7 +134,7 @@ async function processFile(filePath: string): Promise<PostData | null> {
     if (!frontmatter.title) return null;
 
     const slug = filePath
-      .replace(/^src\/content\/posts\//, '')
+      .replace(/^src\/content\/blog\//, '')
       .replace(/\.md$/, '')
       .toLowerCase();
 
