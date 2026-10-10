@@ -34,7 +34,6 @@ const blogCollection = defineCollection({
         .optional(),
       sticky: z.boolean().optional(),
       draft: z.boolean().optional(),
-      tocNumbering: z.boolean().default(true),
       /** 数式 (KaTeX) を使う記事では true */
       math: z.boolean().optional(),
       keywords: z.array(z.string()).optional(),
