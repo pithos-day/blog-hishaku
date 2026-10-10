@@ -517,6 +517,32 @@
   color: var(--hishaku-accent);
 }
 
+.similar-posts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.similar-posts-list li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--hishaku-border);
+}
+
+.similar-posts-list li:last-child {
+  border-bottom: none;
+}
+
+.similar-posts-list a {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--hishaku-fg);
+}
+
+.similar-posts-list a:hover {
+  color: var(--hishaku-accent);
+}
+
 /* --------------------------------------------------------------------------
    モバイル: サイドバーを上に単純積み重ね
    -------------------------------------------------------------------------- */

@@ -2,7 +2,13 @@
 import { t } from '@/i18n';
 import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
 import { siteConfig } from '@/lib/config';
+import type { SimilarPost } from '@/lib/similar-posts';
 
+interface Props {
+  similarPosts?: SimilarPost[];
+}
+
+const { similarPosts } = Astro.props;
 const calendar = await getSidebarCalendar();
 
 const socialEntries = Object.entries(siteConfig.social);
@@ -51,6 +57,23 @@ const weekdays = t('calendar.weekdays').split(',');
       </p>
     </div>
   </section>
+
+  {
+    similarPosts && similarPosts.length > 0 && (
+      <section id="similar-posts" class="sidebar-module" aria-label={t('sidebar.similarPosts')}>
+        <h2 class="module-header">{t('sidebar.similarPosts')}</h2>
+        <div class="module-body">
+          <ul class="similar-posts-list">
+            {similarPosts.map((sp) => (
+              <li>
+                <a href={`/post/${sp.slug}/`}>{sp.title}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 
   <section id="calendar" class="sidebar-module" aria-label={t('sidebar.calendar')}>
     <div class="module-body calendar-body">

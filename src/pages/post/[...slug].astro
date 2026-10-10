@@ -6,6 +6,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import { getSimilarPosts } from '@/lib/similar-posts';
 import { getPostSummary } from '@/lib/summary';
 import { buildTagHref } from '@/lib/tags';
 
@@ -26,7 +27,9 @@ interface Props {
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 const description = getPostDescription(post);
-const summary = getPostSummary(getPostSlug(post));
+const slug = getPostSlug(post);
+const summary = getPostSummary(slug);
+const similarPosts = getSimilarPosts(slug);
 
 // 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (2見出しから表示)
 const tocHeadings = siteConfig.content.enableToc
@@ -107,6 +110,7 @@ const breadcrumbJsonLd =
   type="article"
   math={post.data.math !== false}
   tocHeadings={tocHeadings}
+  similarPosts={similarPosts}
 >
   <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   {breadcrumbJsonLd && (

@@ -7,6 +7,7 @@ import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
 import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
+import type { SimilarPost } from '@/lib/similar-posts';
 import type { TocHeading } from '@/lib/toc';
 import '@/styles/global.css';
 
@@ -21,6 +22,8 @@ interface Props {
   math?: boolean;
   /** 目次パネルに表示する見出し (記事ページのみ渡す) */
   tocHeadings?: TocHeading[];
+  /** 右サイドパネルに表示する類似記事 (記事ページのみ渡す) */
+  similarPosts?: SimilarPost[];
   /** canonical / og:url に使うパス (既定: 現在の URL) */
   canonicalPath?: string;
   /** og:title の上書き (既定: ページタイトル) */
@@ -39,6 +42,7 @@ const {
   type = 'website',
   math = false,
   tocHeadings,
+  similarPosts,
   canonicalPath,
   ogTitle,
   ogDescription,
@@ -159,7 +163,7 @@ const copyrightHolder = siteConfig.site.alternate
         <main class="site-content">
           <slot />
         </main>
-        <SidebarRight />
+        <SidebarRight similarPosts={similarPosts} />
       </div>
 
       <footer>
