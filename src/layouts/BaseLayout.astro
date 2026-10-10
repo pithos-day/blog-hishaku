@@ -10,6 +10,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 interface Props {
   title?: string;
   description?: string;
+  /** 記事 frontmatter のキーワード (サイト keywords と合わせて meta keywords に出力) */
+  keywords?: string[];
   ogImage?: string;
   type?: 'website' | 'article';
   /** 数式 (KaTeX) を含む記事か。非記事ページは false (既定) */
@@ -23,6 +25,7 @@ interface Props {
 const {
   title,
   description = siteConfig.site.description ?? '',
+  keywords,
   ogImage = siteConfig.site.defaultOgImage ?? siteConfig.site.avatar,
   type = 'website',
   math = false,
@@ -37,6 +40,13 @@ const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, siteConfig.sit
 const year = new Date().getFullYear();
 const startYear = siteConfig.site.startYear;
 const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);
+// meta keywords: 記事キーワードにサイトキーワードを続けて重複除去する
+const metaKeywords = [...new Set([...(keywords ?? []), ...siteConfig.site.keywords])];
+// フッターのコピーライト表記: name@alternate (alternate がなければ name)
+const siteName = siteConfig.site.name || siteConfig.site.title;
+const copyrightHolder = siteConfig.site.alternate
+  ? `${siteName}@${siteConfig.site.alternate}`
+  : siteName;
 ---
 
 <html lang={defaultLocale}>
@@ -74,6 +84,7 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
     </script>
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {metaKeywords.length > 0 && <meta name="keywords" content={metaKeywords.join(', ')} />}
     {siteConfig.site.author && <meta name="author" content={siteConfig.site.author} />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href={siteConfig.site.avatar ?? '/favicon.svg'} />
@@ -113,7 +124,7 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
       <footer>
         <div class="flex flex-col items-center gap-2 px-4 py-6 text-sm text-fg-muted">
           <p>
-            © {copyright} {siteConfig.site.author}
+            © {copyright} {copyrightHolder}
           </p>
         </div>
       </footer>

@@ -6,7 +6,7 @@ import { siteConfig } from '@/lib/config';
 const calendar = await getSidebarCalendar();
 
 const socialEntries = Object.entries(siteConfig.social);
-const profileName = siteConfig.site.author || siteConfig.site.title;
+const profileName = siteConfig.site.name || siteConfig.site.title;
 
 const weekdays = t('calendar.weekdays').split(',');
 ---
