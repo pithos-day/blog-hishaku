@@ -124,7 +124,8 @@ export const siteYamlSchema = z.object({
   social: z.record(z.string(), socialLinkSchema).default({}),
   seo: z
     .object({
-      robots: z.string().optional(),
+      /** 空値 (null) は「未設定」として扱う */
+      robots: z.string().nullish(),
     })
     .optional(),
   content: contentSchema.optional(),
