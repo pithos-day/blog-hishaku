@@ -82,9 +82,9 @@ async function main() {
     let processed = 0;
     let skipped = 0;
 
-    for (const file of files) {
+    for (const [index, file] of files.entries()) {
       process.stdout.write(
-        `\r  Processing ${processed + 1}/${files.length}: ${path.basename(file)}...`,
+        `\r  Processing ${index + 1}/${files.length}: ${path.basename(file)}...`,
       );
 
       const compact = await processImage(file);
