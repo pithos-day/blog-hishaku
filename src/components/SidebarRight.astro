@@ -118,9 +118,9 @@ const weekdays = t('calendar.weekdays').split(',');
         <h2 class="module-header">{t('sidebar.similarPosts')}</h2>
         <div class="module-body">
           <ul class="similar-posts-list">
-            {similarPosts.map((sp) => (
+            {similarPosts.map((post) => (
               <li>
-                <a href={`/post/${sp.slug}/`}>{sp.title}</a>
+                <a href={`/post/${post.slug}/`}>{post.title}</a>
               </li>
             ))}
           </ul>
