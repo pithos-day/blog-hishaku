@@ -25,7 +25,7 @@
   text-align: center;
 }
 
-/* JS 無効時・取得失敗時のフォールバックリンク */
+/* 取得失敗時のフォールバックリンク */
 .tweet-embed-fallback {
   display: inline-block;
   max-width: 100%;
@@ -106,6 +106,7 @@ a.tweet-card:hover {
   line-height: 1.6;
   color: var(--hishaku-fg);
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .tweet-card-text a {

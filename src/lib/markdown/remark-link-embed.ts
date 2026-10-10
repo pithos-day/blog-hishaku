@@ -1,7 +1,7 @@
 /**
  * 独行リンクを埋め込みカードへ変換する remark プラグイン。
  * 段落がリンク 1 個 (テキスト = URL) のみなら検出し、
- * - ツイート → クライアント水和用プレースホルダ
+ * - ツイート → ビルド時に fxtwitter API から取得して静的カード
  * - 一般リンク → ビルド時に OG メタデータを取得して静的カード (`.cache/og-data.json` でキャッシュ)
  * に置き換える。
  */
@@ -9,10 +9,12 @@
 import type { Html, Link, Paragraph, Root } from 'mdast';
 import type { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
-import { renderLinkPreview, renderTweetEmbed } from './link-card-template';
+import { renderLinkPreview, renderTweetCard, renderTweetFallback } from './link-card-template';
 import { classifyLink, isStandaloneLinkParagraph } from './link-utils';
 import { DEFAULT_CACHE_TTL_DAYS, getSharedOGCache } from './og-cache';
 import { fetchOGData } from './og-fetcher';
+import type { TweetData } from './tweet-fetcher';
+import { fetchTweetData } from './tweet-fetcher';
 
 interface RemarkLinkEmbedOptions {
   enableLinkEmbed?: boolean;
@@ -48,14 +50,32 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
     );
   }
 
-  const cache = getSharedOGCache(previewCacheTime * 24 * 60 * 60 * 1000);
+  // OG データとツイートデータを同一ファイルに混在させるため unknown で共有する
+  const cache = getSharedOGCache<unknown>(previewCacheTime * 24 * 60 * 60 * 1000);
+
+  /** ツイート: キャッシュ優先でビルド時に取得し、失敗はフォールバックリンクにする */
+  const renderTweet = async (tweetId: string, url: string): Promise<string> => {
+    const cacheKey = `tweet:${tweetId}`;
+    const cached = cache.get(cacheKey) as TweetData | { error: unknown } | null;
+    if (cached) {
+      return 'error' in cached ? renderTweetFallback(url) : renderTweetCard(cached, url);
+    }
+
+    const tweet = await fetchTweetData(tweetId);
+    if (tweet) {
+      cache.set(cacheKey, tweet);
+      return renderTweetCard(tweet, url);
+    }
+    cache.set(cacheKey, { error: 'fetch failed' });
+    return renderTweetFallback(url);
+  };
 
   const renderEmbed = async ({ url, type, tweetId }: EmbedCandidate): Promise<string | null> => {
     if (type === 'tweet' && enableTweetEmbed && tweetId) {
-      return renderTweetEmbed(tweetId, url);
+      return renderTweet(tweetId, url);
     }
     if (type === 'general' && enableOGPreview) {
-      const cached = cache.get(url);
+      const cached = cache.get(url) as Parameters<typeof renderLinkPreview>[0] | null;
       if (cached) return renderLinkPreview(cached);
 
       const ogData = await fetchOGData(url);

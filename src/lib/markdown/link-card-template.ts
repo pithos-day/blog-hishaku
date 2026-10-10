@@ -1,10 +1,11 @@
 /**
- * 埋め込みリンクの純粋 HTML レンダラ (OG プレビュー / ツイート プレースホルダ)
+ * 埋め込みリンクの純粋 HTML レンダラ (OG プレビュー / ツイートカード)
  * 出力はそのままページに埋め込まれるため、エスケープは必ずここを通して行う。
  */
 
 import sanitizeHtml from 'sanitize-html';
 import type { OGData } from './og-fetcher';
+import type { TweetData } from './tweet-fetcher';
 
 /** ユーザー由来テキストから全 HTML タグを取り除く */
 function sanitizeText(text: string): string {
@@ -134,12 +135,104 @@ export function renderLinkPreview(ogData: OGData): string {
 </div>`;
 }
 
+/** HTML テキストノード向けのエスケープ */
+function escapeText(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+const TWEET_URL_PATTERN = /https?:\/\/[^\s<>"']+/g;
+/** URL 末尾に混入しがちな句読点を切り離す */
+const TRAILING_PUNCTUATION = /[.,;:!?)\]}、。」』）！？]+$/;
+
+/** ツイート本文: 全テキストをエスケープし、http(s) URL のみリンク化する */
+function renderTweetText(text: string): string {
+  let html = '';
+  let cursor = 0;
+
+  for (const match of text.matchAll(TWEET_URL_PATTERN)) {
+    const start = match.index;
+    const raw = match[0];
+    const trailing = raw.match(TRAILING_PUNCTUATION)?.[0] ?? '';
+    const url = raw.slice(0, raw.length - trailing.length);
+
+    html += escapeText(text.slice(cursor, start));
+    if (sanitizeUrl(url)) {
+      const safeUrl = escapeHtmlAttribute(url);
+      html += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${escapeText(url)}</a>`;
+    }
+    html += escapeText(trailing);
+    cursor = start + raw.length;
+  }
+
+  html += escapeText(text.slice(cursor));
+  return html;
+}
+
+function formatTweetDate(iso: string): string | null {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+}
+
 /**
- * ツイートのプレースホルダ (クライアント側で水和)。
- * JS 無効時は inner のリンクがそのまま残る。
+ * ツイートの静的カード (ビルド時に fxtwitter API から取得したデータを描画)。
  */
-export function renderTweetEmbed(tweetId: string, url: string): string {
+export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
+  const href = sanitizeUrlAttribute(tweet.url || sourceUrl);
+  const safeName = sanitizeText(tweet.author.name);
+  const safeHandle = sanitizeText(tweet.author.screenName ? `@${tweet.author.screenName}` : '');
+  const safeAvatar = tweet.author.avatarUrl ? sanitizeUrlAttribute(tweet.author.avatarUrl) : '';
+
+  const avatarHtml = safeAvatar
+    ? `<img src="${safeAvatar}" alt="" class="tweet-card-avatar" loading="lazy" referrerpolicy="no-referrer" />`
+    : '';
+
+  const textHtml = tweet.text
+    ? `<div class="tweet-card-text">${renderTweetText(tweet.text)}</div>`
+    : '';
+
+  const photosHtml = tweet.photos
+    .map((photo) => {
+      const safePhotoUrl = sanitizeUrlAttribute(photo.url);
+      if (!safePhotoUrl) return '';
+      const safeAlt = escapeHtmlAttribute(sanitizeText(photo.alt));
+      return `<img src="${safePhotoUrl}" alt="${safeAlt}" class="tweet-card-image" loading="lazy" referrerpolicy="no-referrer" />`;
+    })
+    .join('');
+
+  const formattedDate = tweet.createdAt ? formatTweetDate(tweet.createdAt) : null;
+  const dateHtml = formattedDate
+    ? `<time class="tweet-card-date" datetime="${escapeHtmlAttribute(tweet.createdAt as string)}">${escapeText(formattedDate)}</time>`
+    : '<span></span>';
+
+  return `<div class="tweet-embed not-prose">
+  <a class="tweet-card" href="${href}" target="_blank" rel="noopener noreferrer">
+    <div class="tweet-card-header">
+      ${avatarHtml}
+      <div class="tweet-card-author">
+        <span class="tweet-card-name">${safeName}</span>
+        <span class="tweet-card-handle">${safeHandle}</span>
+      </div>
+      <svg class="tweet-card-logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+    </div>
+    ${textHtml}
+    ${photosHtml}
+    <div class="tweet-card-footer">
+      ${dateHtml}
+      <span class="tweet-card-link">X で見る</span>
+    </div>
+  </a>
+</div>`;
+}
+
+/** ツイート取得失敗時 (削除・非公開・ネットワークエラー) のフォールバック */
+export function renderTweetFallback(url: string): string {
   const safeUrl = sanitizeUrlAttribute(url);
-  const safeTweetId = sanitizeAttribute(tweetId);
-  return `<div class="tweet-embed not-prose" data-tweet-embed data-tweet-id="${safeTweetId}" data-url="${safeUrl}"><a class="tweet-embed-fallback" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a></div>`;
+  return `<div class="tweet-embed not-prose"><a class="tweet-embed-fallback" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a></div>`;
 }

@@ -52,7 +52,8 @@ if (content.enableShokaSpoiler) remarkPlugins.push(remarkShokaSpoiler);
 if (content.enableShokaRuby) remarkPlugins.push(remarkShokaRuby);
 if (content.enableShokaEffects) remarkPlugins.push(remarkIns, remarkMark);
 // リンク埋め込み — テキスト変換系プラグインの後に走らせ、段落構造が確定してから
-// 独行リンクを検出する。一般リンクはビルド時に OG メタデータを取得する。
+// 独行リンクを検出する。一般リンクは OG メタデータを、ツイートは fxtwitter API を
+// ビルド時に取得する (syndication API は CORS でブラウザから呼べないため)。
 remarkPlugins.push([
   remarkLinkEmbed,
   {

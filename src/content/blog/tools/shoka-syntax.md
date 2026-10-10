@@ -176,8 +176,8 @@ pnpm dev
 
 https://astro.build/
 
-Twitter / X のステータス URL は、スクロール接近時にツイートカードとして描画されます
-(JS 無効時はリンクのまま)。
+Twitter / X のステータス URL は、ビルド時にツイートデータを取得して
+静的カードとして表示されます (取得できない場合はリンクのまま)。
 
 https://twitter.com/jack/status/20
 
