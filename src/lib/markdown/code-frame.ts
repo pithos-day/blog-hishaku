@@ -31,7 +31,7 @@ const ICON_BODIES = {
     '<path fill="currentColor" d="m10 15.17l9.192-9.191l1.414 1.414L10 17.999l-6.364-6.364l1.414-1.414z"/>',
 } as const;
 
-/** SVG body 文字列を hast の子要素へパース (path / circle / rect のみ対応) */
+/** SVG body 文字列を hast の子要素へパース (path / circle / rect / line / polyline / polygon に対応) */
 function parseSvgBody(body: string): ElementContent[] {
   const children: ElementContent[] = [];
   const tagRe = /<(path|circle|rect|line|polyline|polygon)\s+([^>]*?)\/>/g;
