@@ -96,22 +96,6 @@ const weekdays = t('calendar.weekdays').split(',');
     </div>
   </section>
 
-  <section id="search-module" class="sidebar-module" aria-label={t('common.search')}>
-    <h2 class="module-header">{t('common.search')}</h2>
-    <div class="module-body">
-      <form id="sidebar-search" role="search" class="sidebar-search">
-        <input
-          type="search"
-          name="q"
-          placeholder={t('search.sidebarPlaceholder')}
-          autocomplete="off"
-          aria-label={t('search.label')}
-        />
-        <button type="submit">{t('common.search')}</button>
-      </form>
-    </div>
-  </section>
-
   {
     similarPosts && similarPosts.length > 0 && (
       <section id="similar-posts" class="sidebar-module" aria-label={t('sidebar.similarPosts')}>
@@ -128,4 +112,20 @@ const weekdays = t('calendar.weekdays').split(',');
       </section>
     )
   }
+
+  <section id="search-module" class="sidebar-module" aria-label={t('common.search')}>
+    <h2 class="module-header">{t('common.search')}</h2>
+    <div class="module-body">
+      <form id="sidebar-search" role="search" class="sidebar-search">
+        <input
+          type="search"
+          name="q"
+          placeholder={t('search.sidebarPlaceholder')}
+          autocomplete="off"
+          aria-label={t('search.label')}
+        />
+        <button type="submit">{t('common.search')}</button>
+      </form>
+    </div>
+  </section>
 </aside>
