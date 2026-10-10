@@ -84,7 +84,7 @@ const breadcrumbJsonLd =
           {
             '@type': 'ListItem',
             position: 1,
-            name: t('breadcrumb.home'),
+            name: t('common.home'),
             item: new URL('/', siteConfig.site.url).href,
           },
           ...breadcrumbChain.map((name, index) => ({
@@ -125,7 +125,7 @@ const toJsonLdHtml = (value: unknown): string => JSON.stringify(value).replace(/
     </header>
 
     {summary && (
-      <aside class="post-summary not-prose" aria-label="記事要約">
+      <aside class="post-summary not-prose" aria-label={t('post.summaryAria')}>
         <p>{summary}</p>
       </aside>
     )}

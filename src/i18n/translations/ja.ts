@@ -13,10 +13,11 @@ export const uiStrings = {
   'common.close': '閉じる',
   'common.themeToggle': 'テーマを切り替え',
   'common.breadcrumb': 'パンくず',
-  'breadcrumb.home': 'ホーム',
+  'common.home': 'ホーム',
   'common.yearMonth': '{year}年{month}月',
   'common.postCount': '{count} 件',
   'common.noPosts': 'まだ記事がありません。',
+  'common.lightboxAria': '画像を拡大表示',
   'common.noCategories': 'まだカテゴリがありません。',
   'common.noTags': 'まだタグがありません。',
 
@@ -41,6 +42,7 @@ export const uiStrings = {
   'index.nextPage': '次のページ →',
 
   // ── 記事 ────────────────────────────────────────────────────
+  'post.summaryAria': '記事要約',
   'post.updated': '更新 {date}',
   'post.charCount': '{count}文字',
   'post.readingTime': '約{minutes}分',
