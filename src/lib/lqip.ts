@@ -32,7 +32,6 @@ function getLqipGradient(imagePath: string): string | undefined {
 }
 
 export function getLqipProps(imagePath: string): { style?: string } {
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return {};
   const gradient = getLqipGradient(imagePath);
   return gradient ? { style: `background-image:${gradient}` } : {};
 }
