@@ -13,6 +13,7 @@ import { parseSiteYaml } from './src/lib/config/site.ts';
 import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
 import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
+import { rehypeImagePlaceholder } from './src/lib/markdown/rehype-image-placeholder.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
 import { remarkLinkEmbed } from './src/lib/markdown/remark-link-embed.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
@@ -62,7 +63,7 @@ remarkPlugins.push([
   },
 ]);
 
-// rehype プラグイン — 見出しアンカー → 属性構文 → KaTeX
+// rehype プラグイン — 見出しアンカー → 属性構文 → 画像 figure 化 → KaTeX
 const rehypePlugins = [
   rehypeSlug,
   [
@@ -77,6 +78,8 @@ const rehypePlugins = [
   ],
 ];
 if (content.enableShokaAttrs) rehypePlugins.push(rehypeShokaAttrs);
+// 画像の figure 化 — attrs 後 (data-* 等が確定した後)、KaTeX 前
+rehypePlugins.push(rehypeImagePlaceholder);
 if (content.enableMath) rehypePlugins.push(rehypeKatex);
 
 // Shiki transformers — meta が data-title 等を付け、wrapper がそれを使って

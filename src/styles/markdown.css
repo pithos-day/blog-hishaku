@@ -659,4 +659,29 @@ kbd {
   background: #000;
 }
 
+/* --- 本文画像 (rehype-image-placeholder) ------------------------------------ */
+.prose .markdown-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5rem auto;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+.prose .markdown-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 0.5rem;
+}
+.prose .markdown-image-caption {
+  max-width: 100%;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--hishaku-fg-muted);
+  text-align: center;
+}
+
 /* --- 記事ヘッダのカテゴリ/タグ など (prose 外共通) ------------------------- */
