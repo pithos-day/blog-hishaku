@@ -1,7 +1,7 @@
 /**
  * 画像ライトボックス
  *
- * 本文の .markdown-image をクリックすると <dialog> で全画面表示する。
+ * 本文の画像 (リンク内・絵文字画像を除く) をクリックすると <dialog> で全画面表示する。
  * Esc キー / 閉じるアイコン / 画像外 (レターボックス) クリックで閉じる。
  */
 
@@ -12,9 +12,7 @@ export function initLightbox(): void {
   if (!dialog || !img) return;
 
   // 本文画像にクリックハンドラを付与
-  const images = document.querySelectorAll<HTMLImageElement>(
-    'article .markdown-image, article img[src]',
-  );
+  const images = document.querySelectorAll<HTMLImageElement>('article img[src]');
   images.forEach((image) => {
     // リンク内画像はスキップ (リンク先を開く挙動を優先)
     // 絵文字画像は拡大対象外
