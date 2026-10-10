@@ -1,7 +1,7 @@
 /** フローティングツールバー (右下): 展開切替とページ内スクロール */
 
 /** カスタムスクロールの所要時間 (ms) — ネイティブ smooth より高速 */
-const SCROLL_DURATION = 250;
+const SCROLL_DURATION = 1000;
 
 /** easeOutQuart: 初速が速く末尾で減速するイージング */
 function easeOutQuart(t: number): number {
