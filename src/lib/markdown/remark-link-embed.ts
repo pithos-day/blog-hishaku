@@ -12,7 +12,7 @@ import { visit } from 'unist-util-visit';
 import { renderLinkPreview, renderTweetCard, renderTweetFallback } from './link-card-template';
 import { classifyLink, isStandaloneLinkParagraph } from './link-utils';
 import { DEFAULT_CACHE_TTL_DAYS, getSharedOGCache, MS_PER_DAY } from './og-cache';
-import { fetchOGData } from './og-fetcher';
+import { fetchOGData, type OGData } from './og-fetcher';
 import type { TweetData } from './tweet-fetcher';
 import { fetchTweetData } from './tweet-fetcher';
 
@@ -75,7 +75,7 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
       return renderTweet(tweetId, url);
     }
     if (type === 'general' && enableOGPreview) {
-      const cached = cache.get(url) as Parameters<typeof renderLinkPreview>[0] | null;
+      const cached = cache.get(url) as OGData | null;
       if (cached) return renderLinkPreview(cached);
 
       const ogData = await fetchOGData(url);
