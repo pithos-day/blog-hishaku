@@ -55,6 +55,29 @@ export interface PreprocessOptions {
 /** ブロック入れ子の最大深度 (暴走防止) */
 const MAX_CONTAINER_DEPTH = 10;
 
+/** ブロック構文のハンドラが返す解析結果 */
+interface ParsedBlock {
+  /** 続きを読むべき行インデックス */
+  next: number;
+  /** ブロックから生成した HTML 行 */
+  output: string[];
+}
+
+/** 保留中のタブパネル 1 つ分 */
+interface PendingTab {
+  name: string;
+  lines: string[];
+}
+
+/** `:::type [no-icon]` の開始行 */
+const NOTE_OPEN_PATTERN = /^:::(\w+)(?:\s+(no-icon))?\s*$/;
+
+/** `+++style Title` の開始行 */
+const COLLAPSE_OPEN_PATTERN = /^\+\+\+(\w+)\s+(.+)$/;
+
+/** `;;;groupId TabName` の開始行 */
+const TAB_OPEN_PATTERN = /^;;;(\S+)\s+(.+)$/;
+
 /** 閉じタグに一致する間、行を消費しながら中身を収集する */
 function collectBlock(
   lines: string[],
@@ -81,44 +104,199 @@ function collectBlock(
   return { inner, next: i };
 }
 
+/** 確定済みのタブグループを HTML 行として生成する */
+function renderTabGroup(
+  groupId: string,
+  tabs: PendingTab[],
+  opts: PreprocessOptions,
+  depth: number,
+): string[] {
+  const output: string[] = [];
+  output.push('');
+  output.push(`<div class="tab-group" data-tab-group="${escapeHtml(groupId)}">`);
+  output.push('<div class="tab-headers" role="tablist">');
+  for (let t = 0; t < tabs.length; t++) {
+    const active = t === 0;
+    output.push(
+      `<button class="tab-header${active ? ' active' : ''}" role="tab" aria-selected="${active}"` +
+        ` data-tab-index="${t}" data-tab-group="${escapeHtml(groupId)}">${escapeHtml(tabs[t].name)}</button>`,
+    );
+  }
+  output.push('</div>');
+  for (let t = 0; t < tabs.length; t++) {
+    const active = t === 0;
+    output.push(
+      `<div class="tab-panel${active ? ' active' : ''}" role="tabpanel" data-tab-index="${t}">`,
+    );
+    output.push('');
+    output.push(processBlocks(tabs[t].lines.join('\n'), opts, depth + 1));
+    output.push('');
+    output.push('</div>');
+  }
+  output.push('</div>');
+  output.push('');
+  return output;
+}
+
+/** `:::type [no-icon] ... :::` を note ブロックの HTML に変換 */
+function handleNoteBlock(
+  lines: string[],
+  start: number,
+  opts: PreprocessOptions,
+  depth: number,
+): ParsedBlock | null {
+  if (opts.containers === false) return null;
+  const match = lines[start].match(NOTE_OPEN_PATTERN);
+  if (!match) return null;
+  const style = match[1];
+  const noIcon = match[2] === 'no-icon';
+  const { inner, next } = collectBlock(
+    lines,
+    start + 1,
+    (l) => NOTE_OPEN_PATTERN.test(l),
+    (l) => /^:::\s*$/.test(l),
+  );
+  const noIconClass = noIcon ? ' no-icon' : '';
+  const output: string[] = [];
+  output.push('');
+  output.push(`<div class="note-block note-${style}${noIconClass}">`);
+  if (!noIcon) {
+    output.push(noteIconSvg(style));
+  }
+  output.push('');
+  output.push(processBlocks(inner.join('\n'), opts, depth + 1));
+  output.push('');
+  output.push('</div>');
+  output.push('');
+  return { next, output };
+}
+
+/** `+++style Title ... +++` を details 要素に変換 */
+function handleCollapseBlock(
+  lines: string[],
+  start: number,
+  opts: PreprocessOptions,
+  depth: number,
+): ParsedBlock | null {
+  if (opts.containers === false) return null;
+  const match = lines[start].match(COLLAPSE_OPEN_PATTERN);
+  if (!match) return null;
+  const style = match[1];
+  const title = match[2];
+  const { inner, next } = collectBlock(
+    lines,
+    start + 1,
+    (l) => /^\+\+\+\w+\s+.+$/.test(l),
+    (l) => /^\+\+\+\s*$/.test(l),
+  );
+  const output: string[] = [];
+  output.push('');
+  output.push(`<details class="collapse-block collapse-${style}">`);
+  output.push(`<summary>${escapeHtml(title)}</summary>`);
+  output.push('<div class="collapse-content">');
+  output.push('');
+  output.push(processBlocks(inner.join('\n'), opts, depth + 1));
+  output.push('');
+  output.push('</div>');
+  output.push('</details>');
+  output.push('');
+  return { next, output };
+}
+
+/** `;;;groupId TabName ... ;;;` を解析 (グループ結合は呼び出し側の保留状態で行う) */
+function handleTabBlock(
+  lines: string[],
+  start: number,
+  opts: PreprocessOptions,
+): { next: number; id: string; name: string; inner: string[] } | null {
+  if (opts.containers === false) return null;
+  const match = lines[start].match(TAB_OPEN_PATTERN);
+  if (!match) return null;
+  const { inner, next } = collectBlock(
+    lines,
+    start + 1,
+    (l) => /^;;;\S+\s+.+$/.test(l),
+    (l) => /^;;;\s*$/.test(l),
+  );
+  return { next, id: match[1], name: match[2], inner };
+}
+
+/** `{% links %} ... {% endlinks %}` の YAML をカード一覧に変換 */
+function handleLinksTag(
+  lines: string[],
+  start: number,
+  opts: PreprocessOptions,
+): ParsedBlock | null {
+  if (opts.hexoTags === false) return null;
+  if (lines[start].trim() !== '{% links %}') return null;
+  const yamlLines: string[] = [];
+  let i = start + 1;
+  while (i < lines.length && lines[i].trim() !== '{% endlinks %}') {
+    yamlLines.push(lines[i]);
+    i++;
+  }
+  if (i < lines.length) i++;
+  const output: string[] = [];
+  try {
+    const data = parseYaml(yamlLines.join('\n')) as FriendLinkData[];
+    if (Array.isArray(data)) {
+      output.push('');
+      output.push(renderFriendLinks(data));
+      output.push('');
+    }
+  } catch {
+    output.push('<!-- links YAML の解析に失敗しました -->');
+  }
+  return { next: i, output };
+}
+
+/** `{% media audio|video %} ... {% endmedia %}` の YAML をメディアに変換 */
+function handleMediaTag(
+  lines: string[],
+  start: number,
+  opts: PreprocessOptions,
+): ParsedBlock | null {
+  if (opts.hexoTags === false) return null;
+  const match = lines[start].trim().match(/^{% media (audio|video) %}$/);
+  if (!match) return null;
+  const mediaType = match[1];
+  const yamlLines: string[] = [];
+  let i = start + 1;
+  while (i < lines.length && lines[i].trim() !== '{% endmedia %}') {
+    yamlLines.push(lines[i]);
+    i++;
+  }
+  if (i < lines.length) i++;
+  const output: string[] = [];
+  try {
+    const data = parseYaml(yamlLines.join('\n')) as MediaItem[];
+    if (Array.isArray(data)) {
+      const html = mediaType === 'audio' ? renderAudioMedia(data) : renderVideoMedia(data);
+      if (html) {
+        output.push('');
+        output.push(html);
+        output.push('');
+      }
+    }
+  } catch {
+    output.push('<!-- media YAML の解析に失敗しました -->');
+  }
+  return { next: i, output };
+}
+
 function processBlocks(text: string, opts: PreprocessOptions, depth = 0): string {
   if (depth >= MAX_CONTAINER_DEPTH) return text;
-  const containers = opts.containers !== false;
-  const hexoTags = opts.hexoTags !== false;
   const lines = text.split(/\r?\n/);
   const output: string[] = [];
   let i = 0;
 
   // 連続する同 id の ;;; ブロックを 1 グループに結合するための保留状態
   let pendingTabId: string | null = null;
-  let pendingTabs: { name: string; lines: string[] }[] = [];
+  let pendingTabs: PendingTab[] = [];
 
   const flushTabs = (): void => {
     if (pendingTabs.length === 0 || !pendingTabId) return;
-    const groupId = pendingTabId;
-    output.push('');
-    output.push(`<div class="tab-group" data-tab-group="${escapeHtml(groupId)}">`);
-    output.push('<div class="tab-headers" role="tablist">');
-    for (let t = 0; t < pendingTabs.length; t++) {
-      const active = t === 0;
-      output.push(
-        `<button class="tab-header${active ? ' active' : ''}" role="tab" aria-selected="${active}"` +
-          ` data-tab-index="${t}" data-tab-group="${escapeHtml(groupId)}">${escapeHtml(pendingTabs[t].name)}</button>`,
-      );
-    }
-    output.push('</div>');
-    for (let t = 0; t < pendingTabs.length; t++) {
-      const active = t === 0;
-      output.push(
-        `<div class="tab-panel${active ? ' active' : ''}" role="tabpanel" data-tab-index="${t}">`,
-      );
-      output.push('');
-      output.push(processBlocks(pendingTabs[t].lines.join('\n'), opts, depth + 1));
-      output.push('');
-      output.push('</div>');
-    }
-    output.push('</div>');
-    output.push('');
+    output.push(...renderTabGroup(pendingTabId, pendingTabs, opts, depth));
     pendingTabs = [];
     pendingTabId = null;
   };
@@ -159,129 +337,48 @@ function processBlocks(text: string, opts: PreprocessOptions, depth = 0): string
       continue;
     }
 
-    // :::type [no-icon] ... :::
-    const noteMatch = containers && line.match(/^:::(\w+)(?:\s+(no-icon))?\s*$/);
-    if (noteMatch) {
+    const note = handleNoteBlock(lines, i, opts, depth);
+    if (note) {
       flushTabs();
-      const style = noteMatch[1];
-      const noIcon = noteMatch[2] === 'no-icon';
-      const { inner, next } = collectBlock(
-        lines,
-        i + 1,
-        (l) => /^:::(\w+)(?:\s+(no-icon))?\s*$/.test(l),
-        (l) => /^:::\s*$/.test(l),
-      );
-      i = next;
-      const noIconClass = noIcon ? ' no-icon' : '';
-      output.push('');
-      output.push(`<div class="note-block note-${style}${noIconClass}">`);
-      if (!noIcon) {
-        output.push(noteIconSvg(style));
-      }
-      output.push('');
-      output.push(processBlocks(inner.join('\n'), opts, depth + 1));
-      output.push('');
-      output.push('</div>');
-      output.push('');
+      output.push(...note.output);
+      i = note.next;
       continue;
     }
 
-    // +++style Title ... +++
-    const collapseMatch = containers && line.match(/^\+\+\+(\w+)\s+(.+)$/);
-    if (collapseMatch) {
+    const collapse = handleCollapseBlock(lines, i, opts, depth);
+    if (collapse) {
       flushTabs();
-      const style = collapseMatch[1];
-      const title = collapseMatch[2];
-      const { inner, next } = collectBlock(
-        lines,
-        i + 1,
-        (l) => /^\+\+\+\w+\s+.+$/.test(l),
-        (l) => /^\+\+\+\s*$/.test(l),
-      );
-      i = next;
-      output.push('');
-      output.push(`<details class="collapse-block collapse-${style}">`);
-      output.push(`<summary>${escapeHtml(title)}</summary>`);
-      output.push('<div class="collapse-content">');
-      output.push('');
-      output.push(processBlocks(inner.join('\n'), opts, depth + 1));
-      output.push('');
-      output.push('</div>');
-      output.push('</details>');
-      output.push('');
+      output.push(...collapse.output);
+      i = collapse.next;
       continue;
     }
 
-    // ;;;groupId TabName ... ;;;
-    const tabMatch = containers && line.match(/^;;;(\S+)\s+(.+)$/);
-    if (tabMatch) {
-      const tabId = tabMatch[1];
-      const tabName = tabMatch[2];
-      const { inner, next } = collectBlock(
-        lines,
-        i + 1,
-        (l) => /^;;;\S+\s+.+$/.test(l),
-        (l) => /^;;;\s*$/.test(l),
-      );
-      i = next;
-      if (pendingTabId === tabId) {
-        pendingTabs.push({ name: tabName, lines: inner });
+    const tab = handleTabBlock(lines, i, opts);
+    if (tab) {
+      if (pendingTabId === tab.id) {
+        pendingTabs.push({ name: tab.name, lines: tab.inner });
       } else {
         flushTabs();
-        pendingTabId = tabId;
-        pendingTabs = [{ name: tabName, lines: inner }];
+        pendingTabId = tab.id;
+        pendingTabs = [{ name: tab.name, lines: tab.inner }];
       }
+      i = tab.next;
       continue;
     }
 
-    // {% links %} ... {% endlinks %}
-    if (hexoTags && line.trim() === '{% links %}') {
+    const links = handleLinksTag(lines, i, opts);
+    if (links) {
       flushTabs();
-      const yamlLines: string[] = [];
-      i++;
-      while (i < lines.length && lines[i].trim() !== '{% endlinks %}') {
-        yamlLines.push(lines[i]);
-        i++;
-      }
-      if (i < lines.length) i++;
-      try {
-        const data = parseYaml(yamlLines.join('\n')) as FriendLinkData[];
-        if (Array.isArray(data)) {
-          output.push('');
-          output.push(renderFriendLinks(data));
-          output.push('');
-        }
-      } catch {
-        output.push('<!-- links YAML の解析に失敗しました -->');
-      }
+      output.push(...links.output);
+      i = links.next;
       continue;
     }
 
-    // {% media audio|video %} ... {% endmedia %}
-    const mediaMatch = hexoTags && line.trim().match(/^{% media (audio|video) %}$/);
-    if (mediaMatch) {
+    const media = handleMediaTag(lines, i, opts);
+    if (media) {
       flushTabs();
-      const mediaType = mediaMatch[1];
-      const yamlLines: string[] = [];
-      i++;
-      while (i < lines.length && lines[i].trim() !== '{% endmedia %}') {
-        yamlLines.push(lines[i]);
-        i++;
-      }
-      if (i < lines.length) i++;
-      try {
-        const data = parseYaml(yamlLines.join('\n')) as MediaItem[];
-        if (Array.isArray(data)) {
-          const html = mediaType === 'audio' ? renderAudioMedia(data) : renderVideoMedia(data);
-          if (html) {
-            output.push('');
-            output.push(html);
-            output.push('');
-          }
-        }
-      } catch {
-        output.push('<!-- media YAML の解析に失敗しました -->');
-      }
+      output.push(...media.output);
+      i = media.next;
       continue;
     }
 
