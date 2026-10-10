@@ -11,18 +11,18 @@
 # サイト基本情報
 # -----------------------------------------------------------------------------
 site:
-  title: ひしゃく # ヘッダーと <title> のサイト名 (必須)
-  alternate: blog-hishaku # フッター表記「name@alternate」の後半 (省略可)
-  subtitle: つまみ食いの記録 # ヘッダーのサブタイトル (省略可)
-  name: Your Name # プロフィール名・og:site_name (省略可、なければ title)
-  description: 最小構成の Astro ブログテンプレート # meta description・RSS の説明文
+  title: ひしゃく # サイト名
+  alternate: blog-hishaku # サイト名のアルファベット表記
+  subtitle: つまみ食いの記録 # ヘッダーのサブタイトル
+  name: Your Name # プロフィール名
+  description: クラシックなデザインの Astro ブログテンプレート # meta description・RSS の説明文
   avatar: /assets/avatar.svg # プロフィール画像・favicon・OGP 画像のフォールバック
-  author: Your Name # meta author・JSON-LD の著者名 (省略可)
-  url: https://example.com # canonical / OGP / RSS の基準 URL (必須)
+  author: Your Name # meta author
+  url: https://example.com # canonical / OGP / RSS の基準 URL
   defaultOgImage: /assets/avatar.svg # カバー未指定時の既定 OGP 画像
-  startYear: 2026 # フッター©の開始年 (今年より古いときのみ「開始年–今年」表示)
+  startYear: 2026 # フッターのコピーライト表記の開始年
   timezone: Asia/Tokyo # IANA 形式。日付の表示・アーカイブ・コンテンツ日付に使用
-  keywords: # 全ページの meta keywords に追加 (記事キーワードと重複除去して結合)
+  keywords: # 全ページの meta keywords に追加
     - ブログ
     - Astro
 

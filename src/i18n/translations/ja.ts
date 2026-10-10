@@ -32,7 +32,7 @@ export const uiStrings = {
   'sidebar.tagsAria': 'タグ一覧',
   'sidebar.profile': 'プロフィール',
   'sidebar.calendar': 'カレンダー',
-  'sidebar.similarPosts': '類似記事',
+  'sidebar.similarPosts': '関連記事',
 
   // ── 記事一覧 (トップページ) ──────────────────────────────────
   'index.listAria': '記事一覧',
