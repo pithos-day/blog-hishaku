@@ -136,6 +136,27 @@ export const contentDefaults: ContentFlags = {
  * エラーにはなりません(対応するキーだけが反映されます)。
  * グループ欠損時の既定値は normalize(`site.ts`)で一括補完します。
  */
+/** umami 設定。空値 (null) は未設定とみなして既定値で補完する */
+const umamiSchema = z.object({
+  enabled: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? false),
+  id: z
+    .string()
+    .nullish()
+    .transform((v) => v ?? ''),
+  endpoint: z
+    .string()
+    .nullish()
+    .transform((v) => v ?? UMAMI_CLOUD_ORIGIN),
+});
+
+/** 解析設定 (現状 umami のみ) */
+const analyticsSchema = z.object({
+  umami: umamiSchema.optional(),
+});
+
 export const siteYamlSchema = z.object({
   site: z.object({
     title: z.string().min(1),
@@ -181,27 +202,7 @@ export const siteYamlSchema = z.object({
     })
     .optional(),
   content: contentSchema.optional(),
-  analytics: z
-    .object({
-      // 空値 (null) は未設定とみなして既定値で補完する
-      umami: z
-        .object({
-          enabled: z
-            .boolean()
-            .nullish()
-            .transform((v) => v ?? false),
-          id: z
-            .string()
-            .nullish()
-            .transform((v) => v ?? ''),
-          endpoint: z
-            .string()
-            .nullish()
-            .transform((v) => v ?? UMAMI_CLOUD_ORIGIN),
-        })
-        .optional(),
-    })
-    .optional(),
+  analytics: analyticsSchema.optional(),
 });
 
 export type SiteYaml = z.infer<typeof siteYamlSchema>;
