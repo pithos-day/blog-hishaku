@@ -6,6 +6,7 @@ import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
 import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
+import { mergeSiteKeywords } from '@/lib/seo';
 import type { SimilarPost } from '@/lib/similar-posts';
 import type { TocHeading } from '@/lib/toc';
 import '@/styles/global.css';
@@ -56,7 +57,7 @@ const year = new Date().getFullYear();
 const startYear = siteConfig.site.startYear;
 const copyright = startYear && startYear < year ? `${startYear}–${year}` : String(year);
 // meta keywords: 記事キーワードにサイトキーワードを続けて重複除去する
-const metaKeywords = [...new Set([...(keywords ?? []), ...siteConfig.site.keywords])];
+const metaKeywords = mergeSiteKeywords(keywords ?? [], siteConfig.site.keywords);
 // OGP: 指定がなければ <title> / description と同じ値を使う
 const resolvedOgTitle = ogTitle ?? pageTitle;
 const resolvedOgDescription = ogDescription ?? description;

@@ -15,6 +15,14 @@ function toSeoDate(date: Date, timezone: string): string {
   }).format(date);
 }
 
+/** 記事キーワードにサイトキーワードを続けて重複除去する (meta keywords / JSON-LD 共用) */
+export function mergeSiteKeywords(
+  keywords: readonly string[],
+  siteKeywords: readonly string[],
+): string[] {
+  return [...new Set([...keywords, ...siteKeywords])];
+}
+
 /** `<script type="application/ld+json">` に埋め込む文字列 */
 export function toJsonLdHtml(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
@@ -49,7 +57,7 @@ export function buildArticleJsonLd(
     '@type': 'BlogPosting',
     headline: post.headline,
     description: post.description,
-    keywords: [...new Set([...post.keywords, ...site.keywords])],
+    keywords: mergeSiteKeywords(post.keywords, site.keywords),
     author: {
       '@type': 'Person',
       name: site.authorName,
