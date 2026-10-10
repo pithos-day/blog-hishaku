@@ -600,8 +600,7 @@
   cursor: pointer;
   transition:
     opacity 0.25s ease,
-    transform 0.25s ease,
-    background-color 0.25s ease;
+    transform 0.25s ease;
 }
 
 .floating-btn:hover {
