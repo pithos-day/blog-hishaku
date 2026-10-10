@@ -1,12 +1,11 @@
 ---
 import { render } from 'astro:content';
+import PostMeta from '@/components/PostMeta.astro';
 import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
-import { formatDate } from '@/lib/date';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
-import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
 import { buildTagHref } from '@/lib/tags';
 
 export async function getStaticPaths() {
@@ -25,7 +24,6 @@ interface Props {
 
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
-const timezone = siteConfig.site.timezone;
 const description = getPostDescription(post);
 
 // 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (2見出しから表示)
@@ -34,7 +32,6 @@ const tocHeadings = siteConfig.content.enableToc
   : [];
 
 const categoryChains = normalizeCategories(post.data.categories);
-const stats = getTextStats(post);
 ---
 
 <BaseLayout
@@ -53,28 +50,7 @@ const stats = getTextStats(post);
     <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
       {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
       <p class="entry-posted">
-        <span class="meta-item">
-          <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
-          <time datetime={post.data.date.toISOString()}>
-            {formatDate(post.data.date, timezone)}
-          </time>
-        </span>
-        {
-          post.data.updated && (
-            <span class="meta-item">
-              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-              {t('post.updated', { date: formatDate(post.data.updated, timezone) })}
-            </span>
-          )
-        }
-        <span class="meta-item">
-          <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
-          {formatCharacterCount(stats.characters)}
-        </span>
-        <span class="meta-item">
-          <i class="fa-solid fa-clock" aria-hidden="true"></i>
-          {formatReadingTime(stats.minutes)}
-        </span>
+        <PostMeta post={post} />
         {
           categoryChains.length > 0 && (
             <span>
