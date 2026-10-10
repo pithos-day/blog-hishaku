@@ -29,6 +29,11 @@ export async function getPublishedPosts(): Promise<PostEntry[]> {
   return posts.sort(comparePosts);
 }
 
+/** 日付降順に並べ替える (sticky 順ではない。アーカイブ・カレンダー等で使う) */
+export function sortByDateDesc(posts: Iterable<PostEntry>): PostEntry[] {
+  return [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
 /** Markdown 本文から表示用のプレーンテキストを取り出す */
 export function toPlainText(markdown: string): string {
   return markdown

@@ -5,7 +5,7 @@
  */
 import { siteConfig } from './config';
 import { getYearMonth } from './date';
-import { getPostSlug, getPublishedPosts, type PostEntry } from './posts';
+import { getPostSlug, getPublishedPosts, type PostEntry, sortByDateDesc } from './posts';
 
 export interface CalendarDay {
   /** 1–31 */
@@ -67,9 +67,7 @@ export function buildMonthCalendar(
  */
 export async function getSidebarCalendar(): Promise<CalendarMonth> {
   const timezone = siteConfig.site.timezone;
-  const posts = [...(await getPublishedPosts())].sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-  );
+  const posts = sortByDateDesc(await getPublishedPosts());
 
   let year: number;
   let month: number;

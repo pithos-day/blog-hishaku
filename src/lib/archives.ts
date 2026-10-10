@@ -1,6 +1,6 @@
 import { siteConfig } from './config';
 import { getYearMonth } from './date';
-import { getPublishedPosts, type PostEntry } from './posts';
+import { getPublishedPosts, type PostEntry, sortByDateDesc } from './posts';
 
 export interface ArchiveMonth {
   year: number;
@@ -19,9 +19,7 @@ export interface ArchiveYear {
  * 戻り値は年・月とも降順。アーカイブは日付降順 (sticky 順は使わない)。
  */
 export async function getArchives(): Promise<ArchiveYear[]> {
-  const posts = [...(await getPublishedPosts())].sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-  );
+  const posts = sortByDateDesc(await getPublishedPosts());
   const timezone = siteConfig.site.timezone;
 
   const years = new Map<number, ArchiveYear>();

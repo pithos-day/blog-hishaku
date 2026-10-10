@@ -1,5 +1,5 @@
 import { siteConfig } from './config';
-import { getPublishedPosts, type PostEntry } from './posts';
+import { getPublishedPosts, type PostEntry, sortByDateDesc } from './posts';
 
 export type CategoryChain = string[];
 
@@ -42,10 +42,6 @@ export function buildCategorySlugPath(names: string[]): string {
 export function buildCategoryHref(names: string[]): string {
   const encoded = buildCategorySlugPath(names).split('/').map(encodeURIComponent).join('/');
   return `/categories/${encoded}`;
-}
-
-function sortPosts(posts: Iterable<PostEntry>): PostEntry[] {
-  return [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
 /**
@@ -96,7 +92,7 @@ export async function getCategoryTree(): Promise<{
 
   const sortRecursively = (nodes: CategoryNode[]): CategoryNode[] => {
     for (const node of nodes) {
-      node.posts = sortPosts(node.posts);
+      node.posts = sortByDateDesc(node.posts);
       node.children = sortRecursively(node.children);
     }
     return nodes.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
