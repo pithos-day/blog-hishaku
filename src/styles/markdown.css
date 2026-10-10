@@ -682,6 +682,7 @@ kbd {
   line-height: 1.4;
   color: var(--hishaku-fg-muted);
   text-align: center;
+  margin-top: 0.2em;
 }
 
 /* --- 記事ヘッダのカテゴリ/タグ など (prose 外共通) ------------------------- */
