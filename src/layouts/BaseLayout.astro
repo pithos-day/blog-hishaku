@@ -201,6 +201,15 @@ const copyrightHolder = siteConfig.site.alternate
       aria-label="画像を拡大表示"
     >
       <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+      <button
+        type="button"
+        id="lightbox-close"
+        class="lightbox-close"
+        aria-label={t('common.close')}
+        title={t('common.close')}
+      >
+        <Icon name="ri:close-line" aria-hidden="true" />
+      </button>
     </dialog>
 
     <div id="floating-group" class="floating-group" data-expanded="false">

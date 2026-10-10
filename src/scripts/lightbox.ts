@@ -2,12 +2,13 @@
  * 画像ライトボックス
  *
  * 本文の .markdown-image をクリックすると <dialog> で全画面表示する。
- * Esc キー / バックドロップクリックで閉じる。
+ * Esc キー / 閉じるアイコン / 画像外 (レターボックス) クリックで閉じる。
  */
 
 export function initLightbox(): void {
   const dialog = document.getElementById('lightbox-dialog') as HTMLDialogElement | null;
   const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const closeButton = document.getElementById('lightbox-close');
   if (!dialog || !img) return;
 
   // 本文画像にクリックハンドラを付与
@@ -36,13 +37,32 @@ export function initLightbox(): void {
     document.body.style.overflow = '';
   }
 
+  closeButton?.addEventListener('click', close);
+
   dialog.addEventListener('click', (e) => {
-    // バックドロップ (dialog 要素自体) をクリックしたら閉じる
-    if (e.target === dialog) close();
+    // ダイアログ自体 (レターボックス含む枠外) をクリックしたら閉じる
+    if (e.target === dialog) {
+      close();
+      return;
+    }
+    // object-fit: contain のレターボックス (画像実体の外側) クリックで閉じる
+    if (e.target === img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+      const rect = img.getBoundingClientRect();
+      const scale = Math.min(rect.width / img.naturalWidth, rect.height / img.naturalHeight);
+      const contentW = img.naturalWidth * scale;
+      const contentH = img.naturalHeight * scale;
+      const x = e.clientX - rect.left - (rect.width - contentW) / 2;
+      const y = e.clientY - rect.top - (rect.height - contentH) / 2;
+      if (x < 0 || y < 0 || x > contentW || y > contentH) close();
+    }
   });
 
   dialog.addEventListener('close', () => {
-    if (img) img.src = '';
-    document.body.style.overflow = '';
+    // 閉じた直後に再オープンすると、キュー済みの close イベントが
+    // 新しい画像の src を消してしまうため、開き直していない場合のみクリアする
+    if (!dialog.open) {
+      img.src = '';
+      document.body.style.overflow = '';
+    }
   });
 }

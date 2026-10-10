@@ -697,3 +697,26 @@
   object-fit: contain;
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
 }
+
+.lightbox-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.lightbox-close:hover {
+  background: rgb(0 0 0 / 0.85);
+}
+.lightbox-close svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
