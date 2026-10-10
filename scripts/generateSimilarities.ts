@@ -15,7 +15,6 @@
  */
 
 import fs from 'node:fs/promises';
-import path from 'node:path';
 import {
   type DeviceType,
   env,
@@ -24,6 +23,7 @@ import {
 } from '@huggingface/transformers';
 import { glob } from 'glob';
 import matter from 'gray-matter';
+import { writeCacheJson } from '../src/lib/cache';
 import type { SimilarPost } from '../src/lib/similar-posts';
 import type { SummaryData } from '../src/lib/summary';
 import { parseCliArgs, runMain } from './cli';
@@ -216,8 +216,7 @@ runMain(async () => {
 
   const similarities = computeSimilarities(posts, embeddings);
 
-  await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-  await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(similarities, null, 2)}\n`);
+  await writeCacheJson(OUTPUT_FILE, similarities);
 
   return {
     done: `Done! Generated similarities for ${posts.length} posts`,

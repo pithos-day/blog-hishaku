@@ -7,10 +7,10 @@
  * 使い方: pnpm tsx scripts/generateLqips.ts
  */
 
-import fs from 'node:fs/promises';
 import path from 'node:path';
 import { glob } from 'glob';
 import sharp from 'sharp';
+import { writeCacheJson } from '../src/lib/cache';
 
 import { runMain } from './cli';
 
@@ -96,9 +96,7 @@ runMain(async () => {
 
   console.log('');
 
-  const dir = path.dirname(OUTPUT_FILE);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(lqips, null, 2)}\n`);
+  await writeCacheJson(OUTPUT_FILE, lqips);
 
   return {
     done: `Done! Generated LQIP for ${processed} images`,

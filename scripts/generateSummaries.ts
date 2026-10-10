@@ -15,12 +15,12 @@
 
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
-import path from 'node:path';
 import { generateText } from '@xsai/generate-text';
 import { glob } from 'glob';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
+import { writeCacheJson } from '../src/lib/cache';
 import type { SummaryData } from '../src/lib/summary';
 import { parseCliArgs, runMain } from './cli';
 
@@ -74,8 +74,7 @@ async function loadCache(): Promise<SummariesCache | null> {
 }
 
 async function saveCache(cache: SummariesCache): Promise<void> {
-  await fs.mkdir(path.dirname(CACHE_FILE), { recursive: true });
-  await fs.writeFile(CACHE_FILE, JSON.stringify(cache, null, 2));
+  await writeCacheJson(CACHE_FILE, cache);
 }
 
 async function getPlainText(markdown: string): Promise<string> {
@@ -156,8 +155,7 @@ runMain(async () => {
     console.log(`\nLLM API が未起動です (${API_BASE_URL})。summary なしで続行します。`);
     console.log('LM Studio / Ollama 等を起動してから再実行してください。');
     // 出力ファイルを空で用意してビルドをブロックしない
-    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-    await fs.writeFile(OUTPUT_FILE, '{}\n');
+    await writeCacheJson(OUTPUT_FILE, {});
     return;
   }
   console.log('API connected!\n');
@@ -232,8 +230,7 @@ runMain(async () => {
   for (const [slug, entry] of Object.entries(newEntries)) {
     output[slug] = { title: entry.title, summary: entry.summary };
   }
-  await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-  await fs.writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2));
+  await writeCacheJson(OUTPUT_FILE, output);
 
   return {
     done: `Done! Generated summaries for ${Object.keys(newEntries).length} posts`,
