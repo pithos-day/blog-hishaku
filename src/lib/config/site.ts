@@ -83,5 +83,6 @@ export function parseSiteYaml(raw: string): SiteConfig {
     social: parsed.social,
     seo: { robots: parsed.seo?.robots ?? undefined },
     content: normalizeContent(parsed.content),
+    analytics: parsed.analytics ?? {},
   };
 }

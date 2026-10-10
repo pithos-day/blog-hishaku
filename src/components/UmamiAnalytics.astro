@@ -1,0 +1,26 @@
+---
+import { siteConfig } from '@/lib/config';
+
+const umami = siteConfig.analytics.umami;
+const enabled = umami?.enabled === true && umami.id !== '';
+// 末尾スラッシュを除去 (自己ホスト時の data-host-url と一致させる)
+const endpoint = (umami?.endpoint ?? 'https://cloud.umami.is').replace(/\/+$/, '');
+const scriptSrc = `${endpoint}/script.js`;
+const hostUrl = endpoint === 'https://cloud.umami.is' ? undefined : endpoint;
+---
+
+{
+  enabled && umami && (
+    <>
+      {import.meta.env.DEV && <script is:inline>localStorage.setItem('umami.disabled', '1');</script>}
+      <script
+        is:inline
+        defer
+        src={scriptSrc}
+        data-website-id={umami.id}
+        data-host-url={hostUrl}
+        data-astro-rerun
+      />
+    </>
+  )
+}

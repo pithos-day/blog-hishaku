@@ -43,6 +43,13 @@ export interface SiteConfig {
   social: Record<string, { url: string; icon?: string; color?: string }>;
   seo: { robots?: string };
   content: ContentFlags;
+  analytics: { umami?: UmamiConfig };
+}
+
+export interface UmamiConfig {
+  enabled: boolean;
+  id: string;
+  endpoint: string;
 }
 
 const localeSchema = z.object({
@@ -129,6 +136,27 @@ export const siteYamlSchema = z.object({
     })
     .optional(),
   content: contentSchema.optional(),
+  analytics: z
+    .object({
+      // 空値 (null) は未設定とみなして既定値で補完する
+      umami: z
+        .object({
+          enabled: z
+            .boolean()
+            .nullish()
+            .transform((v) => v ?? false),
+          id: z
+            .string()
+            .nullish()
+            .transform((v) => v ?? ''),
+          endpoint: z
+            .string()
+            .nullish()
+            .transform((v) => v ?? 'https://cloud.umami.is'),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 export type SiteYaml = z.infer<typeof siteYamlSchema>;
@@ -141,4 +169,5 @@ export const KNOWN_TOP_LEVEL_KEYS = [
   'social',
   'seo',
   'content',
+  'analytics',
 ] as const;

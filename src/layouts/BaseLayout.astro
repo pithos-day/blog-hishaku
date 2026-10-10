@@ -1,6 +1,7 @@
 ---
 import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
+import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
 import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
 import type { TocHeading } from '@/lib/toc';
@@ -123,6 +124,7 @@ const copyrightHolder = siteConfig.site.alternate
     <meta name="generator" content={Astro.generator} />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
     <script src="https://code.iconify.design/iconify-icon/3.0.3/iconify-icon.min.js" defer></script>
+    <UmamiAnalytics />
     <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
