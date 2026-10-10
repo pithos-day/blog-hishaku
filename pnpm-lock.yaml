@@ -318,9 +318,6 @@ importers:
       '@types/unist':
         specifier: ^3.0.3
         version: 3.0.3
-      '@xsai/generate-text':
-        specifier: ^0.5.1
-        version: 0.5.1
       glob:
         specifier: ^13.0.6
         version: 13.0.6
@@ -339,15 +336,9 @@ importers:
       pagefind:
         specifier: ^1.5.2
         version: 1.5.2
-      remark:
-        specifier: ^15.0.1
-        version: 15.0.1
       sharp:
         specifier: ^0.35.5
         version: 0.35.5(@types/node@24.19.1)
-      strip-markdown:
-        specifier: ^6.0.0
-        version: 6.0.0
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
@@ -1759,15 +1750,6 @@ packages:
 
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
-
-  '@xsai/generate-text@0.5.1':
-    resolution: {integrity: sha512-HUFtaa6ekB3CsOGO+7TQN+prgNCwcRQoLkUaG4fpjMwhBi+OtMSRk6Rf2Ef/L+M7OvxsK3aTS1U6ZhXCL53nIA==}
-
-  '@xsai/shared-chat@0.5.1':
-    resolution: {integrity: sha512-BUGPc9JBgY+72AklrXG/6BTd9mX1tbn/Xbmjm3a83fXAA1ooAYhevfmCO8yUudeeuhPNHNYzOGwPVc27BJgc3w==}
-
-  '@xsai/shared@0.5.1':
-    resolution: {integrity: sha512-Zj27Q46a85zTwWgLz8e+l+/Ajja70LYdLu4FHlwMTaY9OzcAAnpFTgtvpEAmqpnJjW92QmwiYOJg/mEBP3gfNA==}
 
   abbrev@5.0.0:
     resolution: {integrity: sha512-/XrFJgzQQQHpti1raDJC6m4ws6aNktmjBlhk8Fdlk7LwCEuDoieEJJY9OFHjfiFJFFRM2tK+Ky/IsfbbmlMu1w==}
@@ -3336,9 +3318,6 @@ packages:
   remark-stringify@11.0.0:
     resolution: {integrity: sha512-1OSmLd3awB/t8qdoEOMazZkNsfVTeY4fTsgzcQFdXNq8ToTN4ZGwrMnlda4K6smTFKD+GRV6O48i6Z4iKgPPpw==}
 
-  remark@15.0.1:
-    resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
-
   request-light@0.5.8:
     resolution: {integrity: sha512-3Zjgh+8b5fhRJBQZoy+zbVKpAQGLyka0MPgW3zruTF4dFFJ8Fqcfu9YsAvi/rvdcaTeWG3MkbZv4WKxAn/84Lg==}
 
@@ -3475,9 +3454,6 @@ packages:
   strip-json-comments@5.0.3:
     resolution: {integrity: sha512-1tB5mhVo7U+ETBKNf92xT4hrQa3pm0MZ0PQvuDnWgAAGHDsfp4lPSpiS6psrSiet87wyGPh9ft6wmhOMQ0hDiw==}
     engines: {node: '>=14.16'}
-
-  strip-markdown@6.0.0:
-    resolution: {integrity: sha512-mSa8FtUoX3ExJYDkjPUTC14xaBAn4Ik5GPQD45G5E2egAmeV3kHgVSTfIoSDggbF6Pk9stahVgqsLCNExv6jHw==}
 
   strnum@2.4.2:
     resolution: {integrity: sha512-rDG3Ah4TV0k1hWvLSzkZtMmLN9+eS+h3knq4MP6A42Y3Yh5qGNnOUs1jJkoSr8FG5dsL28c7KgkIBzSEykqtuw==}
@@ -5199,17 +5175,6 @@ snapshots:
       vscode-uri: 3.2.0
 
   '@vscode/l10n@0.0.18': {}
-
-  '@xsai/generate-text@0.5.1':
-    dependencies:
-      '@xsai/shared': 0.5.1
-      '@xsai/shared-chat': 0.5.1
-
-  '@xsai/shared-chat@0.5.1':
-    dependencies:
-      '@xsai/shared': 0.5.1
-
-  '@xsai/shared@0.5.1': {}
 
   abbrev@5.0.0: {}
 
@@ -7342,15 +7307,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.0
       unified: 11.0.5
 
-  remark@15.0.1:
-    dependencies:
-      '@types/mdast': 4.0.4
-      remark-parse: 11.0.0
-      remark-stringify: 11.0.0
-      unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
-
   request-light@0.5.8: {}
 
   request-light@0.7.0: {}
@@ -7547,10 +7503,6 @@ snapshots:
   strip-bom-string@1.0.0: {}
 
   strip-json-comments@5.0.3: {}
-
-  strip-markdown@6.0.0:
-    dependencies:
-      '@types/mdast': 4.0.4
 
   strnum@2.4.2:
     dependencies:

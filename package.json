@@ -17,7 +17,6 @@
     "lint-staged": "lint-staged",
     "generate:lqips": "tsx scripts/generateLqips.ts",
     "generate:similarities": "tsx scripts/generateSimilarities.ts",
-    "generate:summaries": "tsx scripts/generateSummaries.ts",
     "test": "node --experimental-strip-types --import ./test/register.mjs --test test/*.test.mjs"
   },
   "lint-staged": {
@@ -87,16 +86,13 @@
     "@types/mdast": "^4.0.4",
     "@types/sanitize-html": "^2.16.2",
     "@types/unist": "^3.0.3",
-    "@xsai/generate-text": "^0.5.1",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
     "husky": "^9.1.7",
     "knip": "^6.40.0",
     "lint-staged": "^17.6.0",
     "pagefind": "^1.5.2",
-    "remark": "^15.0.1",
     "sharp": "^0.35.5",
-    "strip-markdown": "^6.0.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3"
   }

@@ -8,7 +8,6 @@ import { siteConfig } from '@/lib/config';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, toJsonLdHtml } from '@/lib/seo';
 import { getSimilarPosts } from '@/lib/similar-posts';
-import { getPostSummary } from '@/lib/summary';
 import { buildTagHref } from '@/lib/tags';
 import { collectTocHeadings } from '@/lib/toc';
 
@@ -29,9 +28,7 @@ interface Props {
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 const description = getPostDescription(post);
-const slug = getPostSlug(post);
-const summary = getPostSummary(slug);
-const similarPosts = getSimilarPosts(slug);
+const similarPosts = getSimilarPosts(getPostSlug(post));
 
 // 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (enableToc 判定込み)
 const tocHeadings = collectTocHeadings(headings);
@@ -93,12 +90,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
     <header>
       <h1 data-pagefind-meta="title" class="entry-title-bar post-title">{post.data.title}</h1>
     </header>
-
-    {summary && (
-      <aside class="post-summary not-prose" aria-label={t('post.summaryAria')}>
-        <p>{summary}</p>
-      </aside>
-    )}
 
     <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
       {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}

@@ -42,7 +42,6 @@ export const uiStrings = {
   'index.nextPage': '次のページ →',
 
   // ── 記事 ────────────────────────────────────────────────────
-  'post.summaryAria': '記事要約',
   'post.updated': '更新 {date}',
   'post.charCount': '{count}文字',
   'post.readingTime': '約{minutes}分',
