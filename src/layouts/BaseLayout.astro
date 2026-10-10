@@ -29,8 +29,8 @@ interface Props {
   ogTitle?: string;
   /** og:description の上書き (既定: description) */
   ogDescription?: string;
-  /** ページ単位の robots ディレクティブ (例: noindex, nofollow) */
-  robots?: string;
+  /** ページ単位の robots ディレクティブ (例: noindex, nofollow) — robots.txt の policy 設定とは別物 */
+  robotsMeta?: string;
 }
 
 const {
@@ -45,7 +45,7 @@ const {
   canonicalPath,
   ogTitle,
   ogDescription,
-  robots,
+  robotsMeta,
 } = Astro.props;
 
 const hasMath = siteConfig.content.enableMath && math !== false;
@@ -136,7 +136,7 @@ const copyrightHolder = siteConfig.site.alternate
             ? [{ name: 'keywords', content: metaKeywords.join(', ') }]
             : []),
           ...(siteConfig.site.author ? [{ name: 'author', content: siteConfig.site.author }] : []),
-          ...(robots ? [{ name: 'robots', content: robots }] : []),
+          ...(robotsMeta ? [{ name: 'robots', content: robotsMeta }] : []),
         ],
         link: [
           { rel: 'icon', type: 'image/svg+xml', href: siteConfig.site.avatar ?? '/favicon.svg' },
