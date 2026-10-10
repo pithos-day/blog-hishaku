@@ -7,6 +7,7 @@ import { defineConfig } from 'astro/config';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
+import remarkDirective from 'remark-directive';
 import remarkMath from 'remark-math';
 import { t } from './src/i18n/index.ts';
 import { parseSiteYaml } from './src/lib/config/site.ts';
@@ -15,6 +16,7 @@ import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
 import { rehypeImagePlaceholder } from './src/lib/markdown/rehype-image-placeholder.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
+import { remarkEmojiImage } from './src/lib/markdown/remark-emoji-image.ts';
 import { remarkLinkEmbed } from './src/lib/markdown/remark-link-embed.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
 import { remarkShokaRuby } from './src/lib/markdown/remark-ruby.ts';
@@ -36,6 +38,9 @@ const content = siteConfig.content;
 //    変換済みなので、それらのテキスト走査プラグインの対象外になる。
 // 3. スポイザー → ルビ → 効果 の順でテキストノードを走査
 const remarkPlugins = [];
+// remarkDirective — :emoji[...] 等の textDirective をパースするため、
+// 他のプラグインより先に登録する (リパース側にも remark-preprocess.ts で入れている)。
+remarkPlugins.push(remarkDirective);
 if (content.enableShokaContainers || content.enableShokaHexoTags || content.enableShokaEffects) {
   remarkPlugins.push([
     remarkShokaPreprocess,
@@ -63,6 +68,8 @@ remarkPlugins.push([
     previewCacheTime: content.previewCacheTime,
   },
 ]);
+// インライン絵文字 :emoji[url] — 他のテキスト変換後に走らせる
+remarkPlugins.push(remarkEmojiImage);
 
 // rehype プラグイン — 見出しアンカー → 属性構文 → 画像 figure 化 → KaTeX
 const rehypePlugins = [

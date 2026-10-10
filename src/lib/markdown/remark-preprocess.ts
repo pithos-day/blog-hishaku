@@ -8,6 +8,7 @@
  * 拡張を揃えないと、再パースでパース時拡張が生成したノードが消える。
  */
 import type { Root } from 'mdast';
+import remarkDirective from 'remark-directive';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
@@ -17,6 +18,9 @@ import { type PreprocessOptions, preprocessShokaMarkdown } from './preprocessor'
 
 export function remarkShokaPreprocess(options?: PreprocessOptions) {
   const pipeline = unified().use(remarkParse).use(remarkGfm);
+  // remarkDirective をリパース側にも入れて :emoji[...] 等の textDirective が
+  // 前処理でツリーが差し替えられても消えないようにする。
+  pipeline.use(remarkDirective);
   // enableMath が false だと main パイプラインにも math が無いため、
   // 再パースでも math を有効にすると rehype-katex 未処理の code として残る。
   if (options?.math !== false) pipeline.use(remarkMath);

@@ -687,4 +687,12 @@ kbd {
   margin-top: 0.2em;
 }
 
+/* --- インライン絵文字 (:emoji[url]) ----------------------------------------- */
+.emoji-image {
+  display: inline-block;
+  height: 1.2em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 /* --- 記事ヘッダのカテゴリ/タグ など (prose 外共通) ------------------------- */

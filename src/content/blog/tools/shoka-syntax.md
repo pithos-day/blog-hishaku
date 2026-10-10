@@ -77,6 +77,7 @@ npm install astro
 - 上下付き: H~2~O、E = mc^2^
 - スポイザー: !!この文章はクリックすると表示されます!! と !!ぼかし表示!!{.blur}
 - ルビ: {漢字^かんじ} / 全体注音 {漢字^=かんじ} / 着重点 {漢字^*}
+- 絵文字: :emoji[/img/emojis/dipper.svg] (alt 属性や `render=pixelated` も可)
 
 ### 色クラス・キーボード・ラベル
 
