@@ -73,23 +73,38 @@ export function rehypeShokaAttrs() {
 
     // パス 2: li 末尾と、要素の直後に続くテキスト {...} の属性付与
     visit(tree, 'element', (node) => {
-      // li の場合は子テキストの末尾 {...} を li 自身へ移す
+      // li の場合は末尾コンテンツのテキスト {...} を li 自身へ移す
+      // (code/pre 等のインライン要素内部は対象外。loose list の <p> 末尾のみ降りる)
       if (node.tagName === 'li') {
-        for (const child of node.children) {
-          let textNode: Text | undefined;
-          if (child.type === 'text') {
-            textNode = child;
-          } else if (child.type === 'element' && child.children.length > 0) {
-            const last = child.children[child.children.length - 1];
-            if (last?.type === 'text') textNode = last as Text;
+        const { children } = node;
+        let last = children.length - 1;
+        while (last >= 0) {
+          const child = children[last];
+          if (child.type === 'text' && child.value.trim() === '') {
+            last--;
+            continue;
           }
-          if (!textNode) continue;
+          break;
+        }
 
+        let textNode: Text | undefined;
+        const child = last >= 0 ? children[last] : undefined;
+        if (child?.type === 'text') {
+          textNode = child;
+        } else if (
+          child?.type === 'element' &&
+          child.tagName === 'p' &&
+          child.children.length > 0
+        ) {
+          const lastChild = child.children[child.children.length - 1];
+          if (lastChild?.type === 'text') textNode = lastChild as Text;
+        }
+
+        if (textNode) {
           const match = textNode.value.match(/\{([^}]+)\}\s*$/);
           if (match) {
             applyAttrs(node, parseAttrs(match[1]));
             textNode.value = textNode.value.slice(0, match.index).trimEnd();
-            break;
           }
         }
         return;
