@@ -77,18 +77,18 @@ export function rehypeShokaAttrs() {
       // (code/pre 等のインライン要素内部は対象外。loose list の <p> 末尾のみ降りる)
       if (node.tagName === 'li') {
         const { children } = node;
-        let last = children.length - 1;
-        while (last >= 0) {
-          const child = children[last];
+        let lastIndex = children.length - 1;
+        while (lastIndex >= 0) {
+          const child = children[lastIndex];
           if (child.type === 'text' && child.value.trim() === '') {
-            last--;
+            lastIndex--;
             continue;
           }
           break;
         }
 
         let textNode: Text | undefined;
-        const child = last >= 0 ? children[last] : undefined;
+        const child = lastIndex >= 0 ? children[lastIndex] : undefined;
         if (child?.type === 'text') {
           textNode = child;
         } else if (
