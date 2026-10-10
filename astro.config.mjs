@@ -4,6 +4,7 @@ import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import icon from 'astro-icon';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
@@ -105,7 +106,18 @@ if (content.enhanceCodeBlock) {
 
 export default defineConfig({
   site: siteConfig.site.url,
-  integrations: [sitemap()],
+  integrations: [
+    sitemap(),
+    icon({
+      include: {
+        ri: ['*'],
+      },
+    }),
+  ],
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   markdown: {
     processor: unified({
       gfm: true,
