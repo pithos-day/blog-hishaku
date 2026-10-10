@@ -1,9 +1,9 @@
 # =============================================================================
 # blog-hishaku サイト設定
 # =============================================================================
-# このテンプレートが未対応の機能キー (weekly / bangumi / music / comment /
-# bgm / christmas / friends / moments / editor / colophon 等)が含まれていても
-# 読み込みは成功し、対応するキーだけが反映されます。
+# 検証スキーマ: src/lib/config/schema.ts
+# 対応トップレベルキー: site / i18n / categoryMap / social / seo / content / analytics
+# 未知のキーは読み込み時に無視されます (dev server ではコンソールに警告)。
 # 変更後は dev server の再起動 (または再ビルド) が必要です。
 # =============================================================================
 
@@ -11,27 +11,26 @@
 # サイト基本情報
 # -----------------------------------------------------------------------------
 site:
-  title: ひしゃく
-  alternate: blog-hishaku
-  subtitle: つまみ食いの記録
-  name: Your Name
-  description: 最小構成の Astro ブログテンプレート
-  avatar: /assets/avatar.svg
-  author: Your Name
-  url: https://example.com
-  defaultOgImage: /assets/avatar.svg
-  startYear: 2026
-  timezone: Asia/Tokyo # IANA 形式。日付の表示・月別アーカイブに使用
-  keywords:
+  title: ひしゃく # ヘッダーと <title> のサイト名 (必須)
+  alternate: blog-hishaku # フッター表記「name@alternate」の後半 (省略可)
+  subtitle: つまみ食いの記録 # ヘッダーのサブタイトル (省略可)
+  name: Your Name # プロフィール名・og:site_name (省略可、なければ title)
+  description: 最小構成の Astro ブログテンプレート # meta description・RSS の説明文
+  avatar: /assets/avatar.svg # プロフィール画像・favicon・OGP 画像のフォールバック
+  author: Your Name # meta author・JSON-LD の著者名 (省略可)
+  url: https://example.com # canonical / OGP / RSS の基準 URL (必須)
+  defaultOgImage: /assets/avatar.svg # カバー未指定時の既定 OGP 画像
+  startYear: 2026 # フッター©の開始年 (今年より古いときのみ「開始年–今年」表示)
+  timezone: Asia/Tokyo # IANA 形式。日付の表示・アーカイブ・コンテンツ日付に使用
+  keywords: # 全ページの meta keywords に追加 (記事キーワードと重複除去して結合)
     - ブログ
     - Astro
 
 # -----------------------------------------------------------------------------
 # 国際化 (i18n)
-# defaultLocale: URL プレフィックスを付けない既定言語
-# locales: 対応言語一覧 (code は BCP 47 短形式)
-# このテンプレートは日本語のみ。将来言語を足す場合は locales への追加に加え、
-# src/pages/[lang]/ に各ページのミラーを作成してください。
+#   defaultLocale: <html lang> に使われる既定言語コード
+#   locales      : 有効な言語の一覧 (code は BCP 47 短形式 / label は表示名)
+#   UI 文言の辞書は src/i18n/translations/ に置く。URL の言語プレフィックスは未実装。
 # -----------------------------------------------------------------------------
 i18n:
   defaultLocale: ja
@@ -41,7 +40,8 @@ i18n:
 
 # -----------------------------------------------------------------------------
 # カテゴリ対応表
-# 記事 frontmatter のカテゴリ表示名 → URL スラッグ
+#   記事 frontmatter のカテゴリ表示名 → URL スラッグ
+#   未登録のカテゴリは表示名がそのままスラッグになる
 # -----------------------------------------------------------------------------
 categoryMap:
   ライフ: life
@@ -50,10 +50,10 @@ categoryMap:
   フロントエンド: front-end
 
 # -----------------------------------------------------------------------------
-# SNS リンク (キー: 表示用 ID)
+# SNS リンク (右サイドバーのプロフィールに表示。キー: 表示用 ID)
 #   url   : リンク先 (mailto: や /rss.xml も可)
-#   icon  : 任意。アイコン ID (現状は未使用。将来 astro-icon 等で利用)
-#   color : 任意。16 進カラー
+#   icon  : 任意。Iconify ID (集合:アイコン名)。省略時はキー名をテキスト表示
+#   color : 任意。リンクの色 (16 進カラー)
 # -----------------------------------------------------------------------------
 social:
   codeberg:
@@ -71,19 +71,18 @@ social:
 
 # -----------------------------------------------------------------------------
 # SEO
-#   robots: astro-robots-txt の policy / host / sitemap 設定 (任意)。
-#          未設定なら全クロール許可で sitemap.xml を出力
+#   robots: astro-robots-txt へ渡す policy / host / sitemap 設定 (任意)。
+#          空 (未設定) なら全クロール許可で sitemap.xml を出力
 # -----------------------------------------------------------------------------
 seo:
   robots:
 
 # -----------------------------------------------------------------------------
 # アクセス解析 (umami)
-#   有効化手順:
-#     1. id       : umami 管理画面の Website ID
-#     2. endpoint : 自己ホスト時はサーバー URL (省略時 https://cloud.umami.is)
-#     3. enabled  : true に変更してデプロイ
-#   開発中 (dev server) は自動的に無効化されます。
+#   enabled  : true で有効化
+#   id       : umami 管理画面の Website ID
+#   endpoint : 自己ホスト時のサーバー URL (省略時 https://cloud.umami.is)
+#   dev server 上では自動的に無効化されます。
 # -----------------------------------------------------------------------------
 analytics:
   umami:
@@ -97,10 +96,10 @@ analytics:
 # -----------------------------------------------------------------------------
 content:
   addBlankTarget: true # 外部リンクを新規タブで開く
-  smoothScroll: true # スムーススクロール
-  addHeadingLevel: true # 見出しアンカー
+  smoothScroll: true # 見出しアンカーのスムーススクロール
+  addHeadingLevel: true # 見出しへ data-level (H2 等) を付与
   enableToc: true # 左サイドバーの目次パネル (記事ページのみ、h2/h3 をツリー表示)
-  enhanceCodeBlock: true # コードブロック強化
+  enhanceCodeBlock: true # コードブロックの枠化・折りたたみ等 (総スイッチ)
   enableCodeCopy: true # コードのコピーボタン
   enableCodeFullscreen: false # コード全画面ボタン
   enableShokaContainers: true # ::: 提醒ブロック ;;; タブ +++ 折りたたみ
