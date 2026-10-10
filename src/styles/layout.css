@@ -533,10 +533,15 @@
   color: var(--hishaku-accent);
 }
 
-/* 最近の記事・関連記事: 記事タイトルにアンダーライン */
-.similar-posts-list a,
-#recent-entries .module-list a {
-  text-decoration: underline;
+/* 最近の記事: 関連記事と同じくタイトルごとに区切り線 */
+#recent-entries .module-list > li {
+  margin-top: 0;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--hishaku-border);
+}
+
+#recent-entries .module-list > li:last-child {
+  border-bottom: none;
 }
 
 /* --------------------------------------------------------------------------
