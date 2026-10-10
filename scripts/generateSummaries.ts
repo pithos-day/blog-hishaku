@@ -93,7 +93,7 @@ async function getPlainText(markdown: string): Promise<string> {
     .trim();
 }
 
-async function checkApiRunning(): Promise<boolean> {
+async function isApiRunning(): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}models`);
     return response.ok;
@@ -126,7 +126,7 @@ async function generateSummary(text: string, model: string): Promise<string> {
   return summary.trim();
 }
 
-async function processFile(filePath: string): Promise<PostData | null> {
+async function readPostForSummary(filePath: string): Promise<PostData | null> {
   try {
     const content = await fs.readFile(filePath, 'utf-8');
     const { data: frontmatter, content: body } = matter(content);
@@ -159,7 +159,7 @@ async function main() {
     console.log('=== AI Summary Generator ===\n');
     console.log(`Model: ${model}`);
 
-    const apiRunning = await checkApiRunning();
+    const apiRunning = await isApiRunning();
     if (!apiRunning) {
       console.log(`\nLLM API が未起動です (${API_BASE_URL})。summary なしで続行します。`);
       console.log('LM Studio / Ollama 等を起動してから再実行してください。');
@@ -185,7 +185,7 @@ async function main() {
 
     const posts: PostData[] = [];
     for (const file of files) {
-      const post = await processFile(file);
+      const post = await readPostForSummary(file);
       if (post) posts.push(post);
     }
     if (!posts.length) {

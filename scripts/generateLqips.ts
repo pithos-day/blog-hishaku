@@ -31,7 +31,7 @@ function rgbToHex(rgb: RgbColor): string {
   return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
 }
 
-async function processImage(imagePath: string): Promise<string | null> {
+async function computeCompactLqip(imagePath: string): Promise<string | null> {
   try {
     const resized = await sharp(imagePath)
       .resize(2, 2, { fit: 'fill' })
@@ -80,20 +80,20 @@ async function main() {
 
     const lqips: LqipMap = {};
     let processed = 0;
-    let skipped = 0;
+    let failed = 0;
 
     for (const [index, file] of files.entries()) {
       process.stdout.write(
         `\r  Processing ${index + 1}/${files.length}: ${path.basename(file)}...`,
       );
 
-      const compact = await processImage(file);
+      const compact = await computeCompactLqip(file);
       if (compact !== null) {
         const key = filePathToKey(file);
         lqips[key] = compact;
         processed++;
       } else {
-        skipped++;
+        failed++;
       }
     }
 
@@ -105,8 +105,8 @@ async function main() {
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\nDone! Generated LQIP for ${processed} images in ${elapsed}s`);
-    if (skipped > 0) {
-      console.log(`  Skipped: ${skipped} images`);
+    if (failed > 0) {
+      console.log(`  Failed to generate LQIP: ${failed} images`);
     }
     console.log(`Output saved to: ${OUTPUT_FILE}`);
   } catch (error) {

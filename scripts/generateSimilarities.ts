@@ -119,7 +119,10 @@ function extractSlug(filePath: string, link?: string): string {
     .toLowerCase();
 }
 
-async function processFile(filePath: string, summaries: SummariesMap): Promise<PostData | null> {
+async function readPostForSimilarity(
+  filePath: string,
+  summaries: SummariesMap,
+): Promise<PostData | null> {
   try {
     const content = await fs.readFile(filePath, 'utf-8');
     const { data: frontmatter } = matter(content);
@@ -206,7 +209,7 @@ async function main() {
 
     const posts: PostData[] = [];
     for (const file of files) {
-      const post = await processFile(file, summaries);
+      const post = await readPostForSimilarity(file, summaries);
       if (post) posts.push(post);
     }
     if (!posts.length) {
