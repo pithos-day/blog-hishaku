@@ -12,9 +12,9 @@
 # -----------------------------------------------------------------------------
 site:
   title: ひしゃく
-  alternate: hishaku
+  alternate: blog-hishaku
   subtitle: つまみ食いの記録
-  name: hishaku
+  name: Your Name
   description: 最小構成の Astro ブログテンプレート
   avatar: /avatar.svg
   author: Your Name
@@ -73,7 +73,8 @@ social:
 # SEO
 #   robots: robots.txt に転記する追加ディレクティブ (任意)
 # -----------------------------------------------------------------------------
-seo: {}
+seo:
+  robots:
 
 # -----------------------------------------------------------------------------
 # コンテンツ (Markdown 拡張) 設定
