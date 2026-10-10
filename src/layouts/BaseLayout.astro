@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { SEO } from 'astro-seo';
+import { SEO, type TwitterCardType } from 'astro-seo';
 import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
@@ -62,12 +62,50 @@ const resolvedOgTitle = ogTitle ?? pageTitle;
 const resolvedOgDescription = ogDescription ?? description;
 const ogImageUrl = ogImage ? new URL(ogImage, siteConfig.site.url) : undefined;
 // Twitter カード: 画像があれば大画像、なければサマリー
-const twitterCard = ogImageUrl ? 'summary_large_image' : 'summary';
+const twitterCard: TwitterCardType = ogImageUrl ? 'summary_large_image' : 'summary';
 // フッターのコピーライト表記: name@alternate (alternate がなければ name)
 const siteName = siteConfig.site.name || siteConfig.site.title;
 const copyrightHolder = siteConfig.site.alternate
   ? `${siteName}@${siteConfig.site.alternate}`
   : siteName;
+
+// <SEO> へ渡す構造体 (テンプレートを平らに保つため frontmatter で組み立てる)
+const seoOpenGraph = {
+  basic: {
+    title: resolvedOgTitle,
+    type,
+    image: ogImageUrl?.href ?? '',
+    url: canonicalUrl.href,
+  },
+  optional: {
+    siteName,
+    description: resolvedOgDescription,
+  },
+};
+
+const seoTwitter = {
+  card: twitterCard,
+  title: resolvedOgTitle,
+  description: resolvedOgDescription,
+  ...(ogImageUrl && { image: ogImageUrl.href }),
+};
+
+const seoExtend = {
+  meta: [
+    ...(metaKeywords.length > 0 ? [{ name: 'keywords', content: metaKeywords.join(', ') }] : []),
+    ...(siteConfig.site.author ? [{ name: 'author', content: siteConfig.site.author }] : []),
+    ...(robotsMeta ? [{ name: 'robots', content: robotsMeta }] : []),
+  ],
+  link: [
+    { rel: 'icon', type: 'image/svg+xml', href: siteConfig.site.avatar ?? '/favicon.svg' },
+    {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title: siteConfig.site.title,
+      href: new URL('rss.xml', siteConfig.site.url).href,
+    },
+  ],
+};
 ---
 
 <html lang={defaultLocale}>
@@ -112,42 +150,9 @@ const copyrightHolder = siteConfig.site.alternate
       title={pageTitle}
       description={description}
       canonical={canonicalUrl.href}
-      openGraph={{
-        basic: {
-          title: resolvedOgTitle,
-          type,
-          image: ogImageUrl?.href ?? '',
-          url: canonicalUrl.href,
-        },
-        optional: {
-          siteName,
-          description: resolvedOgDescription,
-        },
-      }}
-      twitter={{
-        card: twitterCard,
-        title: resolvedOgTitle,
-        description: resolvedOgDescription,
-        ...(ogImageUrl && { image: ogImageUrl.href }),
-      }}
-      extend={{
-        meta: [
-          ...(metaKeywords.length > 0
-            ? [{ name: 'keywords', content: metaKeywords.join(', ') }]
-            : []),
-          ...(siteConfig.site.author ? [{ name: 'author', content: siteConfig.site.author }] : []),
-          ...(robotsMeta ? [{ name: 'robots', content: robotsMeta }] : []),
-        ],
-        link: [
-          { rel: 'icon', type: 'image/svg+xml', href: siteConfig.site.avatar ?? '/favicon.svg' },
-          {
-            rel: 'alternate',
-            type: 'application/rss+xml',
-            title: siteConfig.site.title,
-            href: new URL('rss.xml', siteConfig.site.url).href,
-          },
-        ],
-      }}
+      openGraph={seoOpenGraph}
+      twitter={seoTwitter}
+      extend={seoExtend}
     />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
     <UmamiAnalytics />
