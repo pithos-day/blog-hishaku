@@ -15,7 +15,7 @@ site:
   alternate: blog-hishaku # サイト名のアルファベット表記
   subtitle: つまみ食いの記録 # ヘッダーのサブタイトル
   name: Your Name # プロフィール名
-  description: クラシックなデザインの Astro ブログテンプレート # meta description・RSS の説明文
+  description: クラシックなデザインのAstroブログテンプレート # meta description・RSS の説明文
   avatar: /assets/avatar.svg # プロフィール画像・favicon・OGP 画像のフォールバック
   author: Your Name # meta author
   url: https://example.com # canonical / OGP / RSS の基準 URL
