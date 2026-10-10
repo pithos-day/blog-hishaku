@@ -113,6 +113,10 @@
   color: var(--hishaku-fg-muted);
 }
 
+.post-toc .module-body > .module-list > li > a:hover::before {
+  color: var(--hishaku-accent);
+}
+
 .post-toc .module-list .module-list {
   counter-reset: toc-h3;
 }
@@ -124,6 +128,10 @@
 .post-toc .module-list .module-list > li > a::before {
   content: counter(toc-h2) '.' counter(toc-h3) '. ';
   color: var(--hishaku-fg-muted);
+}
+
+.post-toc .module-list .module-list > li > a:hover::before {
+  color: var(--hishaku-accent);
 }
 
 /* ツリー内で h2↔h3 / h3↔h3 / h3↔h2 の行間を揃える
