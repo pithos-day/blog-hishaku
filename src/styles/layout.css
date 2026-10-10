@@ -99,6 +99,33 @@
   padding-left: 0.9em;
 }
 
+/* 目次: 番号付きリスト (1. / 2.1. 形式) */
+.post-toc .module-body > .module-list {
+  counter-reset: toc-h2;
+}
+
+.post-toc .module-body > .module-list > li {
+  counter-increment: toc-h2;
+}
+
+.post-toc .module-body > .module-list > li > a::before {
+  content: counter(toc-h2) '. ';
+  color: var(--hishaku-fg-muted);
+}
+
+.post-toc .module-list .module-list {
+  counter-reset: toc-h3;
+}
+
+.post-toc .module-list .module-list > li {
+  counter-increment: toc-h3;
+}
+
+.post-toc .module-list .module-list > li > a::before {
+  content: counter(toc-h2) '.' counter(toc-h3) '. ';
+  color: var(--hishaku-fg-muted);
+}
+
 /* ツリー内で h2↔h3 / h3↔h3 / h3↔h2 の行間を揃える
    (ネスト先の先頭 li のみ first-child: 0 が効いて間隔が詰まっていた) */
 .post-toc .module-list .module-list > li:first-child {
