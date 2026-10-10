@@ -1,5 +1,4 @@
 ---
-import 'iconify-icon';
 import { Icon } from 'astro-icon/components';
 import { SEO } from 'astro-seo';
 import SidebarLeft from '@/components/SidebarLeft.astro';
@@ -103,6 +102,11 @@ const copyrightHolder = siteConfig.site.alternate
           });
         } catch (e) {}
       })();
+    </script>
+    <script>
+      // iconify-icon はカスタム要素登録が目的の副作用 import。
+      // frontmatter ではビルド時 (Node) 側にしか評価されないため script で読み込む。
+      import 'iconify-icon';
     </script>
     <SEO
       title={pageTitle}
