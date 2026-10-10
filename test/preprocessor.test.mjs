@@ -57,6 +57,31 @@ test('preprocessShokaMarkdown: links の YAML が壊れていてもビルドを�
   assert.match(actual, /<!-- links YAML の解析に失敗しました -->/);
 });
 
+test('preprocessShokaMarkdown: {% media audio %} を再生カードに変換', () => {
+  const actual = p(
+    '{% media audio %}\n- name: song\n  url: https://example.com/song\n{% endmedia %}',
+  ).trim();
+  assert.match(actual, /^<div class="audio-media">/);
+  assert.match(actual, /<a href="https:\/\/example\.com\/song"[^>]*>song<\/a>/);
+});
+
+test('preprocessShokaMarkdown: {% media video %} を figure 要素に変換', () => {
+  const actual = p(
+    '{% media video %}\n- name: mv\n  url: https://example.com/v\n{% endmedia %}',
+  ).trim();
+  assert.match(actual, /^<figure class="video-media">/);
+  assert.match(actual, /<figcaption>mv<\/figcaption>/);
+  assert.match(actual, /<video controls preload="metadata" src="https:\/\/example\.com\/v">/);
+});
+
+test('preprocessShokaMarkdown: collapse 内の :::note を入れ子で変換', () => {
+  const actual = p('+++success 開く\n:::note\n内側\n:::\n+++').trim();
+  assert.match(actual, /^<details class="collapse-block collapse-success">/);
+  assert.match(actual, /<div class="collapse-content">/);
+  assert.match(actual, /<div class="note-block note-note">/);
+  assert.match(actual, /<\/div>\s*\n\s*<\/details>$/);
+});
+
 test('preprocessShokaMarkdown: コードフェンス内は変換しない', () => {
   const source = '```\n:::note\nコード内\n:::\n```';
   assert.equal(p(source), source);
