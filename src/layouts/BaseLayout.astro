@@ -195,6 +195,14 @@ const copyrightHolder = siteConfig.site.alternate
       <div id="search-results" class="max-h-[60vh] space-y-2 overflow-y-auto"></div>
     </dialog>
 
+    <dialog
+      id="lightbox-dialog"
+      class="lightbox-dialog m-auto max-h-[95vh] max-w-[95vw] border-0 bg-transparent p-0 shadow-none [&::backdrop]:bg-black/80"
+      aria-label="画像を拡大表示"
+    >
+      <img id="lightbox-img" src="" alt="" class="lightbox-img max-h-[95vh] max-w-[95vw] object-contain" />
+    </dialog>
+
     <div id="floating-group" class="floating-group" data-expanded="false">
       <div id="floating-actions" class="floating-actions">
         <button
@@ -243,6 +251,7 @@ const copyrightHolder = siteConfig.site.alternate
     <script>
       import { initEmbeds } from '@/scripts/embed';
       import { initFloatingActions } from '@/scripts/floating';
+      import { initLightbox } from '@/scripts/lightbox';
       import { initSearch } from '@/scripts/search';
       import { initThemeToggle } from '@/scripts/theme';
 
@@ -250,6 +259,7 @@ const copyrightHolder = siteConfig.site.alternate
       initThemeToggle();
       initFloatingActions();
       initEmbeds();
+      initLightbox();
     </script>
   </body>
 </html>

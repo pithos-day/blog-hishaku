@@ -672,3 +672,23 @@
     transition-delay: 0s;
   }
 }
+
+/* --------------------------------------------------------------------------
+   画像ライトボックス
+   -------------------------------------------------------------------------- */
+.lightbox-dialog {
+  border: none;
+  background: transparent;
+  outline: none;
+  overflow: visible;
+}
+
+.lightbox-dialog::backdrop {
+  background: rgb(0 0 0 / 0.8);
+}
+
+.lightbox-img {
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
+}
