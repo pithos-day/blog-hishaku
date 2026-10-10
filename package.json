@@ -16,6 +16,7 @@
     "lint:fix": "biome check --write .",
     "lint-staged": "lint-staged",
     "generate:lqips": "tsx scripts/generateLqips.ts",
+    "generate:similarities": "tsx scripts/generateSimilarities.ts",
     "generate:summaries": "tsx scripts/generateSummaries.ts",
     "test": "node --experimental-strip-types --import ./test/register.mjs --test test/*.test.mjs"
   },
@@ -77,6 +78,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@biomejs/biome": "^2.5.15",
+    "@huggingface/transformers": "^4.3.1",
     "@iconify-json/ri": "^1.2.10",
     "@tailwindcss/typography": "^0.5.20",
     "@types/hast": "^3.0.5",

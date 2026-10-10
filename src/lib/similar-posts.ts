@@ -11,7 +11,7 @@ import path from 'node:path';
 export interface SimilarPost {
   slug: string;
   title: string;
-  score: number;
+  similarity: number;
 }
 
 let similarities: Record<string, SimilarPost[]> = {};

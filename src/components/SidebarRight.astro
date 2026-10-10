@@ -58,23 +58,6 @@ const weekdays = t('calendar.weekdays').split(',');
     </div>
   </section>
 
-  {
-    similarPosts && similarPosts.length > 0 && (
-      <section id="similar-posts" class="sidebar-module" aria-label={t('sidebar.similarPosts')}>
-        <h2 class="module-header">{t('sidebar.similarPosts')}</h2>
-        <div class="module-body">
-          <ul class="similar-posts-list">
-            {similarPosts.map((sp) => (
-              <li>
-                <a href={`/post/${sp.slug}/`}>{sp.title}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    )
-  }
-
   <section id="calendar" class="sidebar-module" aria-label={t('sidebar.calendar')}>
     <div class="module-body calendar-body">
       <table class="calendar">
@@ -128,4 +111,21 @@ const weekdays = t('calendar.weekdays').split(',');
       </form>
     </div>
   </section>
+
+  {
+    similarPosts && similarPosts.length > 0 && (
+      <section id="similar-posts" class="sidebar-module" aria-label={t('sidebar.similarPosts')}>
+        <h2 class="module-header">{t('sidebar.similarPosts')}</h2>
+        <div class="module-body">
+          <ul class="similar-posts-list">
+            {similarPosts.map((sp) => (
+              <li>
+                <a href={`/post/${sp.slug}/`}>{sp.title}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 </aside>
