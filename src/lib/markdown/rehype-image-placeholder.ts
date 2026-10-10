@@ -66,8 +66,10 @@ export function rehypeImagePlaceholder() {
         loading: 'lazy',
         decoding: 'async',
         class: `${existingClass} markdown-image`.trim(),
-        ...(gradient && { style: `background-image:${gradient}` }),
       };
+      if (gradient) {
+        node.properties.style = `background-image:${gradient}`;
+      }
 
       const alt = typeof node.properties.alt === 'string' ? node.properties.alt.trim() : '';
       const caption: Element | null = alt
