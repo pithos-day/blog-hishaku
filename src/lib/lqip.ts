@@ -14,14 +14,19 @@ function imagePathToKey(imagePath: string): string {
   return imagePath.replace(/^\/img\//, '');
 }
 
+/** compact 形式: 3色×6桁 (# なし)。3点は 135deg グラデーションの 0% / 50% / 100% */
+const COMPACT_LENGTH = 18;
+const COLOR_LENGTH = 6;
+
 export function getLqipGradient(imagePath: string): string | undefined {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return undefined;
   const compact = lqips[imagePathToKey(imagePath)];
-  if (compact?.length !== 18) return undefined;
-  const c1 = `#${compact.slice(0, 6)}`;
-  const c2 = `#${compact.slice(6, 12)}`;
-  const c3 = `#${compact.slice(12, 18)}`;
-  return `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c3} 100%)`;
+  if (compact?.length !== COMPACT_LENGTH) return undefined;
+  const colorAt = (start: number) => `#${compact.slice(start, start + COLOR_LENGTH)}`;
+  const topLeft = colorAt(0);
+  const topRight = colorAt(COLOR_LENGTH);
+  const bottomRight = colorAt(COLOR_LENGTH * 2);
+  return `linear-gradient(135deg, ${topLeft} 0%, ${topRight} 50%, ${bottomRight} 100%)`;
 }
 
 export function getLqipProps(imagePath: string): { style?: string } {
