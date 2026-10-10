@@ -4,6 +4,7 @@ import PostMeta from '@/components/PostMeta.astro';
 import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
+import { getLqipProps } from '@/lib/lqip';
 import { buildPostPage, POSTS_PAGE_SIZE } from '@/lib/pagination';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 import { buildTagHref } from '@/lib/tags';
@@ -53,7 +54,13 @@ const posts = page.data;
                 </p>
                 {post.data.cover && (
                   <a href={`/post/${getPostSlug(post)}/`} tabindex={-1} aria-hidden="true">
-                    <img src={post.data.cover} alt="" class="entry-cover" loading="lazy" />
+                    <img
+                      src={post.data.cover}
+                      alt=""
+                      class="entry-cover"
+                      loading="lazy"
+                      {...getLqipProps(post.data.cover)}
+                    />
                   </a>
                 )}
                 {post.data.subtitle && <p class="entry-subtitle">{post.data.subtitle}</p>}

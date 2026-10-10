@@ -4,9 +4,32 @@
  * - alt がある場合は figcaption を生成 (JS 無効でも CSS 表示のみなので常に有効)
  * - <a> 内の画像はリンクを壊さないよう figure ラップせず属性のみ付与
  * - figure のみで構成された <p> を unwrap (不正な <p><figure> 入れ子を解消)
+ * - .cache/lqips.json があれば背景グラデーション (LQIP) を付与
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import type { Element, Root, Text } from 'hast';
 import { SKIP, visit } from 'unist-util-visit';
+
+let lqips: Record<string, string> = {};
+try {
+  lqips = JSON.parse(
+    fs.readFileSync(path.resolve(process.cwd(), '.cache/lqips.json'), 'utf-8'),
+  ) as Record<string, string>;
+} catch {
+  // .cache/lqips.json が未生成なら LQIP なしで動作
+}
+
+function getLqipGradient(imagePath: string): string | undefined {
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return undefined;
+  const key = imagePath.replace(/^\/img\//, '');
+  const compact = lqips[key];
+  if (compact?.length !== 18) return undefined;
+  const c1 = `#${compact.slice(0, 6)}`;
+  const c2 = `#${compact.slice(6, 12)}`;
+  const c3 = `#${compact.slice(12, 18)}`;
+  return `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c3} 100%)`;
+}
 
 export function rehypeImagePlaceholder() {
   return (tree: Root) => {
@@ -27,14 +50,23 @@ export function rehypeImagePlaceholder() {
           loading: 'lazy',
           decoding: 'async',
         };
+        const href = typeof parent.properties?.href === 'string' ? parent.properties.href : '';
+        const linkedGradient = getLqipGradient(href);
+        if (linkedGradient) {
+          node.properties.style = `background-image:${linkedGradient}`;
+        }
         return;
       }
+
+      const src = typeof node.properties.src === 'string' ? node.properties.src : '';
+      const gradient = getLqipGradient(src);
 
       node.properties = {
         ...node.properties,
         loading: 'lazy',
         decoding: 'async',
         class: `${existingClass} markdown-image`.trim(),
+        ...(gradient && { style: `background-image:${gradient}` }),
       };
 
       const alt = typeof node.properties.alt === 'string' ? node.properties.alt.trim() : '';
