@@ -1,0 +1,34 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { TocHeading } from '@/lib/toc';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+  };
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { frontmatter, headings } = Astro.props;
+const tocHeadings: TocHeading[] = headings
+  .filter((heading) => heading.depth === 2 || heading.depth === 3)
+  .map((heading) => ({ depth: heading.depth, slug: heading.slug, text: heading.text }));
+---
+
+<BaseLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  type="article"
+  tocHeadings={tocHeadings}
+>
+  <article data-pagefind-body>
+    <header>
+      <h1 class="entry-title-bar post-title">{frontmatter.title}</h1>
+    </header>
+
+    <div class="post-body post-body-page prose prose-zinc max-w-none dark:prose-invert">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

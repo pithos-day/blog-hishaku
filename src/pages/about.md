@@ -1,4 +1,5 @@
 ---
+layout: ../layouts/MarkdownPageLayout.astro
 title: このサイトについて
 description: サイトと作者についての紹介ページです。
 ---

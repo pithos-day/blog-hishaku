@@ -53,16 +53,6 @@ const blogCollection = defineCollection({
     }),
 });
 
-/** 固定ページ (about など)。記事一覧・アーカイブ等には表示されない */
-const pagesCollection = defineCollection({
-  loader: glob({ pattern: ['**/*.md'], base: './src/content/pages' }),
-  schema: z.object({
-    title: z.string().min(1),
-    description: z.string().optional(),
-  }),
-});
-
 export const collections = {
   blog: blogCollection,
-  pages: pagesCollection,
 };
