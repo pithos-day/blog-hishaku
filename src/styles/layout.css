@@ -233,9 +233,11 @@
   white-space: nowrap;
 }
 
-.meta-item i {
+.meta-item i,
+.meta-item svg {
   display: inline-block;
   width: 1em;
+  height: 1em;
   line-height: 1;
   font-size: 0.95em;
   text-align: center;

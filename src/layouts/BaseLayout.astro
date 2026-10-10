@@ -1,4 +1,6 @@
 ---
+import 'iconify-icon';
+import { Icon } from 'astro-icon/components';
 import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
@@ -6,7 +8,6 @@ import { defaultLocale, t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
 import type { TocHeading } from '@/lib/toc';
 import '@/styles/global.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 
 interface Props {
   title?: string;
@@ -123,7 +124,6 @@ const copyrightHolder = siteConfig.site.alternate
     {robots && <meta name="robots" content={robots} />}
     <meta name="generator" content={Astro.generator} />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
-    <script src="https://code.iconify.design/iconify-icon/3.0.3/iconify-icon.min.js" defer></script>
     <UmamiAnalytics />
     <slot name="head" />
   </head>
@@ -182,8 +182,8 @@ const copyrightHolder = siteConfig.site.alternate
           aria-label={t('common.themeToggle')}
           title={t('common.themeToggle')}
         >
-          <i data-lucide="sun" class="theme-icon theme-icon-sun" aria-hidden="true"></i>
-          <i data-lucide="moon" class="theme-icon theme-icon-moon" aria-hidden="true"></i>
+          <Icon name="ri:sun-line" class="theme-icon theme-icon-sun" aria-hidden="true" />
+          <Icon name="ri:moon-line" class="theme-icon theme-icon-moon" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -192,7 +192,7 @@ const copyrightHolder = siteConfig.site.alternate
           aria-label={t('floating.backToTop')}
           title={t('floating.backToTop')}
         >
-          <i data-lucide="arrow-up" class="fi" aria-hidden="true"></i>
+          <Icon name="ri:arrow-up-line" class="fi" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -201,7 +201,7 @@ const copyrightHolder = siteConfig.site.alternate
           aria-label={t('floating.scrollToBottom')}
           title={t('floating.scrollToBottom')}
         >
-          <i data-lucide="arrow-down" class="fi" aria-hidden="true"></i>
+          <Icon name="ri:arrow-down-line" class="fi" aria-hidden="true" />
         </button>
       </div>
       <button
@@ -213,25 +213,21 @@ const copyrightHolder = siteConfig.site.alternate
         aria-expanded="false"
         aria-controls="floating-actions"
       >
-        <i data-lucide="sparkles" class="fi fi-collapsed" aria-hidden="true"></i>
-        <i data-lucide="x" class="fi fi-expanded" aria-hidden="true"></i>
+        <Icon name="ri:sparkling-line" class="fi fi-collapsed" aria-hidden="true" />
+        <Icon name="ri:close-line" class="fi fi-expanded" aria-hidden="true" />
       </button>
     </div>
 
     <script>
-    import { ArrowDown, ArrowUp, createIcons, Moon, Sparkles, Sun, X } from 'lucide';
-    import { initEmbeds } from '@/scripts/embed';
-    import { initFloatingActions } from '@/scripts/floating';
-    import { initSearch } from '@/scripts/search';
-    import { initThemeToggle } from '@/scripts/theme';
+      import { initEmbeds } from '@/scripts/embed';
+      import { initFloatingActions } from '@/scripts/floating';
+      import { initSearch } from '@/scripts/search';
+      import { initThemeToggle } from '@/scripts/theme';
 
-    initSearch();
-    initThemeToggle();
-    initFloatingActions();
-    initEmbeds();
-
-      // Lucide アイコンの置換 (テーマトグルの太陽 / 月、フローティングツールバー)
-      createIcons({ icons: { Sun, Moon, Sparkles, X, ArrowUp, ArrowDown } });
+      initSearch();
+      initThemeToggle();
+      initFloatingActions();
+      initEmbeds();
     </script>
   </body>
 </html>
