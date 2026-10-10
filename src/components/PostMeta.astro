@@ -16,7 +16,7 @@ const stats = getTextStats(post);
 ---
 
 <span class="meta-item">
-  <Icon name="ri:calendar-line" aria-hidden="true" />
+  <Icon name="fa7-solid:calendar-days" aria-hidden="true" />
   <time datetime={post.data.date.toISOString()}>
     {formatDate(post.data.date, timezone)}
   </time>
@@ -24,16 +24,16 @@ const stats = getTextStats(post);
 {
   post.data.updated && (
     <span class="meta-item">
-      <Icon name="ri:edit-line" aria-hidden="true" />
+      <Icon name="fa7-solid:pen-to-square" aria-hidden="true" />
       {t('post.updated', { date: formatDate(post.data.updated, timezone) })}
     </span>
   )
 }
 <span class="meta-item">
-  <Icon name="ri:quill-pen-line" aria-hidden="true" />
+  <Icon name="fa7-solid:pen-nib" aria-hidden="true" />
   {formatCharacterCount(stats.characters)}
 </span>
 <span class="meta-item">
-  <Icon name="ri:time-line" aria-hidden="true" />
+  <Icon name="fa7-solid:clock" aria-hidden="true" />
   {formatReadingTime(stats.minutes)}
 </span>

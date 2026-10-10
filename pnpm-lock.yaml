@@ -221,6 +221,9 @@ importers:
       katex:
         specifier: ^0.19.0
         version: 0.19.0
+      lucide:
+        specifier: ^1.55.0
+        version: 1.55.0
       metascraper:
         specifier: ^5.58.1
         version: 5.58.1(debug@4.4.3)
@@ -294,6 +297,12 @@ importers:
       '@huggingface/transformers':
         specifier: ^4.3.1
         version: 4.3.1(@types/node@24.19.1)
+      '@iconify-json/fa7-solid':
+        specifier: ^1.2.5
+        version: 1.2.5
+      '@iconify-json/lucide':
+        specifier: ^1.2.142
+        version: 1.2.142
       '@iconify-json/ri':
         specifier: ^1.2.10
         version: 1.2.10
@@ -878,6 +887,12 @@ packages:
 
   '@huggingface/transformers@4.3.1':
     resolution: {integrity: sha512-5+voSeUCFK6PCKlY15dPhNOKq3/zOTxDN7oC+Wy9dFb1QZ0TSQomZRRy7URRK8YRuUoE9fGMQTTPC5d/pWBJhA==}
+
+  '@iconify-json/fa7-solid@1.2.5':
+    resolution: {integrity: sha512-e9EOtXuvDhiv6gBjbuW1q4bSR2tU5HmsDxqbLElQt2w2dR1Byh2mXfPLdRgEVwEr50uQV5tKxE3YAL6LTa+1fA==}
+
+  '@iconify-json/lucide@1.2.142':
+    resolution: {integrity: sha512-vEGX5X52/l77jRMcmxXk3PiEebldDUs8WFdM8X3Evq1S9p5F+o0VZhx8sqaQsmFEB9Ukp5ND5Q/0g2kQ/LF+rQ==}
 
   '@iconify-json/ri@1.2.10':
     resolution: {integrity: sha512-WWMhoncVVM+Xmu9T5fgu2lhYRrKTEWhKk3Com0KiM111EeEsRLiASjpsFKnC/SrB6covhUp95r2mH8tGxhgd5Q==}
@@ -2743,6 +2758,9 @@ packages:
     resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
     engines: {node: 20 || >=22}
 
+  lucide@1.55.0:
+    resolution: {integrity: sha512-FA0GSqTWkdwtvY4KqOFcMXvurex3exkX9FMtfSwUdo8rVsYGx56fBB3TLfc5Iroi4YtgXHUl+2EMJ/uqd30F+Q==}
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -4453,6 +4471,14 @@ snapshots:
       sharp: 0.35.5(@types/node@24.19.1)
     transitivePeerDependencies:
       - '@types/node'
+
+  '@iconify-json/fa7-solid@1.2.5':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/lucide@1.2.142':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify-json/ri@1.2.10':
     dependencies:
@@ -6287,6 +6313,8 @@ snapshots:
   lowercase-keys@2.0.0: {}
 
   lru-cache@11.5.3: {}
+
+  lucide@1.55.0: {}
 
   magic-string@0.30.21:
     dependencies:

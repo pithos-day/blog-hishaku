@@ -1,11 +1,12 @@
 /**
  * Shiki transformer: コードブロックの枠と操作ボタン生成
  *
- * <pre> を div.code-frame で包み、右上に操作ボタン (Remix Icon) を並べる。
+ * <pre> を div.code-frame で包み、右上に操作ボタン (Lucide アイコン) を並べる。
  * 8 行を超えるブロックは code-frame--foldable + code-frame--folded (初期折りたたみ)。
  * 折りたたみ・コピー・全画面の挙動はクライアント側スクリプトが担当。
  */
 import type { Element, ElementContent, Properties } from 'hast';
+import { Check, ChevronsDownUp, ChevronsUpDown, Copy, type IconNode, Maximize } from 'lucide';
 import type { ShikiTransformer } from 'shiki';
 import { t } from '../../i18n';
 
@@ -19,43 +20,18 @@ interface FrameOptions {
   fullscreen?: boolean;
 }
 
-/** Remix Icon (@iconify-json/ri) の SVG body — fill ベース */
-const ICON_BODIES = {
-  fold: '<path fill="currentColor" d="m12 4.836l-6.207 6.207l1.414 1.414L12 7.664l4.793 4.793l1.414-1.414zm0 5.65l-6.207 6.207l1.414 1.414L12 13.314l4.793 4.793l1.414-1.414z"/>',
-  unfold:
-    '<path fill="currentColor" d="m12 19.164l6.207-6.207l-1.414-1.414L12 16.336l-4.793-4.793l-1.414 1.414zm0-5.65l6.207-6.207l-1.414-1.414L12 10.686L7.207 5.893L5.793 7.307z"/>',
-  fullscreen:
-    '<path fill="currentColor" d="M8 3v2H4v4H2V3zM2 21v-6h2v4h4v2zm20 0h-6v-2h4v-4h2zm0-12h-2V5h-4V3h6z"/>',
-  copy: '<path fill="currentColor" d="M7 6V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3c0 .552-.45 1-1.007 1H4.007A1 1 0 0 1 3 21l.003-14c0-.552.45-1 1.006-1zM5.002 8L5 20h10V8zM9 6h8v10h2V4H9z"/>',
-  check:
-    '<path fill="currentColor" d="m10 15.17l9.192-9.191l1.414 1.414L10 17.999l-6.364-6.364l1.414-1.414z"/>',
-} as const;
-
-/** SVG body 文字列を hast の子要素へパース (path / circle / rect / line / polyline / polygon に対応) */
-function parseSvgBody(body: string): ElementContent[] {
-  const children: ElementContent[] = [];
-  const tagRe = /<(path|circle|rect|line|polyline|polygon)\s+([^>]*?)\/>/g;
-  const attrRe = /(\w[\w-]*)="([^"]*)"/g;
-  for (const match of body.matchAll(tagRe)) {
-    const [, tag, attrStr] = match;
-    const properties: Record<string, string | number | boolean> = {};
-    for (const attr of attrStr.matchAll(attrRe)) {
-      const [, key, value] = attr;
-      properties[key] = value;
-    }
-    children.push({ type: 'element', tagName: tag, properties, children: [] });
-  }
-  return children;
-}
-
-/** Remix Icon の SVG 要素を組み立てる (fill ベース) */
-function iconSvg(body: string, className?: string): Element {
+/** Lucide の IconNode から静的 SVG 要素を組み立てる */
+function iconSvg(icon: IconNode, className?: string): Element {
   const properties: Properties = {
     xmlns: 'http://www.w3.org/2000/svg',
     width: 16,
     height: 16,
     viewBox: '0 0 24 24',
-    fill: 'currentColor',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': 2,
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
     'aria-hidden': 'true',
   };
   if (className) properties.class = className;
@@ -64,7 +40,12 @@ function iconSvg(body: string, className?: string): Element {
     type: 'element',
     tagName: 'svg',
     properties,
-    children: parseSvgBody(body),
+    children: icon.map(([tag, attrs]) => ({
+      type: 'element',
+      tagName: tag,
+      properties: { ...attrs },
+      children: [],
+    })),
   };
 }
 
@@ -110,19 +91,19 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
           iconButton(
             'fold',
             t('code.expand'),
-            [iconSvg(ICON_BODIES.fold, 'icon-fold'), iconSvg(ICON_BODIES.unfold, 'icon-unfold')],
+            [iconSvg(ChevronsDownUp, 'icon-fold'), iconSvg(ChevronsUpDown, 'icon-unfold')],
             { 'aria-expanded': 'false' },
           ),
         );
       }
       if (options?.fullscreen) {
-        controls.push(iconButton('full', t('code.fullscreen'), [iconSvg(ICON_BODIES.fullscreen)]));
+        controls.push(iconButton('full', t('code.fullscreen'), [iconSvg(Maximize)]));
       }
       if (options?.copy) {
         controls.push(
           iconButton('copy', t('code.copy'), [
-            iconSvg(ICON_BODIES.copy, 'icon-copy'),
-            iconSvg(ICON_BODIES.check, 'icon-copied'),
+            iconSvg(Copy, 'icon-copy'),
+            iconSvg(Check, 'icon-copied'),
           ]),
         );
       }
@@ -148,7 +129,7 @@ export function codeFrameTransformer(options?: FrameOptions): ShikiTransformer {
             'aria-label': t('code.expand'),
             title: t('code.expand'),
           },
-          children: [iconSvg(ICON_BODIES.unfold)],
+          children: [iconSvg(ChevronsUpDown)],
         });
       }
 
