@@ -11,7 +11,7 @@ import type { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import { renderLinkPreview, renderTweetCard, renderTweetFallback } from './link-card-template';
 import { classifyLink, isStandaloneLinkParagraph } from './link-utils';
-import { DEFAULT_CACHE_TTL_DAYS, getSharedOGCache } from './og-cache';
+import { DEFAULT_CACHE_TTL_DAYS, getSharedOGCache, MS_PER_DAY } from './og-cache';
 import { fetchOGData } from './og-fetcher';
 import type { TweetData } from './tweet-fetcher';
 import { fetchTweetData } from './tweet-fetcher';
@@ -51,7 +51,7 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
   }
 
   // OG データとツイートデータを同一ファイルに混在させるため unknown で共有する
-  const cache = getSharedOGCache<unknown>(previewCacheTime * 24 * 60 * 60 * 1000);
+  const cache = getSharedOGCache<unknown>(previewCacheTime * MS_PER_DAY);
 
   /** ツイート: キャッシュ優先でビルド時に取得し、失敗はフォールバックリンクにする */
   const renderTweet = async (tweetId: string, url: string): Promise<string> => {
