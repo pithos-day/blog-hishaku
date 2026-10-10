@@ -283,9 +283,11 @@
   user-select: auto;
 }
 .spoiler.blur {
-  filter: blur(4px);
+  background: transparent;
+  filter: blur(3px);
 }
-.spoiler.blur.revealed {
+.spoiler:hover,
+.spoiler:focus {
   filter: none;
 }
 
