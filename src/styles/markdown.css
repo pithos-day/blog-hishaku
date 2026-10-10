@@ -264,7 +264,9 @@
   text-decoration-style: wavy;
   text-decoration-color: var(--hishaku-accent);
 }
-.prose mark {
+/* :where() で mark 自身の specificity を殺し、.rainbow / .red 等の
+   属性クラス ({.class}) が後方定義で勝てるようにする */
+.prose :where(mark) {
   background: color-mix(in srgb, #facc15 45%, transparent);
   color: inherit;
   padding: 0 0.15em;
