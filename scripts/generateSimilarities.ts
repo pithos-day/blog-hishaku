@@ -5,8 +5,7 @@
  * ローカル推論し、各記事の埋め込みベクトルからコサイン類似度上位を
  * .cache/similarities.json に保存する。@astro-pithos と同一の仕組み。
  *
- * - 埋め込み入力: タイトル + (AI要約 or frontmatter.description)
- *   AI要約が有効な場合は .cache/summaries.json を優先使用 (pnpm generate:summaries)
+ * - 埋め込み入力: タイトル + (frontmatter.description or 本文冒頭500字)
  * - モデル重みは .cache/transformers/ にキャッシュ (初回のみダウンロード)
  *
  * 使い方:
@@ -25,7 +24,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 import { writeCacheJson } from '../src/lib/cache';
 import type { SimilarPost } from '../src/lib/similar-posts';
-import type { SummaryData } from '../src/lib/summary';
+import { toPlainText } from '../src/lib/text';
 import { parseCliArgs, runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
@@ -33,9 +32,8 @@ const OUTPUT_FILE = '.cache/similarities.json';
 const TOP_N_SIMILAR = 5;
 const MODEL_NAME = 'intfloat/multilingual-e5-small';
 
-// AI要約を類似度計算の入力に使うか (.cache/summaries.json を優先)
-const USE_AI_SUMMARY = true;
-const SUMMARIES_FILE = '.cache/summaries.json';
+// frontmatter.description が無い記事の埋め込み入力に使う本文の文字数
+const BODY_SNIPPET_LENGTH = 500;
 
 // モデル重みのローカルキャッシュ
 env.cacheDir = './.cache/transformers';
@@ -47,8 +45,6 @@ interface PostData {
 }
 
 type SimilarityMap = Record<string, SimilarPost[]>;
-
-type SummariesMap = Record<string, SummaryData>;
 
 const VALID_DEVICE_TYPES: DeviceType[] = [
   'auto',
@@ -80,16 +76,6 @@ function parseArgs(argv: string[] = process.argv.slice(2)): { device: DeviceType
   return { device };
 }
 
-async function loadSummaries(): Promise<SummariesMap> {
-  if (!USE_AI_SUMMARY) return {};
-  try {
-    return JSON.parse(await fs.readFile(SUMMARIES_FILE, 'utf-8')) as SummariesMap;
-  } catch {
-    console.log(`Warning: ${SUMMARIES_FILE} が読めません (pnpm generate:summaries を先に実行)`);
-    return {};
-  }
-}
-
 /** L2 正規化 (正規化済みベクトルの内積 = コサイン類似度) */
 function normalize(vec: Float32Array): Float32Array {
   const len = Math.hypot(...vec);
@@ -111,21 +97,18 @@ function extractSlug(filePath: string, link?: string): string {
     .toLowerCase();
 }
 
-async function readPostForSimilarity(
-  filePath: string,
-  summaries: SummariesMap,
-): Promise<PostData | null> {
+async function readPostForSimilarity(filePath: string): Promise<PostData | null> {
   try {
-    const content = await fs.readFile(filePath, 'utf-8');
-    const { data: frontmatter } = matter(content);
+    const raw = await fs.readFile(filePath, 'utf-8');
+    const { data: frontmatter, content } = matter(raw);
     if (frontmatter.draft === true) return null;
     if (!frontmatter.title) return null;
     // 類似度計算から除外する記事
     if (frontmatter.excludeFromSummary === true) return null;
 
     const slug = extractSlug(filePath, frontmatter.link as string | undefined);
-    const aiSummary = summaries[slug]?.summary;
-    const description = aiSummary || (frontmatter.description as string) || '';
+    const description =
+      (frontmatter.description as string) || toPlainText(content).slice(0, BODY_SNIPPET_LENGTH);
     const text = `${frontmatter.title}. ${description}`.slice(0, 8000);
 
     return { slug, title: frontmatter.title as string, text };
@@ -177,14 +160,8 @@ runMain(async () => {
   const { device } = parseArgs();
   console.log('=== Semantic Similarity Generator ===\n');
   console.log(`Model: ${MODEL_NAME}`);
-  console.log(`Input: title + description/summary`);
-  console.log(`AI Summary: ${USE_AI_SUMMARY ? 'enabled' : 'disabled'}`);
+  console.log(`Input: title + description/body snippet`);
   console.log(`Device: ${device}\n`);
-
-  const summaries = await loadSummaries();
-  if (USE_AI_SUMMARY && Object.keys(summaries).length > 0) {
-    console.log(`Loaded ${Object.keys(summaries).length} AI summaries\n`);
-  }
 
   console.log(`Loading model: ${MODEL_NAME}...`);
   const extractor = await pipeline('feature-extraction', MODEL_NAME, { device });
@@ -199,7 +176,7 @@ runMain(async () => {
 
   const posts: PostData[] = [];
   for (const file of files) {
-    const post = await readPostForSimilarity(file, summaries);
+    const post = await readPostForSimilarity(file);
     if (post) posts.push(post);
   }
   if (!posts.length) {
