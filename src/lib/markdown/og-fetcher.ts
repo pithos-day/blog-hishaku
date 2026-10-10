@@ -43,28 +43,32 @@ export async function fetchOGData(url: string): Promise<OGData> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'ja-JP,ja;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-      },
-      signal: controller.signal,
-    });
+    let html: string;
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'ja-JP,ja;q=0.9,en;q=0.8',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+        },
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeoutId);
+      if (!response.ok) {
+        console.warn(`[Link Embed] 取得失敗 ${url}: ${response.status}`);
+        return { originUrl: url, url, error: `Failed to fetch: ${response.status}` };
+      }
 
-    if (!response.ok) {
-      console.warn(`[Link Embed] 取得失敗 ${url}: ${response.status}`);
-      return { originUrl: url, url, error: `Failed to fetch: ${response.status}` };
+      // タイムアウトは本文の読み込み完了まで有効にする
+      html = await response.text();
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    const html = await response.text();
     const metadata = await scraper({ html, url });
 
     return {
