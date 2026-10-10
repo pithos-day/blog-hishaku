@@ -63,6 +63,7 @@ function renderFallbackCard(ogData: OGData, domain: string): string {
       const lastSegment = pathSegments[pathSegments.length - 1];
       if (lastSegment && lastSegment !== 'index.html') {
         displayText = originUrl;
+        // `||` は空文字もフォールバックに回す (`??` だと空文字のまま表示される)
         subtitle = description || domain;
       }
     }
