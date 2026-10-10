@@ -206,10 +206,12 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     })
     .join('');
 
-  const formattedDate = tweet.createdAt ? formatTweetDate(tweet.createdAt) : null;
-  const dateHtml = formattedDate
-    ? `<time class="tweet-card-date" datetime="${escapeHtmlAttribute(tweet.createdAt as string)}">${escapeText(formattedDate)}</time>`
-    : '<span></span>';
+  const { createdAt } = tweet;
+  const formattedDate = createdAt ? formatTweetDate(createdAt) : null;
+  const dateHtml =
+    createdAt && formattedDate
+      ? `<time class="tweet-card-date" datetime="${escapeHtmlAttribute(createdAt)}">${escapeText(formattedDate)}</time>`
+      : '<span></span>';
 
   return `<div class="tweet-embed not-prose">
   <a class="tweet-card" href="${href}" target="_blank" rel="noopener noreferrer">
