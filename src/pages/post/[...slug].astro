@@ -100,6 +100,9 @@ const breadcrumbJsonLd =
         ],
       }
     : undefined;
+
+/** `<` をエスケープして script タグ内の JSON が早期終了するのを防ぐ */
+const toJsonLdHtml = (value: unknown): string => JSON.stringify(value).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
@@ -112,9 +115,9 @@ const breadcrumbJsonLd =
   tocHeadings={tocHeadings}
   similarPosts={similarPosts}
 >
-  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script is:inline slot="head" type="application/ld+json" set:html={toJsonLdHtml(jsonLd)} />
   {breadcrumbJsonLd && (
-    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <script is:inline slot="head" type="application/ld+json" set:html={toJsonLdHtml(breadcrumbJsonLd)} />
   )}
   <article data-pagefind-body>
     <header>
