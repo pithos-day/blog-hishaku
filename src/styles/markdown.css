@@ -54,7 +54,7 @@
 
 /* --- コードブロックの行間を詰める ------------------------------------------- */
 .prose :where(pre):not(:where([class~='not-prose'] *)) {
-  line-height: 1.4;
+  line-height: 1.7;
 }
 
 /* --- ::: 注意ブロック (note) ----------------------------------------------- */
@@ -657,9 +657,6 @@ kbd {
 }
 
 /* 行ハイライト・プロンプト (enableCodeMeta) */
-.astro-code .line {
-  display: block;
-}
 .astro-code .code-line--marked {
   background: color-mix(in srgb, #f59e0b 14%, transparent);
   display: inline-block;
