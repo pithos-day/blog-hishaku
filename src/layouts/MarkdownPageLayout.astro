@@ -1,4 +1,5 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { collectTocHeadings } from '@/lib/toc';
 
@@ -7,7 +8,7 @@ interface Props {
     title: string;
     description?: string;
   };
-  headings: { depth: number; slug: string; text: string }[];
+  headings: MarkdownHeading[];
 }
 
 const { frontmatter, headings } = Astro.props;
