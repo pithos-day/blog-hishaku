@@ -4,22 +4,13 @@
  */
 
 import sanitizeHtml from 'sanitize-html';
+import { escapeHtml } from './escape';
 import type { OGData } from './og-fetcher';
 import type { TweetData } from './tweet-fetcher';
 
 /** ユーザー由来テキストから全 HTML タグを取り除く */
 function sanitizeText(text: string): string {
   return sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} });
-}
-
-/** HTML 属性へ埋め込む値をエスケープする */
-function escapeHtmlAttribute(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
 }
 
 function sanitizeAttribute(value: string): string {
@@ -38,7 +29,7 @@ function sanitizeUrl(url: string): string {
 }
 
 function sanitizeUrlAttribute(url: string): string {
-  return escapeHtmlAttribute(sanitizeUrl(url));
+  return escapeHtml(sanitizeUrl(url));
 }
 
 function getDomain(url: string): string {
@@ -158,7 +149,7 @@ function renderTweetText(text: string): string {
 
     html += escapeText(text.slice(cursor, start));
     if (sanitizeUrl(url)) {
-      const safeUrl = escapeHtmlAttribute(url);
+      const safeUrl = escapeHtml(url);
       html += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${escapeText(url)}</a>`;
     }
     html += escapeText(trailing);
@@ -202,7 +193,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     .map((photo) => {
       const safePhotoUrl = sanitizeUrlAttribute(photo.url);
       if (!safePhotoUrl) return '';
-      const safeAlt = escapeHtmlAttribute(sanitizeText(photo.alt));
+      const safeAlt = escapeHtml(sanitizeText(photo.alt));
       return `<img src="${safePhotoUrl}" alt="${safeAlt}" class="tweet-card-image" loading="lazy" referrerpolicy="no-referrer" />`;
     })
     .join('');
@@ -211,7 +202,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
   const formattedDate = createdAt ? formatTweetDate(createdAt) : null;
   const dateHtml =
     createdAt && formattedDate
-      ? `<time class="tweet-card-date" datetime="${escapeHtmlAttribute(createdAt)}">${escapeText(formattedDate)}</time>`
+      ? `<time class="tweet-card-date" datetime="${escapeHtml(createdAt)}">${escapeText(formattedDate)}</time>`
       : '<span></span>';
 
   return `<div class="tweet-embed not-prose">

@@ -7,21 +7,13 @@
  */
 import type { Html, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
+import { escapeHtml } from './escape';
 
 interface EmojiDirectiveNode {
   type: string;
   name: string;
   attributes?: Record<string, string | null | undefined>;
   children?: Array<{ type: string; value?: string }>;
-}
-
-function escapeAttribute(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
 }
 
 export function remarkEmojiImage() {
@@ -41,9 +33,9 @@ export function remarkEmojiImage() {
       const alt = directive.attributes?.alt;
       const render = directive.attributes?.render;
 
-      let content = `<img class="emoji-image" src="${escapeAttribute(src)}" `;
-      if (alt) content += `alt="${escapeAttribute(alt)}" `;
-      if (render) content += `style="image-rendering: ${escapeAttribute(render)}" `;
+      let content = `<img class="emoji-image" src="${escapeHtml(src)}" `;
+      if (alt) content += `alt="${escapeHtml(alt)}" `;
+      if (render) content += `style="image-rendering: ${escapeHtml(render)}" `;
       content += '>';
 
       parent.children[index] = { type: 'html', value: content } as Html;
