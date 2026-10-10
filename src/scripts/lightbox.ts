@@ -16,7 +16,8 @@ export function initLightbox(): void {
   );
   images.forEach((image) => {
     // リンク内画像はスキップ (リンク先を開く挙動を優先)
-    if (image.closest('a')) return;
+    // 絵文字画像は拡大対象外
+    if (image.closest('a') || image.classList.contains('emoji-image')) return;
 
     image.style.cursor = 'zoom-in';
     image.addEventListener('click', () => {

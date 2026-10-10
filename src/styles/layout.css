@@ -681,6 +681,8 @@
   background: transparent;
   outline: none;
   overflow: visible;
+  width: 95vw;
+  height: 95vh;
 }
 
 .lightbox-dialog::backdrop {
@@ -689,6 +691,9 @@
 
 .lightbox-img {
   display: block;
+  width: 100%;
+  height: 100%;
   border-radius: 4px;
+  object-fit: contain;
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
 }
