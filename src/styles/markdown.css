@@ -495,7 +495,7 @@
   color: var(--color-grey);
 }
 .rainbow {
-  background: linear-gradient(
+  --_rainbow-gradient: linear-gradient(
     90deg,
     var(--color-red),
     var(--color-orange),
@@ -505,11 +505,22 @@
     var(--color-purple),
     var(--color-pink-text)
   );
+  background: var(--_rainbow-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: rainbow-shift 3s linear infinite;
+}
+/* mark に重なった場合は黄色背景を残しつつ、文字のみグラデーションで塗る
+   (上段レイヤ = グラデを text クリップ、下段レイヤ = mark の黄色を通常クリップ) */
+.prose mark.rainbow {
+  background: var(--_rainbow-gradient), color-mix(in srgb, #facc15 45%, transparent);
+  background-size:
+    200% 100%,
+    auto;
+  background-clip: text, border-box;
+  -webkit-background-clip: text, border-box;
 }
 @keyframes rainbow-shift {
   0% {
