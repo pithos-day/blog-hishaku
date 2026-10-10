@@ -24,6 +24,39 @@
   content: '#';
 }
 
+/* --- 見出しの余白をデフォルトより詰める ------------------------------------- */
+.prose :where(h2):not(:where([class~='not-prose'] *)) {
+  margin-top: 1.75em;
+  margin-bottom: 0.6em;
+}
+.prose :where(h3):not(:where([class~='not-prose'] *)) {
+  margin-top: 1.4em;
+  margin-bottom: 0.4em;
+}
+.prose :where(h4):not(:where([class~='not-prose'] *)) {
+  margin-top: 1.2em;
+  margin-bottom: 0.3em;
+}
+
+/* --- 箇条書きの行間を詰める ------------------------------------------------ */
+.prose :where(ul, ol):not(:where([class~='not-prose'] *)):where(:not([class~='not-prose'] *)) {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
+.prose :where(li):not(:where([class~='not-prose'] *)) {
+  margin-top: 0.15em;
+  margin-bottom: 0.15em;
+}
+.prose :where(li > p):not(:where([class~='not-prose'] *)) {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* --- コードブロックの行間を詰める ------------------------------------------- */
+.prose :where(pre):not(:where([class~='not-prose'] *)) {
+  line-height: 1.55;
+}
+
 /* --- ::: 注意ブロック (note) ----------------------------------------------- */
 .note-block {
   position: relative;
