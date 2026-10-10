@@ -219,14 +219,16 @@ const copyrightHolder = siteConfig.site.alternate
     </div>
 
     <script>
-      import { ArrowDown, ArrowUp, createIcons, Moon, Sparkles, Sun, X } from 'lucide';
-      import { initFloatingActions } from '@/scripts/floating';
-      import { initSearch } from '@/scripts/search';
-      import { initThemeToggle } from '@/scripts/theme';
+    import { ArrowDown, ArrowUp, createIcons, Moon, Sparkles, Sun, X } from 'lucide';
+    import { initEmbeds } from '@/scripts/embed';
+    import { initFloatingActions } from '@/scripts/floating';
+    import { initSearch } from '@/scripts/search';
+    import { initThemeToggle } from '@/scripts/theme';
 
-      initSearch();
-      initThemeToggle();
-      initFloatingActions();
+    initSearch();
+    initThemeToggle();
+    initFloatingActions();
+    initEmbeds();
 
       // Lucide アイコンの置換 (テーマトグルの太陽 / 月、フローティングツールバー)
       createIcons({ icons: { Sun, Moon, Sparkles, X, ArrowUp, ArrowDown } });
