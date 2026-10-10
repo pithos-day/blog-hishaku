@@ -10,9 +10,9 @@ export function tagToSlug(tag: string): string {
   return normalizeTag(tag);
 }
 
-/** タグ名 → リンク先 ("/tags/astro"・日本語タグはそのまま) */
+/** タグ名 → リンク先 ("/tags/astro/"・日本語タグはそのまま) */
 export function buildTagHref(tag: string): string {
-  return `/tags/${encodeURIComponent(tagToSlug(tag))}`;
+  return `/tags/${encodeURIComponent(tagToSlug(tag))}/`;
 }
 
 export interface TagInfo {

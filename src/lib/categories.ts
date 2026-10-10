@@ -38,10 +38,10 @@ export function buildCategorySlugPath(names: string[]): string {
   return names.map(resolveSegment).join('/');
 }
 
-/** 表示名の並び → リンク先 ("/categories/note/front-end") */
+/** 表示名の並び → リンク先 ("/categories/note/front-end/") */
 export function buildCategoryHref(names: string[]): string {
   const encoded = buildCategorySlugPath(names).split('/').map(encodeURIComponent).join('/');
-  return `/categories/${encoded}`;
+  return `/categories/${encoded}/`;
 }
 
 /**

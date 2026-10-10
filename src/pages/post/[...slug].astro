@@ -88,7 +88,7 @@ const categoryChains = normalizeCategories(post.data.categories);
       <nav class="post-nav" aria-label={t('post.contextNavAria')}>
         {
           prev ? (
-            <a href={`/post/${getPostSlug(prev)}`} class="post-nav-link">
+            <a href={`/post/${getPostSlug(prev)}/`} class="post-nav-link">
               « {prev.data.title}
             </a>
           ) : (
@@ -97,7 +97,7 @@ const categoryChains = normalizeCategories(post.data.categories);
         }
         {
           next ? (
-            <a href={`/post/${getPostSlug(next)}`} class="post-nav-link post-nav-next">
+            <a href={`/post/${getPostSlug(next)}/`} class="post-nav-link post-nav-next">
               {next.data.title} »
             </a>
           ) : (

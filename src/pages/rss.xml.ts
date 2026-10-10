@@ -14,7 +14,7 @@ export async function GET(context: APIContext): Promise<Response> {
       title: post.data.title,
       pubDate: post.data.date,
       description: getPostDescription(post),
-      link: `/post/${getPostSlug(post)}`,
+      link: `/post/${getPostSlug(post)}/`,
       categories: post.data.tags,
     })),
   });

@@ -1,8 +1,9 @@
 /**
  * トップページ (記事一覧) のページネーション
  *
- * 1 ページ目は `/`・`/posts/`・`/posts/1` の 3 URL で表示し、
- * 2 ページ目以降は `/posts/{N}` を使う (従来の `/2` 形式は廃止)。
+ * 1 ページ目は `/`・`/posts/`・`/posts/1/` の 3 URL で表示し、
+ * 2 ページ目以降は `/posts/{N}/` を使う (従来の `/2` 形式は廃止)。
+ * 末尾スラッシュは canonical / sitemap の表記に合わせている。
  */
 import type { Page } from 'astro';
 import type { PostEntry } from './posts';
@@ -25,7 +26,7 @@ export function buildPostPage(
   } else if (currentPage === 2) {
     prev = '/';
   } else {
-    prev = `/posts/${currentPage - 1}`;
+    prev = `/posts/${currentPage - 1}/`;
   }
 
   return {
@@ -37,11 +38,11 @@ export function buildPostPage(
     size: pageSize,
     lastPage,
     url: {
-      current: currentPage === 1 ? '/' : `/posts/${currentPage}`,
+      current: currentPage === 1 ? '/' : `/posts/${currentPage}/`,
       prev,
-      next: currentPage < lastPage ? `/posts/${currentPage + 1}` : undefined,
+      next: currentPage < lastPage ? `/posts/${currentPage + 1}/` : undefined,
       first: currentPage === 1 ? undefined : '/',
-      last: currentPage === lastPage ? undefined : `/posts/${lastPage}`,
+      last: currentPage === lastPage ? undefined : `/posts/${lastPage}/`,
     },
   };
 }

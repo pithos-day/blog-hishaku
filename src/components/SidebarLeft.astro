@@ -18,7 +18,7 @@ const backnumbers = archiveYears
   .flatMap((year) =>
     year.months.map((month) => ({
       label: t('common.yearMonth', { year: year.year, month: month.month }),
-      href: `/archives#month-${month.year}-${String(month.month).padStart(2, '0')}`,
+      href: `/archives/#month-${month.year}-${String(month.month).padStart(2, '0')}`,
     })),
   )
   .slice(0, BACKNUMBER_LIMIT);
@@ -45,7 +45,7 @@ const tocTree =
           <ul class="module-list">
             {recentPosts.map((post) => (
               <li>
-                <a href={`/post/${getPostSlug(post)}`} title={post.data.title}>
+                <a href={`/post/${getPostSlug(post)}/`} title={post.data.title}>
                   {post.data.title}
                 </a>
               </li>

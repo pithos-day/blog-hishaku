@@ -20,7 +20,7 @@ const timezone = siteConfig.site.timezone;
       day: '2-digit',
     })}
   </time>
-  <a href={`/post/${getPostSlug(post)}`} class="hover:text-accent">{post.data.title}</a>
+  <a href={`/post/${getPostSlug(post)}/`} class="hover:text-accent">{post.data.title}</a>
   {!import.meta.env.PROD && post.data.draft && (
     <span class="shrink-0 rounded border border-border px-1 py-px text-xs text-fg-muted">
       {t('post.badgeDraft')}

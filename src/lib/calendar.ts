@@ -84,5 +84,5 @@ export async function getSidebarCalendar(): Promise<CalendarMonth> {
 /** カレンダーのセル用: その日の最新記事スラッグ (無い日は null) */
 export function getDayLink(day: CalendarDay | null): string | null {
   if (!day || day.posts.length === 0) return null;
-  return `/post/${getPostSlug(day.posts[0])}`;
+  return `/post/${getPostSlug(day.posts[0])}/`;
 }
