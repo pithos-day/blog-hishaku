@@ -107,15 +107,7 @@ if (content.enhanceCodeBlock) {
 
 export default defineConfig({
   site: siteConfig.site.url,
-  integrations: [
-    sitemap(),
-    icon({
-      include: {
-        ri: ['*'],
-      },
-    }),
-    robotsTxt(siteConfig.seo?.robots ?? {}),
-  ],
+  integrations: [sitemap(), icon(), robotsTxt(siteConfig.seo?.robots ?? {})],
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',

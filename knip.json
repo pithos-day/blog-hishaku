@@ -18,7 +18,6 @@
     "@biomejs/biome",
     "@iconify-json/fa7-solid",
     "@iconify-json/lucide",
-    "@iconify-json/ri",
     "@tailwindcss/typography",
     "husky",
     "katex",
