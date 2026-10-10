@@ -21,6 +21,14 @@ export interface ContentFlags {
   enableShokaHexoTags: boolean;
   enableMath: boolean;
   enableCodeMeta: boolean;
+  /** 独行リンクを埋め込みカードに変換する (総スイッチ) */
+  enableLinkEmbed: boolean;
+  /** 独行の Twitter/X リンクをツイート埋め込みにする */
+  enableTweetEmbed: boolean;
+  /** 独行の一般リンクに OG プレビューカードを表示 (ビルド時にメタデータ取得) */
+  enableOGPreview: boolean;
+  /** OG プレビューデータのキャッシュ日数 */
+  previewCacheTime: number;
 }
 
 export interface SiteConfig {
@@ -80,6 +88,10 @@ const contentSchema = z.object({
   enableShokaHexoTags: z.boolean().optional(),
   enableMath: z.boolean().optional(),
   enableCodeMeta: z.boolean().optional(),
+  enableLinkEmbed: z.boolean().optional(),
+  enableTweetEmbed: z.boolean().optional(),
+  enableOGPreview: z.boolean().optional(),
+  previewCacheTime: z.number().min(0).optional(),
 });
 
 export const contentDefaults: ContentFlags = {
@@ -98,6 +110,10 @@ export const contentDefaults: ContentFlags = {
   enableShokaHexoTags: true,
   enableMath: true,
   enableCodeMeta: true,
+  enableLinkEmbed: true,
+  enableTweetEmbed: true,
+  enableOGPreview: true,
+  previewCacheTime: 30,
 };
 
 /**

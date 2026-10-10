@@ -92,7 +92,7 @@ analytics:
 
 # -----------------------------------------------------------------------------
 # コンテンツ (Markdown 拡張) 設定
-# Phase 2 の Shoka 系構文のオンオフ。未実装のキーは無視されます。
+# 構文・埋め込み等のオンオフ。未実装のキーは無視されます。
 # -----------------------------------------------------------------------------
 content:
   addBlankTarget: true # 外部リンクを新規タブで開く
@@ -110,3 +110,9 @@ content:
   enableShokaHexoTags: true # {% links %} {% media %} Hexo タグ
   enableMath: true # $数式$ KaTeX
   enableCodeMeta: true # コードブロックメタ (title, mark)
+  # リンク埋め込み (独行リンクをカード化) — previewCacheTime の単位は日数
+  # 初回ビルド時に外部 URL へメタデータ取得でアクセスします (失敗時はフォールバック)
+  enableLinkEmbed: true # 独行リンクを埋め込みカードに変換 (総スイッチ)
+  enableTweetEmbed: true # 独行の Twitter/X リンクをツイート埋め込みに
+  enableOGPreview: true # 独行の一般リンクに OG プレビューカードを表示
+  previewCacheTime: 30 # OG プレビューデータのキャッシュ日数
