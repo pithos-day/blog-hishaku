@@ -5,7 +5,7 @@
  * 2. ブロック:  本文が {.class} だけの段落 → 直前の要素へ属性を付与して除去
  * 3. リスト項目: li の末尾 {...} → <li> 自身へ属性を付与
  */
-import type { Element, ElementContent, Root, Text } from 'hast';
+import type { Element, ElementContent, Root, RootContent, Text } from 'hast';
 import { visit } from 'unist-util-visit';
 
 /** `{.class1 .class2 #id key=value}` をプロパティへ展開する */
@@ -44,6 +44,33 @@ function applyAttrs(element: Element, attrs: Record<string, string>) {
   }
 }
 
+/**
+ * `children` を後ろから走査し、最初に現れる要素を返す。
+ * 空白のみのテキストは読み飛ばし、空白でないテキストに当たったら中断 (null)。
+ */
+function findPrevElement(
+  children: RootContent[] | ElementContent[],
+  fromIndex: number,
+): Element | null {
+  for (let i = fromIndex; i >= 0; i--) {
+    const child = children[i];
+    if (child.type === 'element') return child;
+    if (child.type === 'text' && child.value.trim() === '') continue;
+    break;
+  }
+  return null;
+}
+
+/** 末尾から遡り、最初に現れる非空白ノードを返す (全要素空白なら undefined) */
+function findLastMeaningfulChild(children: ElementContent[]): ElementContent | undefined {
+  for (let i = children.length - 1; i >= 0; i--) {
+    const child = children[i];
+    if (child.type === 'text' && child.value.trim() === '') continue;
+    return child;
+  }
+  return undefined;
+}
+
 const INLINE_ATTR_REGEX = /\[([^\]]*)\]\{([^}]+)\}/g;
 const BLOCK_ATTR_REGEX = /^\{([^}]+)\}$/;
 const TRAILING_ATTR_REGEX = /^\{([^}]+)\}/;
@@ -59,16 +86,11 @@ export function rehypeShokaAttrs() {
       if (!blockMatch) return;
 
       const attrs = parseAttrs(blockMatch[1]);
-      for (let i = index - 1; i >= 0; i--) {
-        const sibling = parent.children[i];
-        if (sibling.type === 'element') {
-          applyAttrs(sibling, attrs);
-          parent.children.splice(index, 1);
-          return index;
-        }
-        if (sibling.type === 'text' && sibling.value.trim() === '') continue;
-        break;
-      }
+      const target = findPrevElement(parent.children, index - 1);
+      if (!target) return;
+      applyAttrs(target, attrs);
+      parent.children.splice(index, 1);
+      return index;
     });
 
     // パス 2: li 末尾と、要素の直後に続くテキスト {...} の属性付与
@@ -77,18 +99,9 @@ export function rehypeShokaAttrs() {
       // (code/pre 等のインライン要素内部は対象外。loose list の <p> 末尾のみ降りる)
       if (node.tagName === 'li') {
         const { children } = node;
-        let lastIndex = children.length - 1;
-        while (lastIndex >= 0) {
-          const child = children[lastIndex];
-          if (child.type === 'text' && child.value.trim() === '') {
-            lastIndex--;
-            continue;
-          }
-          break;
-        }
+        const child = findLastMeaningfulChild(children);
 
         let textNode: Text | undefined;
-        const child = lastIndex >= 0 ? children[lastIndex] : undefined;
         if (child?.type === 'text') {
           textNode = child;
         } else if (
@@ -117,15 +130,7 @@ export function rehypeShokaAttrs() {
         const match = TRAILING_ATTR_REGEX.exec(child.value);
         if (!match) continue;
 
-        let prevElement: Element | null = null;
-        for (let j = i - 1; j >= 0; j--) {
-          if (children[j].type === 'element') {
-            prevElement = children[j] as Element;
-            break;
-          }
-          if (children[j].type === 'text' && (children[j] as Text).value.trim() === '') continue;
-          break;
-        }
+        const prevElement = findPrevElement(children, i - 1);
         if (!prevElement) continue;
 
         applyAttrs(prevElement, parseAttrs(match[1]));
