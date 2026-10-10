@@ -261,8 +261,8 @@
 .emphasis-dots {
   text-emphasis: filled circle;
   -webkit-text-emphasis: filled circle;
-  text-emphasis-position: under right;
-  -webkit-text-emphasis-position: under right;
+  text-emphasis-position: over right;
+  -webkit-text-emphasis-position: over right;
 }
 
 /* --- !!spoiler!! ---------------------------------------------------------- */
