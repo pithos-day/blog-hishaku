@@ -1,7 +1,7 @@
 ---
 title: blog-hishakuへようこそ
 date: 2026-10-01 09:30:00
-description: 最小構成のAstroブログテンプレート「blog-hishaku」の紹介記事。特徴・サイト構成・使い方をまとめました。
+description: クラシックなデザインのAstroブログテンプレート「blog-hishaku」の紹介記事。特徴・サイト構成・使い方をまとめました。
 subtitle: テンプレートの紹介
 tags:
   - Astro
@@ -14,7 +14,7 @@ keywords:
   - blog-hishaku
 ---
 
-**blog-hishaku** は、Astroで構築された最小構成のブログテンプレートです。日本語ブログを書くために必要な機能を備えつつ、設定は `config/site.yaml` に集約されているため、メンテナンスがしやすい設計になっています。
+**blog-hishaku** は、Astroで構築されたクラシックなデザインのブログテンプレートです。日本語ブログを書くために必要な機能を備えつつ、設定は `config/site.yaml` に集約されているため、メンテナンスがしやすい設計になっています。
 
 この記事では、blog-hishaku が何ができるテンプレートなのかを紹介します。
 

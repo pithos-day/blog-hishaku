@@ -1,7 +1,7 @@
 {
   "name": "blog-hishaku",
   "version": "0.1.0",
-  "description": "最小構成の Astro ブログテンプレート",
+  "description": "クラシックなデザインのAstroブログテンプレート",
   "type": "module",
   "private": true,
   "scripts": {
