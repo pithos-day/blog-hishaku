@@ -16,10 +16,10 @@ site:
   subtitle: つまみ食いの記録
   name: Your Name
   description: 最小構成の Astro ブログテンプレート
-  avatar: /avatar.svg
+  avatar: /assets/avatar.svg
   author: Your Name
   url: https://example.com
-  defaultOgImage: /avatar.svg
+  defaultOgImage: /assets/avatar.svg
   startYear: 2026
   timezone: Asia/Tokyo # IANA 形式。日付の表示・月別アーカイブに使用
   keywords:
