@@ -201,7 +201,11 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
       const input = document.getElementById('search-input');
       const resultsBox = document.getElementById('search-results');
 
-      if (dialog instanceof HTMLDialogElement && closeButton && input instanceof HTMLInputElement && resultsBox) {
+      // 検索ダイアログの初期化 (必要な要素が揃わないページでは何もしない)
+      const initSearch = (): void => {
+        if (!(dialog instanceof HTMLDialogElement)) return;
+        if (!closeButton || !(input instanceof HTMLInputElement) || !resultsBox) return;
+
         let pagefindPromise: Promise<PagefindApi | null> | undefined;
 
         const loadPagefind = (): Promise<PagefindApi | null> => {
@@ -285,7 +289,9 @@ const copyright = startYear && startYear < year ? `${startYear}–${year}` : Str
           openDialog();
           void runSearch();
         });
-      }
+      };
+
+      initSearch();
 
       const themeToggle = document.getElementById('theme-toggle');
       themeToggle?.addEventListener('click', () => {
