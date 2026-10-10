@@ -68,8 +68,8 @@ const weekdays = t('calendar.weekdays').split(',');
             calendar.weeks.map((week) => (
               <tr>
                 {week.map((cell) => {
-                  const href = getDayLink(cell);
                   if (!cell) return <td class="calendar-blank" />;
+                  const href = getDayLink(cell);
                   return (
                     <td class={href ? 'calendar-post' : undefined}>
                       {href ? (
