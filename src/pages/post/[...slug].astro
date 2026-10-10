@@ -32,12 +32,17 @@ const tocHeadings = siteConfig.content.enableToc
   : [];
 
 const categoryChains = normalizeCategories(post.data.categories);
+
+// meta keywords / JSON-LD 用: frontmatter keywords + タグ + カテゴリ名を重複除去
+const seoKeywords = [
+  ...new Set([...(post.data.keywords ?? []), ...(post.data.tags ?? []), ...categoryChains.flat()]),
+];
 ---
 
 <BaseLayout
   title={post.data.title}
   description={description}
-  keywords={post.data.keywords}
+  keywords={seoKeywords}
   ogImage={post.data.cover}
   type="article"
   math={post.data.math !== false}
