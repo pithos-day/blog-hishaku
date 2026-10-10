@@ -6,30 +6,9 @@
  * - figure のみで構成された <p> を unwrap (不正な <p><figure> 入れ子を解消)
  * - .cache/lqips.json があれば背景グラデーション (LQIP) を付与
  */
-import fs from 'node:fs';
-import path from 'node:path';
 import type { Element, Root, Text } from 'hast';
 import { SKIP, visit } from 'unist-util-visit';
-
-let lqips: Record<string, string> = {};
-try {
-  lqips = JSON.parse(
-    fs.readFileSync(path.resolve(process.cwd(), '.cache/lqips.json'), 'utf-8'),
-  ) as Record<string, string>;
-} catch {
-  // .cache/lqips.json が未生成なら LQIP なしで動作
-}
-
-function getLqipGradient(imagePath: string): string | undefined {
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return undefined;
-  const key = imagePath.replace(/^\/img\//, '');
-  const compact = lqips[key];
-  if (compact?.length !== 18) return undefined;
-  const c1 = `#${compact.slice(0, 6)}`;
-  const c2 = `#${compact.slice(6, 12)}`;
-  const c3 = `#${compact.slice(12, 18)}`;
-  return `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c3} 100%)`;
-}
+import { getLqipGradient } from '../lqip';
 
 export function rehypeImagePlaceholder() {
   return (tree: Root) => {

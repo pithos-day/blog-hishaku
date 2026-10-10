@@ -14,7 +14,7 @@ function imagePathToKey(imagePath: string): string {
   return imagePath.replace(/^\/img\//, '');
 }
 
-function getLqipGradient(imagePath: string): string | undefined {
+export function getLqipGradient(imagePath: string): string | undefined {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return undefined;
   const compact = lqips[imagePathToKey(imagePath)];
   if (compact?.length !== 18) return undefined;
