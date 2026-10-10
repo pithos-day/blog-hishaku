@@ -1,12 +1,13 @@
 ---
 import { siteConfig } from '@/lib/config';
+import { UMAMI_CLOUD_ORIGIN } from '@/lib/config/schema';
 
 const umami = siteConfig.analytics.umami;
 const enabled = umami?.enabled === true && umami.id !== '';
 // 末尾スラッシュを除去 (自己ホスト時の data-host-url と一致させる)
-const endpoint = (umami?.endpoint ?? 'https://cloud.umami.is').replace(/\/+$/, '');
+const endpoint = (umami?.endpoint ?? UMAMI_CLOUD_ORIGIN).replace(/\/+$/, '');
 const scriptSrc = `${endpoint}/script.js`;
-const hostUrl = endpoint === 'https://cloud.umami.is' ? undefined : endpoint;
+const hostUrl = endpoint === UMAMI_CLOUD_ORIGIN ? undefined : endpoint;
 ---
 
 {

@@ -1,6 +1,9 @@
 import { z } from 'astro/zod';
 import type { I18nConfig } from '../../i18n/config';
 
+/** umami の公開エンドポイント (自己ホスト時は endpoint で上書き) */
+export const UMAMI_CLOUD_ORIGIN = 'https://cloud.umami.is';
+
 // ロケール設定の型と既定値は i18n モジュールが所有する
 // (site.yaml の i18n はこの既定値を基準に補完される)
 export { defaultI18n, type I18nConfig } from '../../i18n/config';
@@ -194,7 +197,7 @@ export const siteYamlSchema = z.object({
           endpoint: z
             .string()
             .nullish()
-            .transform((v) => v ?? 'https://cloud.umami.is'),
+            .transform((v) => v ?? UMAMI_CLOUD_ORIGIN),
         })
         .optional(),
     })
