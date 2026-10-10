@@ -108,7 +108,7 @@ export async function fetchTweetData(id: string): Promise<TweetData | null> {
       name:
         typeof author.name === 'string' && author.name ? author.name : (author.screen_name ?? ''),
       screenName: typeof author.screen_name === 'string' ? author.screen_name : '',
-      avatarUrl: isSafeHttpUrl(author.avatar_url) ? (author.avatar_url as string) : '',
+      avatarUrl: isSafeHttpUrl(author.avatar_url) ? author.avatar_url : '',
     },
     createdAt:
       timestamp !== null && Number.isFinite(timestamp)
