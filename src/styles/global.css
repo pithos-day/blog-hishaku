@@ -2,6 +2,7 @@
 @import './markdown.css';
 @import './layout.css';
 @import './theme-toggle.css';
+@import './embed.css';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));

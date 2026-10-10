@@ -1,0 +1,140 @@
+/* ==========================================================================
+   リンク埋め込み (OG プレビューカード / ツイート)
+   ========================================================================== */
+
+/* --- OG プレビューカード --- */
+
+.link-preview-block {
+  margin: 1rem 0;
+}
+
+/* prose が付与する下線をカード内では使わない */
+.link-preview-block a {
+  text-decoration: none;
+}
+
+/* 画像読み込み失敗時はコンテナごと隠す (JS が .error を付与) */
+.link-preview-image-container.error {
+  display: none;
+}
+
+/* --- ツイート埋め込み --- */
+
+.tweet-embed {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+/* JS 無効時・取得失敗時のフォールバックリンク */
+.tweet-embed-fallback {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  color: var(--hishaku-accent);
+}
+
+.tweet-card {
+  display: block;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid var(--hishaku-border);
+  border-radius: 0.75rem;
+  background: var(--hishaku-surface);
+  text-align: left;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+a.tweet-card:hover {
+  border-color: color-mix(in srgb, var(--hishaku-accent) 50%, transparent);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  text-decoration: none;
+}
+
+.tweet-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tweet-card-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  object-fit: cover;
+  background: var(--hishaku-bg);
+}
+
+.tweet-card-author {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.tweet-card-name {
+  overflow: hidden;
+  font-weight: 700;
+  color: var(--hishaku-fg);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tweet-card-handle {
+  overflow: hidden;
+  font-size: 0.875rem;
+  color: var(--hishaku-fg-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tweet-card-logo {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: auto;
+  flex-shrink: 0;
+  fill: var(--hishaku-fg-muted);
+}
+
+.tweet-card-text {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--hishaku-fg);
+  overflow-wrap: anywhere;
+}
+
+.tweet-card-text a {
+  color: var(--hishaku-accent);
+}
+
+.tweet-card-image {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  border: 1px solid var(--hishaku-border);
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.tweet-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.tweet-card-date,
+.tweet-card-link {
+  font-size: 0.8rem;
+  color: var(--hishaku-fg-muted);
+}
+
+.tweet-card-link:hover {
+  color: var(--hishaku-accent);
+}

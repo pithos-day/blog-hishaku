@@ -14,6 +14,7 @@ import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
 import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-attrs.ts';
 import { remarkIns, remarkMark } from './src/lib/markdown/remark-effects.ts';
+import { remarkLinkEmbed } from './src/lib/markdown/remark-link-embed.ts';
 import { remarkShokaPreprocess } from './src/lib/markdown/remark-preprocess.ts';
 import { remarkShokaRuby } from './src/lib/markdown/remark-ruby.ts';
 import { remarkShokaSpoiler } from './src/lib/markdown/remark-spoiler.ts';
@@ -49,6 +50,17 @@ if (content.enableMath) remarkPlugins.push(remarkMath);
 if (content.enableShokaSpoiler) remarkPlugins.push(remarkShokaSpoiler);
 if (content.enableShokaRuby) remarkPlugins.push(remarkShokaRuby);
 if (content.enableShokaEffects) remarkPlugins.push(remarkIns, remarkMark);
+// リンク埋め込み — テキスト変換系プラグインの後に走らせ、段落構造が確定してから
+// 独行リンクを検出する。一般リンクはビルド時に OG メタデータを取得する。
+remarkPlugins.push([
+  remarkLinkEmbed,
+  {
+    enableLinkEmbed: content.enableLinkEmbed,
+    enableTweetEmbed: content.enableTweetEmbed,
+    enableOGPreview: content.enableOGPreview,
+    previewCacheTime: content.previewCacheTime,
+  },
+]);
 
 // rehype プラグイン — 見出しアンカー → 属性構文 → KaTeX
 const rehypePlugins = [
