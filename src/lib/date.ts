@@ -88,8 +88,7 @@ export function parsePostDate(value: string | Date, timeZone: string): Date {
   }
 
   // 壁時計時刻 → サイトタイムゾーンの絶対時刻へ (DST の影響を 2 pass で吸収)
-  const first = wallClock - getTimezoneOffsetMs(timeZone, new Date(wallClock));
-  return new Date(wallClock - getTimezoneOffsetMs(timeZone, new Date(first)));
+  return reinterpretUtcAsTimezone(new Date(wallClock), timeZone);
 }
 
 /** 日付をサイトタイムゾーン基準でローカライズして整形する */
