@@ -26,15 +26,15 @@
 
 /* --- 見出しの余白をデフォルトより詰める ------------------------------------- */
 .prose :where(h2):not(:where([class~='not-prose'] *)) {
-  margin-top: 1.75em;
+  margin-top: 0.6em;
   margin-bottom: 0.6em;
 }
 .prose :where(h3):not(:where([class~='not-prose'] *)) {
-  margin-top: 1.4em;
+  margin-top: 0.4em;
   margin-bottom: 0.4em;
 }
 .prose :where(h4):not(:where([class~='not-prose'] *)) {
-  margin-top: 1.2em;
+  margin-top: 0.3em;
   margin-bottom: 0.3em;
 }
 
@@ -54,7 +54,7 @@
 
 /* --- コードブロックの行間を詰める ------------------------------------------- */
 .prose :where(pre):not(:where([class~='not-prose'] *)) {
-  line-height: 1.55;
+  line-height: 1.4;
 }
 
 /* --- ::: 注意ブロック (note) ----------------------------------------------- */
