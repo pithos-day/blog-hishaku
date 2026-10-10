@@ -49,7 +49,18 @@ export interface SiteConfig {
   i18n: I18nConfig;
   categoryMap: Record<string, string>;
   social: Record<string, { url: string; icon?: string; color?: string }>;
-  seo: { robots?: string };
+  seo: {
+    robots?: {
+      policy?: Array<{
+        userAgent: string;
+        allow?: string | string[];
+        disallow?: string | string[];
+        crawlDelay?: number;
+      }>;
+      host?: string | boolean;
+      sitemap?: string | string[] | boolean;
+    };
+  };
   content: ContentFlags;
   analytics: { umami?: UmamiConfig };
 }
@@ -147,8 +158,23 @@ export const siteYamlSchema = z.object({
   social: z.record(z.string(), socialLinkSchema).default({}),
   seo: z
     .object({
-      /** 空値 (null) は「未設定」として扱う */
-      robots: z.string().nullish(),
+      /** astro-robots-txt の設定 (policy / host / sitemap)。未設定なら全許可 */
+      robots: z
+        .object({
+          policy: z
+            .array(
+              z.object({
+                userAgent: z.string(),
+                allow: z.union([z.string(), z.array(z.string())]).optional(),
+                disallow: z.union([z.string(), z.array(z.string())]).optional(),
+                crawlDelay: z.number().optional(),
+              }),
+            )
+            .optional(),
+          host: z.union([z.string(), z.boolean()]).optional(),
+          sitemap: z.union([z.string(), z.array(z.string()), z.boolean()]).optional(),
+        })
+        .nullish(),
     })
     .optional(),
   content: contentSchema.optional(),

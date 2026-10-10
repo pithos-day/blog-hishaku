@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
+import robotsTxt from 'astro-robots-txt';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
@@ -113,6 +114,7 @@ export default defineConfig({
         ri: ['*'],
       },
     }),
+    robotsTxt(siteConfig.seo?.robots ?? {}),
   ],
   prefetch: {
     prefetchAll: true,

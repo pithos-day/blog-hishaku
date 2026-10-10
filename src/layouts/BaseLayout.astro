@@ -1,6 +1,7 @@
 ---
 import 'iconify-icon';
 import { Icon } from 'astro-icon/components';
+import { SEO } from 'astro-seo';
 import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
@@ -99,30 +100,47 @@ const copyrightHolder = siteConfig.site.alternate
         } catch (e) {}
       })();
     </script>
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
-    {metaKeywords.length > 0 && <meta name="keywords" content={metaKeywords.join(', ')} />}
-    {siteConfig.site.author && <meta name="author" content={siteConfig.site.author} />}
-    <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" type="image/svg+xml" href={siteConfig.site.avatar ?? '/favicon.svg'} />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={siteConfig.site.title}
-      href={new URL('rss.xml', siteConfig.site.url)}
+    <SEO
+      title={pageTitle}
+      description={description}
+      canonical={canonicalUrl.href}
+      openGraph={{
+        basic: {
+          title: resolvedOgTitle,
+          type,
+          image: ogImageUrl?.href ?? '',
+          url: canonicalUrl.href,
+        },
+        optional: {
+          siteName,
+          description: resolvedOgDescription,
+        },
+      }}
+      twitter={{
+        card: twitterCard,
+        title: resolvedOgTitle,
+        description: resolvedOgDescription,
+        ...(ogImageUrl && { image: ogImageUrl.href }),
+      }}
+      extend={{
+        meta: [
+          ...(metaKeywords.length > 0
+            ? [{ name: 'keywords', content: metaKeywords.join(', ') }]
+            : []),
+          ...(siteConfig.site.author ? [{ name: 'author', content: siteConfig.site.author }] : []),
+          ...(robots ? [{ name: 'robots', content: robots }] : []),
+        ],
+        link: [
+          { rel: 'icon', type: 'image/svg+xml', href: siteConfig.site.avatar ?? '/favicon.svg' },
+          {
+            rel: 'alternate',
+            type: 'application/rss+xml',
+            title: siteConfig.site.title,
+            href: new URL('rss.xml', siteConfig.site.url).href,
+          },
+        ],
+      }}
     />
-    <meta property="og:title" content={resolvedOgTitle} />
-    <meta property="og:description" content={resolvedOgDescription} />
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content={siteName} />
-    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-    <meta name="twitter:card" content={twitterCard} />
-    <meta name="twitter:title" content={resolvedOgTitle} />
-    <meta name="twitter:description" content={resolvedOgDescription} />
-    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
-    {robots && <meta name="robots" content={robots} />}
-    <meta name="generator" content={Astro.generator} />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
     <UmamiAnalytics />
     <slot name="head" />
