@@ -30,9 +30,6 @@ const OUTPUT_FILE = '.cache/similarities.json';
 const TOP_N_SIMILAR = 5;
 const MODEL_NAME = 'intfloat/multilingual-e5-small';
 
-// 本文を埋め込みに含めるか (false: タイトル + 要約/説明のみ・高速)
-const INCLUDE_BODY = false;
-
 // AI要約を類似度計算の入力に使うか (.cache/summaries.json を優先)
 const USE_AI_SUMMARY = true;
 const SUMMARIES_FILE = '.cache/summaries.json';
@@ -187,9 +184,7 @@ async function main() {
     const { device } = parseArgs();
     console.log('=== Semantic Similarity Generator ===\n');
     console.log(`Model: ${MODEL_NAME}`);
-    console.log(
-      `Mode: ${INCLUDE_BODY ? 'title + description + body' : 'title + description only'}`,
-    );
+    console.log(`Input: title + description/summary`);
     console.log(`AI Summary: ${USE_AI_SUMMARY ? 'enabled' : 'disabled'}`);
     console.log(`Device: ${device}\n`);
 
