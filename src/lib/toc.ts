@@ -2,8 +2,10 @@
  * 記事の見出しから目次ツリーを組み立てる
  *
  * Astro の render() が返す headings (depth / slug / text) を受け取り、
- * h2 > h3 の入れ子構造に編む。深度フィルタ (2, 3) は呼び出し側で行う。
+ * h2 > h3 の入れ子構造に編む。抽出と深度フィルタは collectTocHeadings が行う。
  */
+
+import { siteConfig } from './config';
 
 export interface TocHeading {
   depth: number;
@@ -15,6 +17,15 @@ export interface TocNode {
   slug: string;
   text: string;
   children: TocNode[];
+}
+
+/**
+ * 目次用の見出しを抽出する。
+ * `content.enableToc` 無効時は空配列を返し、呼び出し側はそのまま渡すだけにする。
+ */
+export function collectTocHeadings(headings: TocHeading[]): TocHeading[] {
+  if (!siteConfig.content.enableToc) return [];
+  return headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 }
 
 /** 平坦な見出し列を h2 > h3 の入れ子ツリーに編む */

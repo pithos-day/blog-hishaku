@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import type { TocHeading } from '@/lib/toc';
+import { collectTocHeadings } from '@/lib/toc';
 
 interface Props {
   frontmatter: {
@@ -11,9 +11,7 @@ interface Props {
 }
 
 const { frontmatter, headings } = Astro.props;
-const tocHeadings: TocHeading[] = headings
-  .filter((heading) => heading.depth === 2 || heading.depth === 3)
-  .map((heading) => ({ depth: heading.depth, slug: heading.slug, text: heading.text }));
+const tocHeadings = collectTocHeadings(headings);
 ---
 
 <BaseLayout
