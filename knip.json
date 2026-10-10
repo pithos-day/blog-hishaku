@@ -2,7 +2,6 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": [
     "astro.config.mjs",
-    "src/content.config.ts",
     "src/pages/**/*.astro",
     "src/pages/**/*.ts",
     "src/layouts/**/*.astro",
@@ -10,10 +9,20 @@
     "src/lib/config/site.ts",
     "src/lib/markdown/*.ts",
     "src/i18n/index.ts",
-    "scripts/**/*.mjs",
+    "scripts/**/*.{ts,mjs}",
     "test/**/*.mjs"
   ],
-  "project": ["src/**/*.{ts,tsx,astro}", "scripts/**/*.mjs", "test/**/*.mjs"],
+  "project": ["src/**/*.{ts,tsx,astro}", "scripts/**/*.{ts,mjs}", "test/**/*.mjs"],
   "ignore": ["src/assets/**", "src/content/**", "public/**", "dist/**", ".cache/**"],
-  "ignoreDependencies": ["@biomejs/biome", "husky", "lint-staged", "pagefind", "typescript"]
+  "ignoreDependencies": [
+    "@biomejs/biome",
+    "@iconify-json/ri",
+    "@tailwindcss/typography",
+    "husky",
+    "katex",
+    "lint-staged",
+    "pagefind",
+    "tailwindcss",
+    "typescript"
+  ]
 }

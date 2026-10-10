@@ -21,7 +21,7 @@ function imagePathToKey(imagePath: string): string {
   return imagePath.replace(/^\/img\//, '');
 }
 
-export function getLqipGradient(imagePath: string): string | undefined {
+function getLqipGradient(imagePath: string): string | undefined {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return undefined;
   const compact = lqips[imagePathToKey(imagePath)];
   if (compact?.length !== 18) return undefined;
@@ -31,12 +31,8 @@ export function getLqipGradient(imagePath: string): string | undefined {
   return `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c3} 100%)`;
 }
 
-export function getLqipStyle(imagePath: string): string | undefined {
-  const gradient = getLqipGradient(imagePath);
-  return gradient ? `background-image:${gradient}` : undefined;
-}
-
 export function getLqipProps(imagePath: string): { style?: string } {
-  const style = getLqipStyle(imagePath);
-  return style ? { style } : {};
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return {};
+  const gradient = getLqipGradient(imagePath);
+  return gradient ? { style: `background-image:${gradient}` } : {};
 }
