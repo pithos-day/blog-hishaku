@@ -475,6 +475,10 @@
   gap: 10px;
 }
 
+.entry-posted a {
+  text-decoration: none;
+}
+
 .post-body {
   background: var(--hishaku-surface);
   padding: 5px 16px 16px;
