@@ -24,6 +24,8 @@ import {
 } from '@huggingface/transformers';
 import { glob } from 'glob';
 import matter from 'gray-matter';
+import type { SimilarPost } from '../src/lib/similar-posts';
+import type { SummaryData } from '../src/lib/summary';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const OUTPUT_FILE = '.cache/similarities.json';
@@ -43,15 +45,9 @@ interface PostData {
   text: string;
 }
 
-interface SimilarPost {
-  slug: string;
-  title: string;
-  similarity: number;
-}
-
 type SimilarityMap = Record<string, SimilarPost[]>;
 
-type SummariesMap = Record<string, { title: string; summary: string }>;
+type SummariesMap = Record<string, SummaryData>;
 
 const VALID_DEVICE_TYPES: DeviceType[] = [
   'auto',

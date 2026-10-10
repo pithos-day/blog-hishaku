@@ -21,6 +21,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
+import type { SummaryData } from '../src/lib/summary';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILE = '.cache/summaries-cache.json';
@@ -236,7 +237,7 @@ async function main() {
     await saveCache({ version: CACHE_VERSION, model, entries: newEntries });
 
     // ページ表示用の出力 ({ slug: { title, summary } })
-    const output: Record<string, { title: string; summary: string }> = {};
+    const output: Record<string, SummaryData> = {};
     for (const [slug, entry] of Object.entries(newEntries)) {
       output[slug] = { title: entry.title, summary: entry.summary };
     }
