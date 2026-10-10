@@ -40,7 +40,6 @@ export const uiStrings = {
 
   // ── 記事 ────────────────────────────────────────────────────
   'post.updated': '更新 {date}',
-  'post.updatedAt': '更新: {date}',
   'post.charCount': '{count}文字',
   'post.readingTime': '約{minutes}分',
   'post.draftNotice': 'この記事は下書きです。',
