@@ -63,7 +63,7 @@ function renderFallbackCard(ogData: OGData, domain: string): string {
       const lastSegment = pathSegments[pathSegments.length - 1];
       if (lastSegment && lastSegment !== 'index.html') {
         displayText = originUrl;
-        subtitle = description ?? domain;
+        subtitle = description || domain;
       }
     }
   } catch (error) {
