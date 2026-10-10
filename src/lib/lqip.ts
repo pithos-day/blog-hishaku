@@ -5,17 +5,10 @@
  * 画像パスから CSS グラデーション文字列を返す。
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { loadCacheJson } from './cache';
 
-let lqips: Record<string, string> = {};
-
-try {
-  const cachePath = path.resolve(process.cwd(), '.cache/lqips.json');
-  lqips = JSON.parse(fs.readFileSync(cachePath, 'utf-8')) as Record<string, string>;
-} catch {
-  // .cache/lqips.json が未生成の場合 (pnpm tsx scripts/generateLqips.ts で生成)
-}
+// .cache/lqips.json が未生成の場合 (pnpm tsx scripts/generateLqips.ts で生成)
+const lqips = loadCacheJson<Record<string, string>>('lqips.json', {});
 
 function imagePathToKey(imagePath: string): string {
   return imagePath.replace(/^\/img\//, '');
