@@ -109,12 +109,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
         }
         {
           post.data.tags && post.data.tags.length > 0 && (
-            <span>
-              {post.data.tags.map((tag, index) => (
-                <>
-                  {index > 0 && <span aria-hidden="true">|</span>}
-                  <a href={buildTagHref(tag)}>{tag}</a>
-                </>
+            <span class="entry-tags-inline">
+              {post.data.tags.map((tag) => (
+                <a href={buildTagHref(tag)}>{tag}</a>
               ))}
             </span>
           )

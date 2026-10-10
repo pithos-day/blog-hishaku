@@ -352,6 +352,17 @@
   margin-right: 1px;
 }
 
+.entry-tags-inline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.entry-tags-inline a::before {
+  content: '#';
+  margin-right: 1px;
+}
+
 .entry-divider {
   border: 0;
   border-top: 1px solid var(--hishaku-border);
