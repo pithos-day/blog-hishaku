@@ -4,7 +4,6 @@ export const initThemeToggle = (): void => {
   themeToggle?.addEventListener('click', () => {
     const root = document.documentElement;
     const next = root.classList.contains('dark') ? 'light' : 'dark';
-    root.classList.add('theme-transition');
     root.classList.toggle('dark', next === 'dark');
     root.dataset.theme = next;
     try {
@@ -12,6 +11,5 @@ export const initThemeToggle = (): void => {
     } catch {
       // localStorage が使えない環境ではセッション内のみ反映
     }
-    setTimeout(() => root.classList.remove('theme-transition'), 400);
   });
 };
