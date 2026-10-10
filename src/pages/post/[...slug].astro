@@ -6,6 +6,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import { getPostSummary } from '@/lib/summary';
 import { buildTagHref } from '@/lib/tags';
 
 export async function getStaticPaths() {
@@ -25,6 +26,7 @@ interface Props {
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 const description = getPostDescription(post);
+const summary = getPostSummary(getPostSlug(post));
 
 // 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (2見出しから表示)
 const tocHeadings = siteConfig.content.enableToc
@@ -114,6 +116,12 @@ const breadcrumbJsonLd =
     <header>
       <h1 data-pagefind-meta="title" class="entry-title-bar post-title">{post.data.title}</h1>
     </header>
+
+    {summary && (
+      <aside class="post-summary not-prose" aria-label="記事要約">
+        <p>{summary}</p>
+      </aside>
+    )}
 
     <div class="post-body prose prose-zinc max-w-none dark:prose-invert">
       {post.data.subtitle && <p class="post-subtitle">{post.data.subtitle}</p>}
