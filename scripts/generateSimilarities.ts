@@ -26,7 +26,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 import type { SimilarPost } from '../src/lib/similar-posts';
 import type { SummaryData } from '../src/lib/summary';
-import { runMain } from './cli';
+import { parseCliArgs, runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const OUTPUT_FILE = '.cache/similarities.json';
@@ -69,18 +69,13 @@ function isDeviceType(value: string): value is DeviceType {
 }
 
 function parseArgs(argv: string[] = process.argv.slice(2)): { device: DeviceType } {
-  let device: DeviceType = 'cpu';
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === '--device') {
-      const value = argv[i + 1];
-      if (!value || !isDeviceType(value)) {
-        throw new Error(`Invalid device type: ${value}. Valid: ${VALID_DEVICE_TYPES.join(', ')}`);
-      }
-      device = value;
-      i++;
-      continue;
-    }
-    throw new Error(`Unknown argument: ${argv[i]}`);
+  const { device } = parseCliArgs(
+    argv,
+    { device: { type: 'string', default: 'cpu' } },
+    'Usage: pnpm generate:similarities [--device auto|gpu|cpu|wasm]',
+  );
+  if (!isDeviceType(device)) {
+    throw new Error(`Invalid device type: ${device}. Valid: ${VALID_DEVICE_TYPES.join(', ')}`);
   }
   return { device };
 }

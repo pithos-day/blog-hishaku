@@ -22,7 +22,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
 import type { SummaryData } from '../src/lib/summary';
-import { runMain } from './cli';
+import { parseCliArgs, runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILE = '.cache/summaries-cache.json';
@@ -34,18 +34,11 @@ const API_KEY = process.env.SUMMARY_API_KEY ?? 'lm-studio';
 const DEFAULT_MODEL = process.env.SUMMARY_MODEL ?? 'qwen/qwen3-4b-2507';
 
 function parseArgs(): { model: string; force: boolean } {
-  const args = process.argv.slice(2);
-  let model = DEFAULT_MODEL;
-  let force = false;
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--model' && args[i + 1]) {
-      model = args[i + 1];
-      i++;
-    } else if (args[i] === '--force') {
-      force = true;
-    }
-  }
-  return { model, force };
+  return parseCliArgs(
+    process.argv.slice(2),
+    { model: { type: 'string', default: DEFAULT_MODEL }, force: { type: 'boolean' } },
+    'Usage: pnpm generate:summaries [--model <名>] [--force]',
+  );
 }
 
 interface PostData {
