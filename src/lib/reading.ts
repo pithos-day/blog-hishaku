@@ -4,7 +4,8 @@
  * 日本語主体のため 1 分あたり 400 字で概算する (CJK 記事の一般的な目安)。
  */
 import { t } from '../i18n';
-import { type PostEntry, toPlainText } from './posts';
+import type { PostEntry } from './posts';
+import { toPlainText } from './text';
 
 export interface TextStats {
   /** 空白を除いた本文の文字数 */

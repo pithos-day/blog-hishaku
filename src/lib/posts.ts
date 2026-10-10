@@ -1,6 +1,8 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
+import { toPlainText } from './text';
 
 export type PostEntry = CollectionEntry<'blog'>;
+export { toPlainText };
 
 /**
  * 記事の URL スラッグ。`link` があればそれを使い、なければファイル名 (id)。
@@ -32,20 +34,6 @@ export async function getPublishedPosts(): Promise<PostEntry[]> {
 /** 日付降順に並べ替える (sticky 順ではない。アーカイブ・カレンダー等で使う) */
 export function sortByDateDesc(posts: Iterable<PostEntry>): PostEntry[] {
   return [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-}
-
-/** Markdown 本文から表示用のプレーンテキストを取り出す */
-export function toPlainText(markdown: string): string {
-  return markdown
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`([^`]*)`/g, '$1')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/^\s{0,3}[#>*+-]+\s?/gm, '')
-    .replace(/[*_~^|=]/g, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
 }
 
 /**
