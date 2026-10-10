@@ -13,6 +13,7 @@ export const uiStrings = {
   'common.close': '閉じる',
   'common.themeToggle': 'テーマを切り替え',
   'common.breadcrumb': 'パンくず',
+  'breadcrumb.home': 'ホーム',
   'common.yearMonth': '{year}年{month}月',
   'common.postCount': '{count} 件',
   'common.noPosts': 'まだ記事がありません。',

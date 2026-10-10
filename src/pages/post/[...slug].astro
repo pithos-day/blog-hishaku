@@ -37,6 +37,64 @@ const categoryChains = normalizeCategories(post.data.categories);
 const seoKeywords = [
   ...new Set([...(post.data.keywords ?? []), ...(post.data.tags ?? []), ...categoryChains.flat()]),
 ];
+
+// schema.org 用: サイトタイムゾーン基準の yyyy-MM-dd
+const seoDate = (date: Date): string =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: siteConfig.site.timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+
+// OGP 画像と同一のフォールバック (cover → defaultOgImage → avatar)
+const jsonLdImageSrc = post.data.cover ?? siteConfig.site.defaultOgImage ?? siteConfig.site.avatar;
+const jsonLdImage = jsonLdImageSrc ? new URL(jsonLdImageSrc, siteConfig.site.url).href : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description,
+  keywords: [...new Set([...seoKeywords, ...siteConfig.site.keywords])],
+  author: {
+    '@type': 'Person',
+    name: siteConfig.site.author ?? siteConfig.site.name ?? siteConfig.site.title,
+    url: siteConfig.site.url,
+  },
+  datePublished: seoDate(post.data.date),
+  ...(post.data.updated && { dateModified: seoDate(post.data.updated) }),
+  ...(jsonLdImage && { image: jsonLdImage }),
+  mainEntityOfPage: new URL(Astro.url.pathname, siteConfig.site.url).href,
+};
+
+// カテゴリがある記事はパンくず JSON-LD も出力 (最終項目は item なし)
+const breadcrumbChain = categoryChains[0] ?? [];
+const breadcrumbJsonLd =
+  breadcrumbChain.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: t('breadcrumb.home'),
+            item: new URL('/', siteConfig.site.url).href,
+          },
+          ...breadcrumbChain.map((name, index) => ({
+            '@type': 'ListItem',
+            position: index + 2,
+            name,
+            item: new URL(
+              buildCategoryHref(breadcrumbChain.slice(0, index + 1)),
+              siteConfig.site.url,
+            ).href,
+          })),
+          { '@type': 'ListItem', position: breadcrumbChain.length + 2, name: post.data.title },
+        ],
+      }
+    : undefined;
 ---
 
 <BaseLayout
@@ -48,6 +106,10 @@ const seoKeywords = [
   math={post.data.math !== false}
   tocHeadings={tocHeadings}
 >
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  {breadcrumbJsonLd && (
+    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  )}
   <article data-pagefind-body>
     <header>
       <h1 data-pagefind-meta="title" class="entry-title-bar post-title">{post.data.title}</h1>
