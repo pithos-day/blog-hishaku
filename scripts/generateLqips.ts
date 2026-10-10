@@ -12,6 +12,8 @@ import path from 'node:path';
 import { glob } from 'glob';
 import sharp from 'sharp';
 
+import { runMain } from './cli';
+
 const IMAGE_GLOB = 'public/img/**/*.{webp,jpg,jpeg,png,avif,gif}';
 const OUTPUT_FILE = '.cache/lqips.json';
 
@@ -65,54 +67,46 @@ function filePathToKey(filePath: string): string {
   return filePath.replace(/\\/g, '/').replace(/^public\/img\//, '');
 }
 
-async function main() {
-  const startTime = Date.now();
+runMain(async () => {
+  console.log('=== LQIP Generator ===\n');
 
-  try {
-    console.log('=== LQIP Generator ===\n');
-
-    const files = await glob(IMAGE_GLOB);
-    if (!files.length) {
-      console.log('No image files found.');
-      return;
-    }
-    console.log(`Found ${files.length} images\n`);
-
-    const lqips: LqipMap = {};
-    let processed = 0;
-    let failed = 0;
-
-    for (const [index, file] of files.entries()) {
-      process.stdout.write(
-        `\r  Processing ${index + 1}/${files.length}: ${path.basename(file)}...`,
-      );
-
-      const compact = await computeCompactLqip(file);
-      if (compact !== null) {
-        const key = filePathToKey(file);
-        lqips[key] = compact;
-        processed++;
-      } else {
-        failed++;
-      }
-    }
-
-    console.log('');
-
-    const dir = path.dirname(OUTPUT_FILE);
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(lqips, null, 2)}\n`);
-
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(`\nDone! Generated LQIP for ${processed} images in ${elapsed}s`);
-    if (failed > 0) {
-      console.log(`  Failed to generate LQIP: ${failed} images`);
-    }
-    console.log(`Output saved to: ${OUTPUT_FILE}`);
-  } catch (error) {
-    console.error('\nError:', error);
-    process.exitCode = 1;
+  const files = await glob(IMAGE_GLOB);
+  if (!files.length) {
+    console.log('No image files found.');
+    return;
   }
-}
+  console.log(`Found ${files.length} images\n`);
 
-main();
+  const lqips: LqipMap = {};
+  let processed = 0;
+  let failed = 0;
+
+  for (const [index, file] of files.entries()) {
+    process.stdout.write(`\r  Processing ${index + 1}/${files.length}: ${path.basename(file)}...`);
+
+    const compact = await computeCompactLqip(file);
+    if (compact !== null) {
+      const key = filePathToKey(file);
+      lqips[key] = compact;
+      processed++;
+    } else {
+      failed++;
+    }
+  }
+
+  console.log('');
+
+  const dir = path.dirname(OUTPUT_FILE);
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(lqips, null, 2)}\n`);
+
+  return {
+    done: `Done! Generated LQIP for ${processed} images`,
+    after: () => {
+      if (failed > 0) {
+        console.log(`  Failed to generate LQIP: ${failed} images`);
+      }
+      console.log(`Output saved to: ${OUTPUT_FILE}`);
+    },
+  };
+});

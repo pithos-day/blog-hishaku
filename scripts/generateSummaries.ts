@@ -22,6 +22,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import strip from 'strip-markdown';
 import type { SummaryData } from '../src/lib/summary';
+import { runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILE = '.cache/summaries-cache.json';
@@ -152,107 +153,99 @@ async function readPostForSummary(filePath: string): Promise<PostData | null> {
   }
 }
 
-async function main() {
-  const startTime = Date.now();
+runMain(async () => {
   const { model, force } = parseArgs();
+  console.log('=== AI Summary Generator ===\n');
+  console.log(`Model: ${model}`);
 
-  try {
-    console.log('=== AI Summary Generator ===\n');
-    console.log(`Model: ${model}`);
+  const apiRunning = await isApiRunning();
+  if (!apiRunning) {
+    console.log(`\nLLM API が未起動です (${API_BASE_URL})。summary なしで続行します。`);
+    console.log('LM Studio / Ollama 等を起動してから再実行してください。');
+    // 出力ファイルを空で用意してビルドをブロックしない
+    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
+    await fs.writeFile(OUTPUT_FILE, '{}\n');
+    return;
+  }
+  console.log('API connected!\n');
 
-    const apiRunning = await isApiRunning();
-    if (!apiRunning) {
-      console.log(`\nLLM API が未起動です (${API_BASE_URL})。summary なしで続行します。`);
-      console.log('LM Studio / Ollama 等を起動してから再実行してください。');
-      // 出力ファイルを空で用意してビルドをブロックしない
-      await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-      await fs.writeFile(OUTPUT_FILE, '{}\n');
-      return;
-    }
-    console.log('API connected!\n');
+  let cache = force ? null : await loadCache();
+  if (cache && (cache.version !== CACHE_VERSION || cache.model !== model)) {
+    console.log('Cache invalidated (model changed), will regenerate all\n');
+    cache = null;
+  }
 
-    let cache = force ? null : await loadCache();
-    if (cache && (cache.version !== CACHE_VERSION || cache.model !== model)) {
-      console.log('Cache invalidated (model changed), will regenerate all\n');
-      cache = null;
-    }
+  const files = await glob(CONTENT_GLOB);
+  if (!files.length) {
+    console.log('No content files found.');
+    return;
+  }
+  console.log(`Found ${files.length} markdown files\n`);
 
-    const files = await glob(CONTENT_GLOB);
-    if (!files.length) {
-      console.log('No content files found.');
-      return;
-    }
-    console.log(`Found ${files.length} markdown files\n`);
+  const posts: PostData[] = [];
+  for (const file of files) {
+    const post = await readPostForSummary(file);
+    if (post) posts.push(post);
+  }
+  if (!posts.length) {
+    console.log('No valid posts found.');
+    return;
+  }
+  console.log(`Loaded ${posts.length} posts\n`);
 
-    const posts: PostData[] = [];
-    for (const file of files) {
-      const post = await readPostForSummary(file);
-      if (post) posts.push(post);
-    }
-    if (!posts.length) {
-      console.log('No valid posts found.');
-      return;
-    }
-    console.log(`Loaded ${posts.length} posts\n`);
+  const validCache = cache?.entries ?? {};
+  const newEntries: Record<string, CacheEntry> = {};
+  let cached = 0;
+  let generated = 0;
+  let errors = 0;
 
-    const validCache = cache?.entries ?? {};
-    const newEntries: Record<string, CacheEntry> = {};
-    let cached = 0;
-    let generated = 0;
-    let errors = 0;
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i];
+    const cachedEntry = validCache[post.slug];
 
-    for (let i = 0; i < posts.length; i++) {
-      const post = posts[i];
-      const cachedEntry = validCache[post.slug];
-
-      if (cachedEntry && cachedEntry.hash === post.hash) {
-        newEntries[post.slug] = cachedEntry;
-        cached++;
-        process.stdout.write(`\r  [${i + 1}/${posts.length}] cached: ${post.slug.slice(0, 40)}...`);
-      } else {
-        process.stdout.write(
-          `\r  [${i + 1}/${posts.length}] generating: ${post.slug.slice(0, 40)}...`,
-        );
-        try {
-          const summary = await generateSummary(post.text, model);
-          newEntries[post.slug] = {
-            hash: post.hash,
-            title: post.title,
-            summary,
-            generatedAt: new Date().toISOString(),
-          };
-          generated++;
-        } catch (error) {
-          console.log('');
-          console.error(`  Error generating summary for ${post.slug}:`, error);
-          errors++;
-          if (cachedEntry) newEntries[post.slug] = cachedEntry;
-        }
+    if (cachedEntry && cachedEntry.hash === post.hash) {
+      newEntries[post.slug] = cachedEntry;
+      cached++;
+      process.stdout.write(`\r  [${i + 1}/${posts.length}] cached: ${post.slug.slice(0, 40)}...`);
+    } else {
+      process.stdout.write(
+        `\r  [${i + 1}/${posts.length}] generating: ${post.slug.slice(0, 40)}...`,
+      );
+      try {
+        const summary = await generateSummary(post.text, model);
+        newEntries[post.slug] = {
+          hash: post.hash,
+          title: post.title,
+          summary,
+          generatedAt: new Date().toISOString(),
+        };
+        generated++;
+      } catch (error) {
+        console.log('');
+        console.error(`  Error generating summary for ${post.slug}:`, error);
+        errors++;
+        if (cachedEntry) newEntries[post.slug] = cachedEntry;
       }
     }
-
-    console.log('');
-    console.log(`  Cached: ${cached}, Generated: ${generated}, Errors: ${errors}`);
-
-    await saveCache({ version: CACHE_VERSION, model, entries: newEntries });
-
-    // ページ表示用の出力 ({ slug: { title, summary } })
-    const output: Record<string, SummaryData> = {};
-    for (const [slug, entry] of Object.entries(newEntries)) {
-      output[slug] = { title: entry.title, summary: entry.summary };
-    }
-    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-    await fs.writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2));
-
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(
-      `\nDone! Generated summaries for ${Object.keys(newEntries).length} posts in ${elapsed}s`,
-    );
-    console.log(`Output saved to: ${OUTPUT_FILE}`);
-  } catch (error) {
-    console.error('\nError:', error);
-    process.exitCode = 1;
   }
-}
 
-main();
+  console.log('');
+  console.log(`  Cached: ${cached}, Generated: ${generated}, Errors: ${errors}`);
+
+  await saveCache({ version: CACHE_VERSION, model, entries: newEntries });
+
+  // ページ表示用の出力 ({ slug: { title, summary } })
+  const output: Record<string, SummaryData> = {};
+  for (const [slug, entry] of Object.entries(newEntries)) {
+    output[slug] = { title: entry.title, summary: entry.summary };
+  }
+  await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
+  await fs.writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2));
+
+  return {
+    done: `Done! Generated summaries for ${Object.keys(newEntries).length} posts`,
+    after: () => {
+      console.log(`Output saved to: ${OUTPUT_FILE}`);
+    },
+  };
+});

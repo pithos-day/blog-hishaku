@@ -26,6 +26,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 import type { SimilarPost } from '../src/lib/similar-posts';
 import type { SummaryData } from '../src/lib/summary';
+import { runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const OUTPUT_FILE = '.cache/similarities.json';
@@ -177,61 +178,56 @@ function computeSimilarities(posts: PostData[], embeddings: Float32Array[]): Sim
   return result;
 }
 
-async function main() {
-  const startTime = Date.now();
-  try {
-    const { device } = parseArgs();
-    console.log('=== Semantic Similarity Generator ===\n');
-    console.log(`Model: ${MODEL_NAME}`);
-    console.log(`Input: title + description/summary`);
-    console.log(`AI Summary: ${USE_AI_SUMMARY ? 'enabled' : 'disabled'}`);
-    console.log(`Device: ${device}\n`);
+runMain(async () => {
+  const { device } = parseArgs();
+  console.log('=== Semantic Similarity Generator ===\n');
+  console.log(`Model: ${MODEL_NAME}`);
+  console.log(`Input: title + description/summary`);
+  console.log(`AI Summary: ${USE_AI_SUMMARY ? 'enabled' : 'disabled'}`);
+  console.log(`Device: ${device}\n`);
 
-    const summaries = await loadSummaries();
-    if (USE_AI_SUMMARY && Object.keys(summaries).length > 0) {
-      console.log(`Loaded ${Object.keys(summaries).length} AI summaries\n`);
-    }
-
-    console.log(`Loading model: ${MODEL_NAME}...`);
-    const extractor = await pipeline('feature-extraction', MODEL_NAME, { device });
-    console.log('Model loaded!\n');
-
-    const files = await glob(CONTENT_GLOB);
-    if (!files.length) {
-      console.log('No content files found.');
-      return;
-    }
-    console.log(`Found ${files.length} markdown files\n`);
-
-    const posts: PostData[] = [];
-    for (const file of files) {
-      const post = await readPostForSimilarity(file, summaries);
-      if (post) posts.push(post);
-    }
-    if (!posts.length) {
-      console.log('No valid posts found.');
-      return;
-    }
-    console.log(`Loaded ${posts.length} posts\n`);
-
-    const embeddings = await generateEmbeddings(posts, extractor);
-    if (!embeddings.length) {
-      console.log('No embeddings generated.');
-      return;
-    }
-
-    const similarities = computeSimilarities(posts, embeddings);
-
-    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-    await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(similarities, null, 2)}\n`);
-
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(`\nDone! Generated similarities for ${posts.length} posts in ${elapsed}s`);
-    console.log(`Output saved to: ${OUTPUT_FILE}`);
-  } catch (error) {
-    console.error('\nError:', error);
-    process.exitCode = 1;
+  const summaries = await loadSummaries();
+  if (USE_AI_SUMMARY && Object.keys(summaries).length > 0) {
+    console.log(`Loaded ${Object.keys(summaries).length} AI summaries\n`);
   }
-}
 
-main();
+  console.log(`Loading model: ${MODEL_NAME}...`);
+  const extractor = await pipeline('feature-extraction', MODEL_NAME, { device });
+  console.log('Model loaded!\n');
+
+  const files = await glob(CONTENT_GLOB);
+  if (!files.length) {
+    console.log('No content files found.');
+    return;
+  }
+  console.log(`Found ${files.length} markdown files\n`);
+
+  const posts: PostData[] = [];
+  for (const file of files) {
+    const post = await readPostForSimilarity(file, summaries);
+    if (post) posts.push(post);
+  }
+  if (!posts.length) {
+    console.log('No valid posts found.');
+    return;
+  }
+  console.log(`Loaded ${posts.length} posts\n`);
+
+  const embeddings = await generateEmbeddings(posts, extractor);
+  if (!embeddings.length) {
+    console.log('No embeddings generated.');
+    return;
+  }
+
+  const similarities = computeSimilarities(posts, embeddings);
+
+  await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
+  await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(similarities, null, 2)}\n`);
+
+  return {
+    done: `Done! Generated similarities for ${posts.length} posts`,
+    after: () => {
+      console.log(`Output saved to: ${OUTPUT_FILE}`);
+    },
+  };
+});
