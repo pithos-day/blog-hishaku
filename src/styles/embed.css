@@ -126,6 +126,20 @@
   object-fit: cover;
 }
 
+/* 動画・GIF (アスペクト比はインラインの aspect-ratio で実寸に合わせる) */
+.tweet-card-video {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 0.75rem;
+  border: 1px solid var(--hishaku-border);
+  border-radius: 0.75rem;
+  background: var(--hishaku-bg);
+  object-fit: contain;
+}
+
 /* 複数枚の画像は昔の Twitter 風にひとつの枠へまとめる */
 .tweet-card-images {
   display: grid;

@@ -6,7 +6,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { escapeHtml } from './escape';
 import type { OGData } from './og-fetcher';
-import type { TweetData } from './tweet-fetcher';
+import type { TweetData, TweetVideo } from './tweet-fetcher';
 
 /** ユーザー由来テキストから全 HTML タグを取り除く */
 function sanitizeText(text: string): string {
@@ -173,6 +173,23 @@ function formatTweetDate(iso: string): string | null {
 }
 
 /**
+ * 動画・GIF ツイートの再生プレイヤー。
+ * GIF は音声を持たないため自動ループ再生、動画は操作可能なプレイヤーにする。
+ */
+function renderTweetVideo(video: TweetVideo): string {
+  const safeUrl = sanitizeUrlAttribute(video.url);
+  if (!safeUrl) return '';
+
+  const safePoster = video.posterUrl ? sanitizeUrlAttribute(video.posterUrl) : '';
+  const posterAttr = safePoster ? ` poster="${safePoster}"` : '';
+  const aspectAttr =
+    video.width && video.height ? ` style="aspect-ratio: ${video.width} / ${video.height}"` : '';
+  const playbackAttrs = video.isGif ? 'autoplay muted loop' : 'controls preload="metadata"';
+
+  return `<video class="tweet-card-video" src="${safeUrl}"${posterAttr}${aspectAttr} ${playbackAttrs} playsinline referrerpolicy="no-referrer"></video>`;
+}
+
+/**
  * ツイートの静的カード (ビルド時に fxtwitter API から取得したデータを描画)。
  */
 export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
@@ -204,6 +221,8 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
       ? `<div class="tweet-card-images tweet-card-images-${Math.min(imageTags.length, 4)}">${imageTags.join('')}</div>`
       : imageTags.join('');
 
+  const videoHtml = tweet.video ? renderTweetVideo(tweet.video) : '';
+
   const { createdAt } = tweet;
   const formattedDate = createdAt ? formatTweetDate(createdAt) : null;
   const dateHtml =
@@ -223,6 +242,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     </div>
     ${textHtml}
     ${photosHtml}
+    ${videoHtml}
     <div class="tweet-card-footer">
       ${dateHtml}
       <a class="tweet-card-link" href="${href}" target="_blank" rel="noopener noreferrer">Twitter で見る</a>

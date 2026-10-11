@@ -7,11 +7,26 @@
 const API_BASE = 'https://api.fxtwitter.com/status';
 const TIMEOUT_MS = 5000;
 const MAX_PHOTOS = 4;
+/** 埋め込み動画の高さ上限。これを超える解像度は重すぎるため選ばない */
+const MAX_EMBED_HEIGHT = 720;
 const TWEET_ID_PATTERN = /^[0-9]{1,20}$/;
 
 export interface TweetPhoto {
   url: string;
   alt: string;
+}
+
+export interface TweetVideo {
+  /** 再生用 mp4 (m3u8 は除去し、Web 向けにビットレートを選別済み) */
+  url: string;
+  /** ポスター画像 */
+  posterUrl: string;
+  width: number | null;
+  height: number | null;
+  /** 秒。取得できなければ null (GIF は 0) */
+  duration: number | null;
+  /** GIF ツイート (音声なし・ループ再生) */
+  isGif: boolean;
 }
 
 export interface TweetData {
@@ -26,6 +41,24 @@ export interface TweetData {
   /** ISO 8601 (取得できなければ null) */
   createdAt: string | null;
   photos: TweetPhoto[];
+  /** 動画・GIF ツイートのみ (写真付きは null) */
+  video: TweetVideo | null;
+}
+
+/** selectVideoSource の入力形状 (API レスポンスの videos 配列要素) */
+export interface VideoSourceInput {
+  type?: string;
+  url?: string;
+  thumbnail_url?: string;
+  width?: number;
+  height?: number;
+  duration?: number;
+  formats?: Array<{
+    url?: string;
+    container?: string;
+    bitrate?: number;
+    height?: number;
+  }>;
 }
 
 interface FxPhoto {
@@ -45,6 +78,7 @@ interface FxTweet {
   };
   media?: {
     photos?: FxPhoto[];
+    videos?: VideoSourceInput[];
   };
 }
 
@@ -61,6 +95,48 @@ function isSafeHttpUrl(value: unknown): value is string {
   } catch {
     return false;
   }
+}
+
+/** formats[].height が無い場合に URL のパス (/1280x720/) から高さを取り出す */
+function resolveFormatHeight(format: { height?: number; url?: string }): number {
+  if (typeof format.height === 'number' && Number.isFinite(format.height)) return format.height;
+  if (typeof format.url !== 'string') return 0;
+  const match = format.url.match(/\/(\d{2,5})x(\d{2,5})\//);
+  return match ? Number(match[2]) : 0;
+}
+
+/** 埋め込み用の再生 mp4 を選ぶ (m3u8 は Chrome で再生できないため対象外) */
+export function selectVideoSource(video: VideoSourceInput): TweetVideo | null {
+  const mp4Formats = (video.formats ?? []).filter(
+    (format) => format.container === 'mp4' && isSafeHttpUrl(format.url),
+  );
+
+  // 720p 相当以下を優先 (4K の mp4 をそのまま埋め込むと重すぎる)
+  const bounded = mp4Formats.filter((format) => {
+    const height = resolveFormatHeight(format);
+    return height > 0 && height <= MAX_EMBED_HEIGHT;
+  });
+  const candidates = bounded.length > 0 ? bounded : mp4Formats;
+
+  const best = candidates.reduce<(typeof candidates)[number] | null>((acc, format) => {
+    if (!acc) return format;
+    return (format.bitrate ?? 0) > (acc.bitrate ?? 0) ? format : acc;
+  }, null);
+
+  const url = best?.url ?? (isSafeHttpUrl(video.url) ? video.url : '');
+  if (!url) return null;
+
+  return {
+    url,
+    posterUrl: isSafeHttpUrl(video.thumbnail_url) ? video.thumbnail_url : '',
+    width: typeof video.width === 'number' && Number.isFinite(video.width) ? video.width : null,
+    height: typeof video.height === 'number' && Number.isFinite(video.height) ? video.height : null,
+    duration:
+      typeof video.duration === 'number' && Number.isFinite(video.duration) && video.duration > 0
+        ? video.duration
+        : null,
+    isGif: video.type === 'gif',
+  };
 }
 
 /** 取得失敗・非公開・削除済みはすべて null (呼び出し側がフォールバックを描画する) */
@@ -101,6 +177,9 @@ export async function fetchTweetData(id: string): Promise<TweetData | null> {
       alt: typeof photo.altText === 'string' ? photo.altText : '',
     }));
 
+  const firstVideo = tweet.media?.videos?.[0];
+  const video = firstVideo ? selectVideoSource(firstVideo) : null;
+
   return {
     url: isSafeHttpUrl(tweet.url) ? tweet.url : '',
     text: typeof tweet.text === 'string' ? tweet.text : '',
@@ -115,5 +194,6 @@ export async function fetchTweetData(id: string): Promise<TweetData | null> {
         ? new Date(timestamp * 1000).toISOString()
         : null,
     photos,
+    video,
   };
 }
