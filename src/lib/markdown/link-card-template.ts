@@ -189,14 +189,20 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     ? `<div class="tweet-card-text">${renderTweetText(tweet.text)}</div>`
     : '';
 
-  const photosHtml = tweet.photos
+  const imageTags = tweet.photos
     .map((photo) => {
       const safePhotoUrl = sanitizeUrlAttribute(photo.url);
       if (!safePhotoUrl) return '';
       const safeAlt = escapeHtml(sanitizeText(photo.alt));
       return `<img src="${safePhotoUrl}" alt="${safeAlt}" class="tweet-card-image" loading="lazy" referrerpolicy="no-referrer" />`;
     })
-    .join('');
+    .filter(Boolean);
+
+  // 複数枚は昔の Twitter 風のグリッドにまとめる (枚数は MAX_PHOTOS=4 が上限)
+  const photosHtml =
+    imageTags.length > 1
+      ? `<div class="tweet-card-images tweet-card-images-${Math.min(imageTags.length, 4)}">${imageTags.join('')}</div>`
+      : imageTags.join('');
 
   const { createdAt } = tweet;
   const formattedDate = createdAt ? formatTweetDate(createdAt) : null;
