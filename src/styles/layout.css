@@ -438,13 +438,25 @@
 }
 
 .post-nav-link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
   font-size: 0.85rem;
   color: var(--hishaku-accent);
   text-decoration: none;
   min-width: 0;
   overflow: hidden;
+}
+
+.post-nav-title {
+  min-width: 0;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.post-nav-arrow {
+  flex-shrink: 0;
 }
 
 .post-nav-link:hover {

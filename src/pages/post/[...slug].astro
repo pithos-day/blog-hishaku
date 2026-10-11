@@ -130,7 +130,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
         {
           prev ? (
             <a href={`/post/${getPostSlug(prev)}/`} class="post-nav-link">
-              « {prev.data.title}
+              <span class="post-nav-arrow">«</span>
+              <span class="post-nav-title">{prev.data.title}</span>
             </a>
           ) : (
             <span />
@@ -139,7 +140,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
         {
           next ? (
             <a href={`/post/${getPostSlug(next)}/`} class="post-nav-link post-nav-next">
-              {next.data.title} »
+              <span class="post-nav-title">{next.data.title}</span>
+              <span class="post-nav-arrow">»</span>
             </a>
           ) : (
             <span />
