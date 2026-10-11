@@ -112,6 +112,8 @@ const seoExtend = {
 <html lang={defaultLocale}>
   <head>
     <meta charset="utf-8" />
+    <!-- 外部メディア (video.twimg.com 等) のホットリンク保護で Referer 付きだと 403 になるため、サイト全体で Referer を送らない -->
+    <meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>
       // テーマ初期化 (FOUC 防止)。優先順位: localStorage の明示指定 > システム設定

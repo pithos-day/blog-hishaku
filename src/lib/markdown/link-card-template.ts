@@ -186,7 +186,7 @@ function renderTweetVideo(video: TweetVideo): string {
     video.width && video.height ? ` style="aspect-ratio: ${video.width} / ${video.height}"` : '';
   const playbackAttrs = video.isGif ? 'autoplay muted loop' : 'controls preload="metadata"';
 
-  return `<video class="tweet-card-video" src="${safeUrl}"${posterAttr}${aspectAttr} ${playbackAttrs} playsinline referrerpolicy="no-referrer"></video>`;
+  return `<video class="tweet-card-video" src="${safeUrl}"${posterAttr}${aspectAttr} ${playbackAttrs} playsinline></video>`;
 }
 
 /**
