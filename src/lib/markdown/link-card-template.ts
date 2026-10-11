@@ -206,7 +206,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
       : '<span></span>';
 
   return `<div class="tweet-embed not-prose">
-  <a class="tweet-card" href="${href}" target="_blank" rel="noopener noreferrer">
+  <div class="tweet-card">
     <div class="tweet-card-header">
       ${avatarHtml}
       <div class="tweet-card-author">
@@ -219,9 +219,9 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     ${photosHtml}
     <div class="tweet-card-footer">
       ${dateHtml}
-      <span class="tweet-card-link">Twitter で見る</span>
+      <a class="tweet-card-link" href="${href}" target="_blank" rel="noopener noreferrer">Twitter で見る</a>
     </div>
-  </a>
+  </div>
 </div>`;
 }
 
