@@ -11,6 +11,7 @@ import {
   getPublishedPosts,
   type PostEntry,
   postPath,
+  shouldShowDraft,
 } from '@/lib/posts';
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, toJsonLdHtml } from '@/lib/seo';
 import { getSimilarPosts } from '@/lib/similar-posts';
@@ -123,11 +124,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
           )
         }
         {post.data.sticky && <span class="entry-badge entry-badge-pin">{t('post.badgePin')}</span>}
-        {!import.meta.env.PROD && post.data.draft && (
+        {shouldShowDraft(post) && (
           <span class="entry-badge entry-badge-draft">{t('post.badgeDraft')}</span>
         )}
       </p>
-      {!import.meta.env.PROD && post.data.draft && (
+      {shouldShowDraft(post) && (
         <p class="mb-3 text-sm text-accent">{t('post.draftNotice')}</p>
       )}
       <Content />

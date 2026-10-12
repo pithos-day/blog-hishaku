@@ -22,6 +22,11 @@ function isPublished(post: PostEntry): boolean {
   return import.meta.env.DEV || !post.data.draft;
 }
 
+/** 下書きマーク・注意書きを出すか (本番ビルドでは下書きであることを隠す) */
+export function shouldShowDraft(post: PostEntry): boolean {
+  return !import.meta.env.PROD && Boolean(post.data.draft);
+}
+
 /** sticky → 日付降順 (同日は id 昇順で安定化) */
 function comparePosts(a: PostEntry, b: PostEntry): number {
   const sticky = Number(b.data.sticky ?? false) - Number(a.data.sticky ?? false);

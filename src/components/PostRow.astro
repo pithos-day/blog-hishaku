@@ -2,7 +2,7 @@
 import { t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
-import { getPostSlug, type PostEntry, postPath } from '@/lib/posts';
+import { getPostSlug, type PostEntry, postPath, shouldShowDraft } from '@/lib/posts';
 
 interface Props {
   post: PostEntry;
@@ -21,7 +21,7 @@ const timezone = siteConfig.site.timezone;
     })}
   </time>
   <a href={postPath(getPostSlug(post))} class="hover:text-accent">{post.data.title}</a>
-  {!import.meta.env.PROD && post.data.draft && (
+  {shouldShowDraft(post) && (
     <span class="shrink-0 rounded border border-border px-1 py-px text-xs text-fg-muted">
       {t('post.badgeDraft')}
     </span>

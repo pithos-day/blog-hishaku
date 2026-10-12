@@ -12,6 +12,7 @@ import {
   getPublishedPosts,
   type PostEntry,
   postPath,
+  shouldShowDraft,
 } from '@/lib/posts';
 import { buildTagHref } from '@/lib/tags';
 
@@ -83,7 +84,7 @@ const posts = page.data;
                 <hr class="entry-divider" />
                 <p class="entry-meta">
                   {post.data.sticky && <span class="entry-badge entry-badge-pin">{t('post.badgePin')}</span>}
-                  {!import.meta.env.PROD && post.data.draft && (
+                  {shouldShowDraft(post) && (
                     <span class="entry-badge entry-badge-draft">{t('post.badgeDraft')}</span>
                   )}
                   {normalizeCategories(post.data.categories).map((chain) => (
