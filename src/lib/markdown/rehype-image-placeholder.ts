@@ -21,7 +21,7 @@ export function rehypeImagePlaceholder() {
 
       const existingClass = Array.isArray(node.properties.class)
         ? node.properties.class.join(' ')
-        : String(node.properties.class ?? '') || '';
+        : String(node.properties.class ?? '');
 
       if (parent.type === 'element' && parent.tagName === 'a') {
         node.properties = {
