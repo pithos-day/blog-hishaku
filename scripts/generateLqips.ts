@@ -15,7 +15,8 @@ import { writeCacheJson } from '../src/lib/cache';
 import { runMain } from './cli';
 
 const IMAGE_GLOB = 'public/img/**/*.{webp,jpg,jpeg,png,avif,gif}';
-const OUTPUT_FILE = '.cache/lqips.json';
+const CACHE_FILENAME = 'lqips.json';
+const OUTPUT_FILE = `.cache/${CACHE_FILENAME}`;
 
 interface RgbColor {
   r: number;
@@ -74,7 +75,7 @@ runMain(async () => {
   if (!files.length) {
     console.log('No image files found.');
     // 画像ゼロでも「生成済み (空)」を作り、未実行と区別できるようにする
-    await writeCacheJson(OUTPUT_FILE, {});
+    await writeCacheJson(CACHE_FILENAME, {});
     return;
   }
   console.log(`Found ${files.length} images\n`);
@@ -98,7 +99,7 @@ runMain(async () => {
 
   console.log('');
 
-  await writeCacheJson(OUTPUT_FILE, lqips);
+  await writeCacheJson(CACHE_FILENAME, lqips);
 
   return {
     done: `Done! Generated LQIP for ${processed} images`,

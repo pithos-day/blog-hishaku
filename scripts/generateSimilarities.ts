@@ -28,7 +28,8 @@ import { toPlainText } from '../src/lib/text';
 import { parseCliArgs, runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
-const OUTPUT_FILE = '.cache/similarities.json';
+const CACHE_FILENAME = 'similarities.json';
+const OUTPUT_FILE = `.cache/${CACHE_FILENAME}`;
 const TOP_N_SIMILAR = 5;
 const MODEL_NAME = 'intfloat/multilingual-e5-small';
 
@@ -193,7 +194,7 @@ runMain(async () => {
 
   const similarities = computeSimilarities(posts, embeddings);
 
-  await writeCacheJson(OUTPUT_FILE, similarities);
+  await writeCacheJson(CACHE_FILENAME, similarities);
 
   return {
     done: `Done! Generated similarities for ${posts.length} posts`,

@@ -16,8 +16,13 @@ function warnOnce(message: string, key: string): void {
   console.warn(message);
 }
 
+/** `.cache/` 配下のキャッシュファイルへのパスを組み立てる (読む/書くで同じ基準) */
+function cacheFilePath(filename: string): string {
+  return path.resolve(process.cwd(), '.cache', filename);
+}
+
 export function loadCacheJson<T>(filename: string, fallback: T): T {
-  const cachePath = path.resolve(process.cwd(), '.cache', filename);
+  const cachePath = cacheFilePath(filename);
   try {
     return JSON.parse(readFileSync(cachePath, 'utf-8')) as T;
   } catch (error) {
@@ -33,8 +38,12 @@ export function loadCacheJson<T>(filename: string, fallback: T): T {
   }
 }
 
-/** JSON を整形してファイルへ書き込む (親ディレクトリを作成) */
-export async function writeCacheJson(filePath: string, value: unknown): Promise<void> {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
+/**
+ * `.cache/` 配下へ JSON を整形して書き込む。
+ * `filename` は loadCacheJson と同じ `.cache/` 基準 (親ディレクトリは作成)。
+ */
+export async function writeCacheJson(filename: string, value: unknown): Promise<void> {
+  const cachePath = cacheFilePath(filename);
+  await mkdir(path.dirname(cachePath), { recursive: true });
+  await writeFile(cachePath, `${JSON.stringify(value, null, 2)}\n`);
 }
