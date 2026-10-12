@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { toPlainText } from '../src/lib/text.ts';
 
-test('標準 Markdown の記号を残さずに本文だけを取り出す', () => {
+test('toPlainText: 標準 Markdown の記号を残さずに本文だけを取り出す', () => {
   const markdown = [
     '# 見出し',
     '',
@@ -32,7 +32,7 @@ test('標準 Markdown の記号を残さずに本文だけを取り出す', () =
   );
 });
 
-test('Shoka のインライン構文は中身だけ残して記号を消す', () => {
+test('toPlainText: Shoka のインライン構文は中身だけ残して記号を消す', () => {
   const markdown = [
     '==test== と ++下線++ と !!ネタバレ!! と {漢字^かんじ} と {重要^*}。',
     '',
@@ -54,7 +54,7 @@ test('Shoka のインライン構文は中身だけ残して記号を消す', ()
   assert.doesNotMatch(text, /==|\+\+|!!|\{|\}|\[|\]/);
 });
 
-test('ブロック構文のマーカーと中身の YAML を落とす', () => {
+test('toPlainText: ブロック構文のマーカーと中身の YAML を落とす', () => {
   const markdown = [
     ':::info',
     'info ブロックの中身です。',
@@ -83,7 +83,7 @@ test('ブロック構文のマーカーと中身の YAML を落とす', () => {
   assert.doesNotMatch(text, /:::|\+\+\+|;;;|site:|url:|{%|%}/);
 });
 
-test('コードブロックとインラインコードの扱い', () => {
+test('toPlainText: コードブロックとインラインコードの扱い', () => {
   const markdown = [
     '```js',
     'const a = "```"; // ==test==',
@@ -95,12 +95,12 @@ test('コードブロックとインラインコードの扱い', () => {
   assert.equal(toPlainText(markdown), 'インラインは description です。');
 });
 
-test('エスケープされた記号も抜粋では記号を出さない', () => {
+test('toPlainText: エスケープされた記号も抜粋では記号を出さない', () => {
   assert.equal(toPlainText('\\==これはハイライトになりません=='), 'これはハイライトになりません');
   assert.equal(toPlainText('\\++これは下線になりません++'), 'これは下線になりません');
 });
 
-test('通常の `=` とコードはそのまま残す', () => {
+test('toPlainText: 通常の `=` とコードはそのまま残す', () => {
   assert.equal(toPlainText('値を `a = b` に設定する。'), '値を a = b に設定する。');
   assert.equal(
     toPlainText('E = mc^2 のように式が文中にあってもよい。'),
@@ -108,19 +108,19 @@ test('通常の `=` とコードはそのまま残す', () => {
   );
 });
 
-test('数式はデリミタだけ外して中身を残す', () => {
+test('toPlainText: 数式はデリミタだけ外して中身を残す', () => {
   assert.equal(toPlainText('インライン数式は $E = mc^2$。'), 'インライン数式は E = mc^2。');
   // ディスプレイ数式は LaTeX の生コードなので抜粋には出さない
   assert.equal(toPlainText('$$\n\\int_{-\\infty}^{\\infty} e^{-x^2}\n$$'), '');
 });
 
-test('脚注は参照番号を落として本文だけ残す', () => {
+test('toPlainText: 脚注は参照番号を落として本文だけ残す', () => {
   assert.equal(
     toPlainText('脚注の参照[^note]は後ろに定義。\n\n[^note]: これが脚注の本文。'),
     '脚注の参照は後ろに定義。 これが脚注の本文。',
   );
 });
 
-test('空文字列はそのまま返す', () => {
+test('toPlainText: 空文字列はそのまま返す', () => {
   assert.equal(toPlainText(''), '');
 });

@@ -21,7 +21,7 @@ const mp4FromUrl = (path, bitrate) => ({
 
 const M3U8 = { url: 'https://video.twimg.com/live.m3u8', container: 'm3u8' };
 
-test('height の無い formats は URL から高さを読み取って 720p 以下を選ぶ (実 API 形状)', () => {
+test('selectVideoSource: height の無い formats は URL から高さを読み取って 720p 以下を選ぶ (実 API 形状)', () => {
   const video = selectVideoSource({
     url: 'https://video.twimg.com/avc1/3840x2160/4k.mp4',
     thumbnail_url: 'https://pbs.twimg.com/thumb.jpg',
@@ -44,7 +44,7 @@ test('height の無い formats は URL から高さを読み取って 720p 以�
   assert.equal(video.isGif, false);
 });
 
-test('formats[].height がある場合はそれを優先して 720p 以下を選ぶ', () => {
+test('selectVideoSource: formats[].height がある場合はそれを優先して 720p 以下を選ぶ', () => {
   const video = selectVideoSource({
     formats: [
       M3U8,
@@ -59,7 +59,7 @@ test('formats[].height がある場合はそれを優先して 720p 以下を選
   assert.equal(video.url, 'https://video.twimg.com/720.mp4');
 });
 
-test('720p 以下の mp4 がなければ mp4 の中から最高ビットレートを選ぶ', () => {
+test('selectVideoSource: 720p 以下の mp4 がなければ mp4 の中から最高ビットレートを選ぶ', () => {
   const video = selectVideoSource({
     formats: [
       M3U8,
@@ -71,7 +71,7 @@ test('720p 以下の mp4 がなければ mp4 の中から最高ビットレー�
   assert.equal(video.url, 'https://video.twimg.com/2160.mp4');
 });
 
-test('formats がなければ url を再生源にする (GIF)', () => {
+test('selectVideoSource: formats がなければ url を再生源にする (GIF)', () => {
   const video = selectVideoSource({
     type: 'gif',
     url: 'https://video.twimg.com/tweet_video/abc.mp4',
@@ -86,12 +86,12 @@ test('formats がなければ url を再生源にする (GIF)', () => {
   assert.equal(video.duration, null);
 });
 
-test('m3u8 しかなければ再生源なし (null)', () => {
+test('selectVideoSource: m3u8 しかなければ再生源なし (null)', () => {
   assert.equal(selectVideoSource({ formats: [M3U8] }), null);
   assert.equal(selectVideoSource({}), null);
 });
 
-test('http(s) 以外の URL は捨てる', () => {
+test('selectVideoSource: http(s) 以外の URL は捨てる', () => {
   assert.equal(selectVideoSource({ url: 'javascript:alert(1)' }), null);
   assert.equal(selectVideoSource({ formats: [mp4('javascript:alert(1)', 100, 360)] }), null);
 });
