@@ -3,7 +3,7 @@ title: 画像描画テスト
 date: 2026-10-9 15:30:00
 description: public/img/ に置いた4枚の画像で、本文画像のfigure化・キャプション・幅指定・ライトボックス・LQIP・カバー画像の描画を検証するサンプル記事です。
 subtitle: 本文画像のレンダリング検証用サンプル
-cover: /img/plum.jpg
+cover: /img/plum.webp
 tags:
   - サンプル
   - 画像
@@ -24,33 +24,33 @@ keywords:
 
 `![代替テキスト](パス)` で本文に画像を置くと、`<figure>` でラップされて中央寄せ表示され、代替テキストがキャプションとして下に出ます。あわせて `loading="lazy"` と `decoding="async"` が付きます。
 
-![梅 — この記事のカバー画像と同じ1枚](/img/plum.jpg)
+![梅 — この記事のカバー画像と同じ1枚](/img/plum.webp)
 
 ## キャプションなし
 
 代替テキストを省略すると、`<figure>` は作られるもののキャプションは出ません。
 
-![](/img/orchid.jpg)
+![](/img/orchid.webp)
 
 ## 連続して並べた画像
 
 隣接する段落の画像はそれぞれ独立した figure になり、縦に積み上がります。2枚続けても重なりやはみ出しが出ないことを確認します。
 
-![竹 — 節のある幹](/img/bamboo.jpg)
+![竹 — 節のある幹](/img/bamboo.webp)
 
-![菊 — 咲き乱れる花](/img/chrysanthemums.jpg)
+![菊 — 咲き乱れる花](/img/chrysanthemums.webp)
 
 ## 幅を指定した画像
 
 属性構文を使えば画像に `width` などを直接付けられます。`{width=320}` を続けると 320px 幅で描画されます (スマホ幅では `max-width: 100%` に従い縮みます)。
 
-![梅 — 幅320px](/img/plum.jpg){width=320}
+![梅 — 幅320px](/img/plum.webp){width=320}
 
 ## リンク付きの画像
 
 画像をリンクで包むと、figure ラップは行われずリンク優先の挙動になります。カーソルも `zoom-in` ではなくリンク用になり、クリックでリンク先 (元画像) が開きます。
 
-[![菊 — 元画像を開く](/img/chrysanthemums.jpg)](/img/chrysanthemums.jpg)
+[![菊 — 元画像を開く](/img/chrysanthemums.webp)](/img/chrysanthemums.webp)
 
 ## ライトボックス
 
@@ -68,10 +68,10 @@ pnpm generate:lqips
 
 ## カバー画像
 
-frontmatter の `cover` に `/img/plum.jpg` を指定しています。このパスは記事一覧のサムネイル、OGP 画像、JSON-LD の画像に使われるため、以下の点を確認します。
+frontmatter の `cover` に `/img/plum.webp` を指定しています。このパスは記事一覧のサムネイル、OGP 画像、JSON-LD の画像に使われるため、以下の点を確認します。
 
 - 記事一覧のサムネイルに梅の画像が出る (同じく LQIP グラデーション付き)
-- OGP・ソーシャルカードの画像 URL が `/img/plum.jpg` を指す
+- OGP・ソーシャルカードの画像 URL が `/img/plum.webp` を指す
 
 ## テストチェックリスト
 
@@ -82,4 +82,4 @@ frontmatter の `cover` に `/img/plum.jpg` を指定しています。このパ
 5. リンク内画像に figure ラップが付かず、クリックで元画像が開く
 6. 本文画像をクリックするとライトボックスで拡大される
 7. 画像の背景に LQIP グラデーションが出る (`pnpm generate:lqips` 済みの場合)
-8. 一覧サムネイルと OGP 画像が `/img/plum.jpg` になる
+8. 一覧サムネイルと OGP 画像が `/img/plum.webp` になる
