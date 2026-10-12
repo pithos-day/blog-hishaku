@@ -2,7 +2,7 @@
 import { t } from '@/i18n';
 import { getArchives } from '@/lib/archives';
 import { buildCategoryHref, getCategoryTree } from '@/lib/categories';
-import { getPostSlug, getPublishedPosts, postPath } from '@/lib/posts';
+import { getPostSlug, getPublishedPosts, postPath, sortByDateDesc } from '@/lib/posts';
 import { buildTagHref, getAllTags } from '@/lib/tags';
 import { buildTocTree, type TocHeading } from '@/lib/toc';
 
@@ -10,8 +10,8 @@ const RECENT_LIMIT = 5;
 const BACKNUMBER_LIMIT = 10;
 const TOC_MIN_HEADINGS = 2;
 
-const posts = await getPublishedPosts();
-const recentPosts = posts.slice(0, RECENT_LIMIT);
+// 最近の記事は日付降順 (sticky 順ではなく、ピン留め記事に引っ張られない)
+const recentPosts = sortByDateDesc(await getPublishedPosts()).slice(0, RECENT_LIMIT);
 
 const archiveYears = await getArchives();
 const backnumbers = archiveYears
