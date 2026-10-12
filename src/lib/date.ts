@@ -40,8 +40,9 @@ export function getTimezoneOffsetMs(timeZone: string, date: Date): number {
  */
 export function reinterpretUtcAsTimezone(date: Date, timeZone: string): Date {
   const wallClock = date.getTime();
-  const first = wallClock - getTimezoneOffsetMs(timeZone, new Date(wallClock));
-  return new Date(wallClock - getTimezoneOffsetMs(timeZone, new Date(first)));
+  // オフセットは時刻に依存する (DST 等) ため、一度目の近似値で再計算して誤差を詰める
+  const firstPass = wallClock - getTimezoneOffsetMs(timeZone, new Date(wallClock));
+  return new Date(wallClock - getTimezoneOffsetMs(timeZone, new Date(firstPass)));
 }
 
 function parseOffsetMs(offset: string): number {
