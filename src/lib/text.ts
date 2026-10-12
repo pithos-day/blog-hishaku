@@ -184,8 +184,11 @@ const processor = unified()
   .use(remarkIns)
   .use(remarkMark);
 
-/** 同じ本文は何度も抜く (一覧の description と文字数で共有される) ためのメモ */
-const CACHE_LIMIT = 512;
+/**
+ * 同じ本文は何度も抜く (一覧の description と文字数で共有される) のでメモ化する。
+ * `CACHE_MAX_ENTRIES` は保持するエントリ数の上限 (バイト数ではなく件数)。
+ */
+const CACHE_MAX_ENTRIES = 512;
 const cache = new Map<string, string>();
 
 export function toPlainText(markdown: string): string {
@@ -201,7 +204,7 @@ export function toPlainText(markdown: string): string {
   collectText(tree, segments);
   const text = toReadableText(segments.join(''));
 
-  if (cache.size >= CACHE_LIMIT) cache.clear();
+  if (cache.size >= CACHE_MAX_ENTRIES) cache.clear();
   cache.set(markdown, text);
   return text;
 }
