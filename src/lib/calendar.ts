@@ -39,12 +39,14 @@ export function buildMonthCalendar(
     const ym = getYearMonth(post.data.date, timezone);
     if (ym.year !== year || ym.month !== month) continue;
     const parts = dayFormatter.formatToParts(post.data.date);
+    // 抽出失敗時は '0' で Map に入るが、下の cells 生成は 1 始まりのため静かに破棄される
     const day = Number(parts.find((part) => part.type === 'day')?.value ?? '0');
     const list = dayMap.get(day);
     if (list) list.push(post);
     else dayMap.set(day, [post]);
   }
 
+  // Date.UTC の day は 0 始まりのため、month の day 0 は「その月の前月末日」= 当月の日数
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
   const firstWeekday = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
 
