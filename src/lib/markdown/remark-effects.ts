@@ -8,39 +8,20 @@
  * 要素属性として取り込む。~sub~ / ^sup^ は GFM と衝突するため
  * preprocessor (生テキスト段階) で処理する。
  */
-import type { PhrasingContent, Root } from 'mdast';
+import type { Root } from 'mdast';
 import { visit } from 'unist-util-visit';
+import { parseAttrTokens, TRAILING_ATTR_PATTERN } from './attr-tokens';
 import { escapeHtml } from './escape';
-
-/** 属性トークンに使える CSS 識別子 */
-const CSS_IDENT = /^[a-zA-Z_-][a-zA-Z0-9_-]*$/;
-
-/** 直後の `{.class #id key=value}` ブロック */
-const TRAILING_ATTRS = /^\{([^}]+)\}/;
+import { replaceTextParts } from './text-rewrite';
 
 /** 属性トークンを HTML 属性文字列に変換する */
 function buildAttrString(raw: string): string {
-  const classes: string[] = [];
-  let id = '';
-  const attrs: string[] = [];
-
-  for (const token of raw.split(/\s+/)) {
-    if (token.startsWith('.')) {
-      const cls = token.slice(1);
-      if (CSS_IDENT.test(cls)) classes.push(cls);
-    } else if (token.startsWith('#')) {
-      const idValue = token.slice(1);
-      if (CSS_IDENT.test(idValue)) id = idValue;
-    } else if (token.includes('=')) {
-      const [key, ...rest] = token.split('=');
-      if (CSS_IDENT.test(key)) attrs.push(`${key}="${escapeHtml(rest.join('='))}"`);
-    }
-  }
+  const { classes, id, attrs } = parseAttrTokens(raw);
 
   const parts: string[] = [];
   if (id) parts.push(`id="${id}"`);
   if (classes.length > 0) parts.push(`class="${classes.join(' ')}"`);
-  parts.push(...attrs);
+  parts.push(...attrs.map(({ key, value }) => `${key}="${escapeHtml(value)}"`));
   return parts.length > 0 ? ` ${parts.join(' ')}` : '';
 }
 
@@ -52,35 +33,17 @@ function createInlineEffect(pattern: RegExp, tagName: string) {
       if (!('children' in parent)) return;
 
       const text = node.value;
-      pattern.lastIndex = 0;
-      const parts: PhrasingContent[] = [];
-      let lastIndex = 0;
-
-      for (let match = pattern.exec(text); match !== null; match = pattern.exec(text)) {
-        if (match.index > lastIndex) {
-          parts.push({ type: 'text', value: text.slice(lastIndex, match.index) });
-        }
-
+      const parts = replaceTextParts(text, pattern, (match) => {
         // 続く `{attrs}` を属性として消費
-        let attrStr = '';
-        const after = text.slice(match.index + match[0].length);
-        const attrMatch = TRAILING_ATTRS.exec(after);
-        if (attrMatch) {
-          attrStr = buildAttrString(attrMatch[1]);
-          pattern.lastIndex += attrMatch[0].length;
-        }
-
-        parts.push({
-          type: 'html',
-          value: `<${tagName}${attrStr}>${escapeHtml(match[1])}</${tagName}>`,
-        });
-        lastIndex = pattern.lastIndex;
-      }
-
-      if (parts.length === 0) return;
-      if (lastIndex < text.length) {
-        parts.push({ type: 'text', value: text.slice(lastIndex) });
-      }
+        const attrMatch = TRAILING_ATTR_PATTERN.exec(text.slice(match.index + match[0].length));
+        return {
+          html: `<${tagName}${attrMatch ? buildAttrString(attrMatch[1]) : ''}>${escapeHtml(
+            match[1],
+          )}</${tagName}>`,
+          skip: attrMatch?.[0].length,
+        };
+      });
+      if (!parts) return;
       parent.children.splice(index, 1, ...parts);
     });
   };

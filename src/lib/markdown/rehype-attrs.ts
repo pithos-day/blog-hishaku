@@ -7,6 +7,7 @@
  */
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast';
 import { visit } from 'unist-util-visit';
+import { TRAILING_ATTR_PATTERN } from './attr-tokens';
 
 /** `{.class1 .class2 #id key=value}` をプロパティへ展開する */
 function parseAttrs(attrStr: string): Record<string, string> {
@@ -73,7 +74,6 @@ function findLastMeaningfulChild(children: ElementContent[]): ElementContent | u
 
 const INLINE_ATTR_REGEX = /\[([^\]]*)\]\{([^}]+)\}/g;
 const BLOCK_ATTR_REGEX = /^\{([^}]+)\}$/;
-const TRAILING_ATTR_REGEX = /^\{([^}]+)\}/;
 
 export function rehypeShokaAttrs() {
   return (tree: Root) => {
@@ -127,7 +127,7 @@ export function rehypeShokaAttrs() {
       for (let i = children.length - 1; i >= 0; i--) {
         const child = children[i];
         if (child.type !== 'text') continue;
-        const match = TRAILING_ATTR_REGEX.exec(child.value);
+        const match = TRAILING_ATTR_PATTERN.exec(child.value);
         if (!match) continue;
 
         const prevElement = findPrevElement(children, i - 1);
