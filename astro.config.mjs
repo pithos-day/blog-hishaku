@@ -12,7 +12,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkDirective from 'remark-directive';
 import remarkMath from 'remark-math';
-import { t } from './src/i18n/index.ts';
+import { configureDefaultLocale, t } from './src/i18n/index.ts';
 import { parseSiteYaml } from './src/lib/config/site.ts';
 import { codeFrameTransformer } from './src/lib/markdown/code-frame.ts';
 import { codeMetaTransformer } from './src/lib/markdown/code-meta.ts';
@@ -33,6 +33,8 @@ function loadSiteConfig() {
 }
 
 const siteConfig = loadSiteConfig();
+// i18n の既定ロケールを site.yaml の値へ反映する (t() が追従する)
+configureDefaultLocale(siteConfig.i18n.defaultLocale);
 const content = siteConfig.content;
 
 // remark プラグイン — 順序が重要:

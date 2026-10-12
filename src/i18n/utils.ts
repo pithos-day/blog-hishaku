@@ -8,7 +8,7 @@
  * 既定ロケール (site.yaml の i18n.defaultLocale) を常に使う。
  */
 
-import { defaultLocale } from './config';
+import { getDefaultLocale } from './config';
 import { translations } from './translations';
 import { uiStrings as defaultStrings } from './translations/ja';
 import type { TranslationKey, TranslationParams } from './types';
@@ -27,7 +27,7 @@ function interpolate(value: string, params?: TranslationParams): string {
  * 翻訳キーを既定ロケールの文字列に変換する。
  *
  * 参照順:
- * 1. 既定ロケールの辞書 (translations[defaultLocale])
+ * 1. 既定ロケールの辞書 (translations[getDefaultLocale()])
  * 2. 既定辞書 (translations/ja)
  *
  * @example
@@ -37,7 +37,7 @@ function interpolate(value: string, params?: TranslationParams): string {
  * ```
  */
 export function t(key: TranslationKey, params?: TranslationParams): string {
-  const dict = translations[defaultLocale];
+  const dict = translations[getDefaultLocale()];
   const value = dict?.[key] ?? defaultStrings[key];
 
   if (!value) {

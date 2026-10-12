@@ -11,8 +11,9 @@
 export type { I18nConfig } from './config';
 // Config — ロケール設定 (site.yaml の i18n 既定値の所有者)
 export {
+  configureDefaultLocale,
   defaultI18n,
-  defaultLocale,
+  getDefaultLocale,
   getLocaleLabel,
   isI18nEnabled,
   isLocaleSupported,

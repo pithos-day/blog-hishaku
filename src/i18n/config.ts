@@ -20,8 +20,18 @@ export const defaultI18n: I18nConfig = {
   locales: [{ code: 'ja', label: '日本語', enabled: true }],
 };
 
-/** 既定ロケールコード (辞書のフォールバック先) */
-export const defaultLocale: string = defaultI18n.defaultLocale;
+/** 既定ロケールコード (辞書のフォールバック先) — site.yaml 読み込み時に上書きされる */
+let defaultLocaleCode: string = defaultI18n.defaultLocale;
+
+/** site.yaml の `i18n.defaultLocale` を既定ロケールへ反映する (設定読み込み時に 1 回呼ぶ) */
+export function configureDefaultLocale(code: string): void {
+  defaultLocaleCode = code;
+}
+
+/** 現在の既定ロケールコード (辞書のフォールバック先) */
+export function getDefaultLocale(): string {
+  return defaultLocaleCode;
+}
 
 /** 有効なロケールコード一覧 */
 export const localeList: string[] = defaultI18n.locales
