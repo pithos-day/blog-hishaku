@@ -39,9 +39,16 @@
 }
 
 /* --- 見出しの太さ: 700/800 は重いため 600 に寄せる ------------------------- */
-/* typography プラグイン既定 (h1=800, h2=700, h2〜h4内 strong=700) を上書き。
+/* typography プラグイン既定 (h1=800, h2=700, h2〜h4内 strong=700/800) を上書き。
    markdown.css が後ろで読まれ、指定子の重みも同等のため後勝ちになる */
 .prose :where(h1, h2, h2 strong, h3 strong, h4 strong):not(:where([class~='not-prose'] *)) {
+  font-weight: 600;
+}
+/* h1 strong だけは上のリストから漏れて 900 が確定する (実測: getComputedStyle=900)。
+   同梱は 400/500/600 のみで、フォントマッチング上は 600 のフェイスに寄るため
+   描画は上と同じになるが、宣言値が 900 のままだと将来 700/900 を足した時に
+   意図せず太くなる。見出し内 strong も 600 に揃える意図を明示しておく */
+.prose :where(h1 strong):not(:where([class~='not-prose'] *)) {
   font-weight: 600;
 }
 
