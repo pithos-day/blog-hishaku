@@ -127,11 +127,6 @@ export function renderLinkPreview(ogData: OGData): string {
 </div>`;
 }
 
-/** HTML テキストノード向けのエスケープ */
-function escapeText(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
 const TWEET_URL_PATTERN = /https?:\/\/[^\s<>"']+/g;
 /** URL 末尾に混入しがちな句読点を切り離す */
 const TRAILING_PUNCTUATION = /[.,;:!?)\]}、。」』）！？]+$/;
@@ -147,16 +142,16 @@ function renderTweetText(text: string): string {
     const trailing = raw.match(TRAILING_PUNCTUATION)?.[0] ?? '';
     const url = raw.slice(0, raw.length - trailing.length);
 
-    html += escapeText(text.slice(cursor, start));
+    html += escapeHtml(text.slice(cursor, start));
     if (sanitizeUrl(url)) {
       const safeUrl = escapeHtml(url);
-      html += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${escapeText(url)}</a>`;
+      html += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`;
     }
-    html += escapeText(trailing);
+    html += escapeHtml(trailing);
     cursor = start + raw.length;
   }
 
-  html += escapeText(text.slice(cursor));
+  html += escapeHtml(text.slice(cursor));
   return html;
 }
 
@@ -227,7 +222,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
   const formattedDate = createdAt ? formatTweetDate(createdAt) : null;
   const dateHtml =
     createdAt && formattedDate
-      ? `<time class="tweet-card-date" datetime="${escapeHtml(createdAt)}">${escapeText(formattedDate)}</time>`
+      ? `<time class="tweet-card-date" datetime="${escapeHtml(createdAt)}">${escapeHtml(formattedDate)}</time>`
       : '<span></span>';
 
   return `<div class="tweet-embed not-prose">
