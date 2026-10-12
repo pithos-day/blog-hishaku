@@ -7,7 +7,8 @@
 
 import { loadCacheJson } from './cache';
 
-// .cache/lqips.json が未生成の場合 (pnpm tsx scripts/generateLqips.ts で生成)
+// .cache/lqips.json が未生成の場合 (pnpm generate:lqips で生成) は警告を出して
+// 空のマップで続行し、getLqipGradient はすべて undefined を返す (placeholder なしで描画)
 const lqips = loadCacheJson<Record<string, string>>('lqips.json', {});
 
 function imagePathToKey(imagePath: string): string {
