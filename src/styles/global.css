@@ -70,7 +70,12 @@
   --font-sans:
     'Gen Interface JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic',
     sans-serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
+  /* code,kbd,samp,pre の base 規則が参照する (--default-mono-font-family)。
+   * webfont は public/fonts/jetbrains-mono に同梱し BaseLayout で読み込む。
+   * JetBrains Mono は和文グリフを持たないため、日本語コメント用に Gen Interface JP を
+   * 2番目に置く (CJK は等幅なのでコードの桁は揃う) */
+  --font-mono:
+    'JetBrains Mono', 'Gen Interface JP', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 @layer base {

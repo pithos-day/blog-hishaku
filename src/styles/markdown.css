@@ -437,7 +437,7 @@
   border-radius: 0.3em;
   font-size: 0.85em;
   font-weight: 500;
-  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-family: 'JetBrains Mono', 'Gen Interface JP', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* --- Shoka 効果クラス ({.class} 構文) -------------------------------------- */
@@ -547,7 +547,8 @@ kbd {
   display: inline-block;
   padding: 0.15em 0.4em;
   font-size: 0.85em;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-family:
+    'JetBrains Mono', 'Gen Interface JP', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   line-height: 1.2;
   color: hsl(0 0% 30%);
   background: hsl(0 0% 97%);

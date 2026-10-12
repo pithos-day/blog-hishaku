@@ -1,0 +1,27 @@
+/* JetBrains Mono v2.304 (SIL Open Font License 1.1)
+ * https://www.jetbrains.com/lp/mono/ / https://github.com/JetBrains/JetBrainsMono
+ * コードブロック・インラインコード・kbd に使う等幅書体。ライセンス本文は同梱の OFL.txt。
+ *
+ * fontsource の subset 版 (latin/latin-ext) は unicode-range が U+2500 系の
+ * 罫線文字 (─ │ ├ └) や U+2192 (→) を含まず、このブログのコードブロック内の
+ * ツリー図が別フォントへ落ちるため使わない。公式 webfonts (完全版) を同梱している。
+ *
+ * 重みはサイトの実使用分のみ:
+ *   400 Regular — コードブロック / kbd / code,kbd,samp,pre の base 規則
+ *   500 Medium  — インラインコード (markdown.css の .prose code が 500)
+ */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('./JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('./JetBrainsMono-Medium.woff2') format('woff2');
+}
