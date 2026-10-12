@@ -132,5 +132,11 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    // re2 は pnpm-workspace.yaml の allowBuilds でビルドを止めている (url-regex-safe が
+    // try/catch で読み、失敗時は RegExp にフォールバックするため)。dev の依存最適化は
+    // 静的解析なのでそのフォールバックが効かず re2.node の不在で失敗するため対象外にする。
+    optimizeDeps: {
+      exclude: ['re2', 'url-regex-safe'],
+    },
   },
 });
