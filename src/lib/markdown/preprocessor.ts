@@ -229,16 +229,16 @@ function handleLinksTag(
 ): ParsedBlock | null {
   if (opts.hexoTags === false) return null;
   if (lines[start].trim() !== '{% links %}') return null;
-  const yamlLines: string[] = [];
-  let i = start + 1;
-  while (i < lines.length && lines[i].trim() !== '{% endlinks %}') {
-    yamlLines.push(lines[i]);
-    i++;
-  }
-  if (i < lines.length) i++;
+  // YAML はネストしないため開き側の判定は常に false (閉じタグまで収集するだけ)
+  const { inner, next } = collectBlock(
+    lines,
+    start + 1,
+    () => false,
+    (l) => l.trim() === '{% endlinks %}',
+  );
   const output: string[] = [];
   try {
-    const data = parseYaml(yamlLines.join('\n')) as FriendLinkData[];
+    const data = parseYaml(inner.join('\n')) as FriendLinkData[];
     if (Array.isArray(data)) {
       output.push('');
       output.push(renderFriendLinks(data));
@@ -247,7 +247,7 @@ function handleLinksTag(
   } catch {
     output.push('<!-- links YAML の解析に失敗しました -->');
   }
-  return { next: i, output };
+  return { next, output };
 }
 
 /** `{% media audio|video %} ... {% endmedia %}` の YAML をメディアに変換 */
@@ -260,16 +260,16 @@ function handleMediaTag(
   const match = lines[start].trim().match(/^{% media (audio|video) %}$/);
   if (!match) return null;
   const mediaType = match[1];
-  const yamlLines: string[] = [];
-  let i = start + 1;
-  while (i < lines.length && lines[i].trim() !== '{% endmedia %}') {
-    yamlLines.push(lines[i]);
-    i++;
-  }
-  if (i < lines.length) i++;
+  // YAML はネストしないため開き側の判定は常に false (links と同じ収集)
+  const { inner, next } = collectBlock(
+    lines,
+    start + 1,
+    () => false,
+    (l) => l.trim() === '{% endmedia %}',
+  );
   const output: string[] = [];
   try {
-    const data = parseYaml(yamlLines.join('\n')) as MediaItem[];
+    const data = parseYaml(inner.join('\n')) as MediaItem[];
     if (Array.isArray(data)) {
       const html = mediaType === 'audio' ? renderAudioMedia(data) : renderVideoMedia(data);
       if (html) {
@@ -281,7 +281,7 @@ function handleMediaTag(
   } catch {
     output.push('<!-- media YAML の解析に失敗しました -->');
   }
-  return { next: i, output };
+  return { next, output };
 }
 
 function processBlocks(text: string, opts: PreprocessOptions, depth = 0): string {
