@@ -56,9 +56,9 @@ categoryMap:
 #   color : 任意。リンクの色 (16 進カラー)
 # -----------------------------------------------------------------------------
 social:
-  codeberg:
-    url: https://example.com/codeberg
-    icon: devicon:codeberg
+  github:
+    url: https://example.com/github
+    icon: ri:github-fill
     color: '#191717'
   email:
     url: mailto:you@example.com
