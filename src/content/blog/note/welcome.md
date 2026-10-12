@@ -1,6 +1,6 @@
 ---
 title: blog-hishakuへようこそ
-date: 2026-10-01 09:30:00
+date: 2026-10-13 09:30:00
 description: クラシックなデザインのAstroブログテンプレート「blog-hishaku」の紹介記事。特徴・サイト構成・使い方をまとめました。
 subtitle: テンプレートの紹介
 tags:

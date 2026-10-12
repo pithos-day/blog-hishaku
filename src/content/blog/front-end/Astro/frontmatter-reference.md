@@ -1,6 +1,6 @@
 ---
 title: frontmatterリファレンス
-date: 2026-09-28 10:00:00
+date: 2026-10-10 10:00:00
 updated: 2026-10-07 09:00:00
 subtitle: 記事のfrontmatterで指定できる全フィールド
 description: blog-hishakuの記事frontmatterで指定できるフィールドをすべて解説します。型・既定値・使用例つき。

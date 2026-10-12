@@ -1,6 +1,6 @@
 ---
 title: 画像描画テスト
-date: 2026-10-12 15:30:00
+date: 2026-10-9 15:30:00
 description: public/img/ に置いた4枚の画像で、本文画像のfigure化・キャプション・幅指定・ライトボックス・LQIP・カバー画像の描画を検証するサンプル記事です。
 subtitle: 本文画像のレンダリング検証用サンプル
 cover: /img/plum.jpg

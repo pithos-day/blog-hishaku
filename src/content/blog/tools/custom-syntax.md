@@ -1,6 +1,6 @@
 ---
 title: Markdown構文と拡張構文のすべて
-date: 2026-10-02 14:00:00
+date: 2026-10-12 14:00:00
 description: blog-hishakuで使える標準Markdown・GFM構文と、拡張されたShoka系構文をすべて紹介・テストする記事です。
 subtitle: 全構文のショーケースとテスト台帳
 tags:
