@@ -1,0 +1,307 @@
+---
+/**
+ * webfont の遅延読み込み。
+ *
+ * gen-interface-jp.css は unicode-range 分割で数百 @font-face / 280KB 超あり、
+ * head で <link rel="stylesheet"> として読むと FCP (最初の中身のある描画) と
+ * リソースを奪い合う。このコンポーネントは head では何も読み込まず、
+ *
+ *   初回訪問 … FCP を待ってから CSS を取得し、FontFace API で @font-face を登録
+ *   再訪     … localStorage に保存した CSS 文字列から先に登録し (フォント本体は
+ *              HTTP キャッシュから来るため描画を妨げない)、FCP 後に実ファイルと
+ *              照合して古ければ差し替える (デプロイへの追従)
+ *
+ * JavaScript 無効時・API 非対応時は <noscript> の <link> か、動的生成した
+ * <link rel="stylesheet"> に切り替える。
+ *
+ * 注意: CSS 内の相対 url() は FontFace だと document 基準で解決されるため、
+ * 登録前に stylesheet の URL 基準で絶対 URL へ書き換える必要がある。
+ */
+interface Props {
+  /** public/ からの CSS パス。既定は本文フォントの Gen Interface JP */
+  hrefs?: string[];
+}
+
+const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props;
+---
+
+<noscript>
+  {hrefs.map((href) => <link rel="stylesheet" href={href} />)}
+</noscript>
+
+<script is:inline define:vars={{ fontHrefs: hrefs }}>
+  (function () {
+    'use strict';
+
+    var CACHE_PREFIX = 'hishaku-webfont:';
+    /** FCP を待ちすぎる環境でもフォント読み込みを止めない上限 (ms) */
+    var PAINT_TIMEOUT_MS = 3000;
+    /** href → 現在 document.fonts に載っている FontFace と元の CSS 文字列 */
+    var installed = new Map();
+    /** href ごとの fetch を1回にまとめる */
+    var requests = new Map();
+    /** 動的注入済みの href (二重注入の防止) */
+    var injected = new Set();
+
+    // FontFace / CSSOM が揃っていれば、@font-face を JS で直接登録できる
+    function isSupported() {
+      return (
+        typeof window.FontFace === 'function' &&
+        typeof window.CSSFontFaceRule === 'function' &&
+        typeof document.fonts !== 'undefined' &&
+        typeof CSSStyleSheet.prototype.replaceSync === 'function'
+      );
+    }
+
+    // フォールバック: 通常の stylesheet として読む (JS で処理できなかった場合のみ)
+    function injectLinks() {
+      for (const href of fontHrefs) {
+        if (installed.has(href) || injected.has(href)) continue;
+        injected.add(href);
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    }
+
+    function readCache(href) {
+      try {
+        return localStorage.getItem(CACHE_PREFIX + href);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writeCache(href, text) {
+      try {
+        localStorage.setItem(CACHE_PREFIX + href, text);
+      } catch (error) {
+        // 容量超過・プライベートモード等は無視する (次回も fetch で動く)
+      }
+    }
+
+    function forgetCache(href) {
+      try {
+        localStorage.removeItem(CACHE_PREFIX + href);
+      } catch (error) {
+        // 同上
+      }
+    }
+
+    function fetchText(href) {
+      if (!requests.has(href)) {
+        requests.set(
+          href,
+          fetch(href).then(function (response) {
+            if (!response.ok) throw new Error(href + ': HTTP ' + response.status);
+            return response.text();
+          }),
+        );
+      }
+      return requests.get(href);
+    }
+
+    // src の url() を stylesheet 基準の絶対 URL に書き換える。
+    // data: 等のスキーム付き・ローカルフォント指定はそのまま残す。
+    var SCHEME_RE = /^[a-z][a-z\d+\-.]*:/i;
+    function toAbsoluteUrls(src, baseUrl) {
+      return src.replace(/url\((["']?)([^"')]+)\1\)/g, function (match, _quote, path) {
+        if (SCHEME_RE.test(path)) return match;
+        return 'url("' + new URL(path, baseUrl).href + '")';
+      });
+    }
+
+    // CSS 文字列をパースして FontFace の配列を作る。
+    // 1つでも作れない場合は例外を投げ、呼び出し側が旧状態を保つ (登録前に全部作る)。
+    function buildFaces(text, baseUrl) {
+      var sheet = new CSSStyleSheet();
+      sheet.replaceSync(text);
+      // [CSS の記述子名, FontFace のオプション名]。未指定のものは渡さない (既定値のまま)
+      var descriptors = [
+        ['font-style', 'style'],
+        ['font-weight', 'weight'],
+        ['font-stretch', 'stretch'],
+        ['font-display', 'display'],
+        ['unicode-range', 'unicodeRange'],
+      ];
+      var faces = [];
+      for (var i = 0; i < sheet.cssRules.length; i++) {
+        var rule = sheet.cssRules[i];
+        if (!(rule instanceof CSSFontFaceRule)) continue;
+        var style = rule.style;
+        var family = style.getPropertyValue('font-family').trim().replace(/^["']|["']$/g, '');
+        var source = toAbsoluteUrls(style.getPropertyValue('src').trim(), baseUrl);
+        if (!family || !source) continue;
+        var options = {};
+        for (var j = 0; j < descriptors.length; j++) {
+          var descriptor = style.getPropertyValue(descriptors[j][0]).trim();
+          if (descriptor) options[descriptors[j][1]] = descriptor;
+        }
+        faces.push(new FontFace(family, source, options));
+      }
+      if (faces.length === 0) throw new Error('font-face 規則が1つも見つかりません');
+      return faces;
+    }
+
+    // 旧 FontFace を外して新しい配列を document.fonts に載せる
+    function install(href, text) {
+      var faces = buildFaces(text, new URL(href, location.href).href);
+      var previous = installed.get(href);
+      if (previous) {
+        previous.faces.forEach(function (face) {
+          document.fonts.delete(face);
+        });
+      }
+      faces.forEach(function (face) {
+        document.fonts.add(face);
+      });
+      installed.set(href, { faces: faces, text: text });
+    }
+
+    function tryInstall(href, text) {
+      try {
+        install(href, text);
+        return true;
+      } catch (error) {
+        console.warn('[font] 保存済みのフォント CSS を登録できませんでした', error);
+        return false;
+      }
+    }
+
+    function painted() {
+      var entries = performance.getEntriesByType ? performance.getEntriesByType('paint') : [];
+      return entries.some(function (entry) {
+        return entry.name === 'first-contentful-paint';
+      });
+    }
+
+    // paint エントリは最上位の閲覧コンテキストでのみ観測できる
+    function canWatchPaint() {
+      return (
+        window.top === window &&
+        typeof PerformanceObserver === 'function' &&
+        Array.isArray(PerformanceObserver.supportedEntryTypes) &&
+        PerformanceObserver.supportedEntryTypes.indexOf('paint') !== -1
+      );
+    }
+
+    // FCP まで待つ。経路は 3つ:
+    //   1. 既に出ているなら即時
+    //   2. PerformanceObserver (buffered) で待つ
+    //   3. 観測できない環境では DOM 構築後の2フレーム描画を代用
+    // どれも上限は PAINT_TIMEOUT_MS。
+    function waitForPaint() {
+      if (painted()) return Promise.resolve();
+      return new Promise(function (resolve) {
+        var settled = false;
+        var timer;
+        function finish() {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve();
+        }
+        timer = setTimeout(finish, PAINT_TIMEOUT_MS);
+        if (canWatchPaint()) {
+          var observer = new PerformanceObserver(function (list) {
+            if (
+              !list.getEntries().some(function (entry) {
+                return entry.name === 'first-contentful-paint';
+              })
+            ) {
+              return;
+            }
+            observer.disconnect();
+            finish();
+          });
+          observer.observe({ type: 'paint', buffered: true });
+          return;
+        }
+        var afterFrames = function () {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(finish);
+          });
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', afterFrames, { once: true });
+        } else {
+          afterFrames();
+        }
+      });
+    }
+
+    // 数百面の FontFace 登録のような後処理をフレーム後に逃がす
+    function nextIdle() {
+      return new Promise(function (resolve) {
+        if (typeof window.requestIdleCallback === 'function') {
+          requestIdleCallback(resolve, { timeout: 500 });
+        } else {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(resolve);
+          });
+        }
+      });
+    }
+
+    async function run() {
+      if (!isSupported()) {
+        injectLinks();
+        return;
+      }
+
+      // 再訪分は保存コピーから即時登録、未保存・破損なら初回訪問と同じ流れにする
+      var revisit = [];
+      var firstVisit = [];
+      for (const href of fontHrefs) {
+        var saved = readCache(href);
+        if (saved !== null && tryInstall(href, saved)) {
+          revisit.push(href);
+        } else {
+          forgetCache(href);
+          firstVisit.push(href);
+        }
+      }
+
+      if (firstVisit.length > 0) {
+        // フォント CSS の取得は FCP を妨げないよう、最初の中身が出るまで待つ
+        await waitForPaint();
+        try {
+          for (const href of firstVisit) {
+            var text = await fetchText(href);
+            await nextIdle();
+            install(href, text);
+            writeCache(href, text);
+          }
+        } catch (error) {
+          console.warn('[font] FontFace での読み込みに失敗しました', error);
+          injectLinks();
+          return;
+        }
+      }
+
+      if (revisit.length > 0) {
+        // 再訪分は保存コピーで描画を救ったあと、FCP 後に実体と照合する
+        await waitForPaint();
+        await nextIdle();
+        for (const href of revisit) {
+          try {
+            var latest = await fetchText(href);
+            var current = installed.get(href);
+            if (latest === current.text) continue;
+            install(href, latest);
+            writeCache(href, latest);
+          } catch (error) {
+            // 更新確認に失敗しても保存コピーは使い続けられるので警告のみ
+            console.warn('[font] フォント CSS の更新確認に失敗しました', error);
+          }
+        }
+      }
+    }
+
+    run().catch(function (error) {
+      console.warn('[font] 遅延読み込みを中断して stylesheet に切り替えます', error);
+      injectLinks();
+    });
+  })();
+</script>

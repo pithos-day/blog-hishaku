@@ -65,7 +65,8 @@
   --color-accent-fg: var(--hishaku-accent-fg);
 
   /* Gen Interface JP (Inter + Noto Sans JP)。webfont は public/fonts に同梱し、
-   * BaseLayout で /fonts/gen-interface-jp/gen-interface-jp.css を読み込んでいる。
+   * BaseLayout の FontLoader が FCP 後に /fonts/gen-interface-jp/gen-interface-jp.css
+   * を非同期で読み込んでいる。
    * 後続は同梱ファイルに無いグリフ (絵文字など) のための OS 既定フォント */
   --font-sans:
     'Gen Interface JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic',
