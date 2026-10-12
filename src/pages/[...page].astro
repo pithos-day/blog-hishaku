@@ -41,6 +41,14 @@ interface Props {
 
 const { page } = Astro.props;
 const posts = page.data;
+
+/**
+ * カバー画像の width/height 属性。
+ * レイアウトは CSS (.entry-cover の aspect-ratio: 16 / 7) が担うため、
+ * 属性値も 16 : 7 に合わせておき、ロード前の初期描画でも比率がずれないようにする。
+ */
+const COVER_WIDTH = 1600;
+const COVER_HEIGHT = 700;
 ---
 
 <BaseLayout canonicalPath={page.url.current}>
@@ -65,6 +73,8 @@ const posts = page.data;
                       src={post.data.cover}
                       alt=""
                       class="entry-cover"
+                      width={COVER_WIDTH}
+                      height={COVER_HEIGHT}
                       loading="lazy"
                       {...getLqipProps(post.data.cover)}
                     />
