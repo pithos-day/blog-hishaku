@@ -48,6 +48,7 @@ export function reinterpretUtcAsTimezone(date: Date, timeZone: string): Date {
 function parseOffsetMs(offset: string): number {
   if (offset === 'Z') return 0;
   const match = /^([+-])(\d{2}):?(\d{2})$/.exec(offset);
+  // TIMESTAMP_PATTERN が通った時点で必ず一致する。万一不一致でも 0 (UTC 扱い) に落とす
   if (!match) return 0;
   const sign = match[1] === '-' ? -1 : 1;
   return sign * (Number(match[2]) * 60 + Number(match[3])) * 60_000;
