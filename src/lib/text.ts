@@ -191,19 +191,24 @@ const processor = unified()
 const CACHE_MAX_ENTRIES = 512;
 const cache = new Map<string, string>();
 
+/** パース → テキスト収集 → 可読化までを一気通貫で実行する */
+function parseToPlainText(source: string): string {
+  const tree = processor.runSync(processor.parse(source)) as unknown as PlainNode;
+  const segments: string[] = [];
+  collectText(tree, segments);
+  return toReadableText(segments.join(''));
+}
+
 export function toPlainText(markdown: string): string {
   if (!markdown) return '';
 
   const cached = cache.get(markdown);
   if (cached !== undefined) return cached;
 
-  const source = preprocessShokaMarkdown(markdown);
-  const tree = processor.runSync(processor.parse(source)) as unknown as PlainNode;
+  const text = parseToPlainText(preprocessShokaMarkdown(markdown));
 
-  const segments: string[] = [];
-  collectText(tree, segments);
-  const text = toReadableText(segments.join(''));
-
+  // LRU ではなく上限到達時に全消去する。アクセス順の追跡が不要で、
+  // 消去後も直近の本文は次の呼び出しで即座に再登録されるため十分。
   if (cache.size >= CACHE_MAX_ENTRIES) cache.clear();
   cache.set(markdown, text);
   return text;
