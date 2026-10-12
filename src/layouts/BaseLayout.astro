@@ -146,11 +146,6 @@ const seoExtend = {
         } catch (e) {}
       })();
     </script>
-    <script>
-      // iconify-icon はカスタム要素登録が目的の副作用 import。
-      // frontmatter ではビルド時 (Node) 側にしか評価されないため script で読み込む。
-      import 'iconify-icon';
-    </script>
     <SEO
       title={pageTitle}
       description={description}

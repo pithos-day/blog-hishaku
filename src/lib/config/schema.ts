@@ -25,7 +25,7 @@ export interface SiteConfig {
   };
   i18n: I18nConfig;
   categoryMap: Record<string, string>;
-  social: Record<string, { url: string; icon?: string; color?: string }>;
+  social: Record<string, { url: string; icon?: string; color?: string; colorDark?: string }>;
   seo: {
     robots?: {
       policy?: Array<{
@@ -58,6 +58,8 @@ const socialLinkSchema = z.object({
   url: z.string().min(1),
   icon: z.string().optional(),
   color: z.string().optional(),
+  /** ダークモード時の色 (未指定時は color のまま) */
+  colorDark: z.string().optional(),
 });
 
 const contentSchema = z.object({

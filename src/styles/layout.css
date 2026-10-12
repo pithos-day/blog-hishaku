@@ -536,6 +536,9 @@
   align-items: center;
   justify-content: center;
   line-height: 0;
+  /* 色はインライン style の --link-color / --link-color-dark から取り出す
+     (color をインライン指定するとダークモード時に CSS で上書けないため) */
+  color: var(--link-color, inherit);
   transition:
     transform 0.2s ease,
     opacity 0.2s ease;
@@ -546,7 +549,17 @@
   opacity: 0.85;
 }
 
-.profile-social iconify-icon {
+/* ダークモード: colorDark 指定があればそちらを優先 (黒系アイコンの視認性対策)。
+   :where() で (0,1,1) に揃え、直後の .profile-social a より後ろに置くことで
+   ソース順で解決される (specificity を上げると後の規則との降順警告が出る) */
+:where(.dark) .profile-social a {
+  color: var(--link-color-dark, var(--link-color, inherit));
+}
+
+.profile-social svg {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
   font-size: 1.35rem;
 }
 

@@ -51,15 +51,20 @@ categoryMap:
 
 # -----------------------------------------------------------------------------
 # SNS リンク (右サイドバーのプロフィールに表示。キー: 表示用 ID)
-#   url   : リンク先 (mailto: や /rss.xml も可)
-#   icon  : 任意。Iconify ID (集合:アイコン名)。省略時はキー名をテキスト表示
-#   color : 任意。リンクの色 (16 進カラー)
+#   url      : リンク先 (mailto: や /rss.xml も可)
+#   icon     : 任意。Iconify ID (集合:アイコン名)。省略時はキー名をテキスト表示。
+#              集合は package.json の @iconify-json/<集合> を入れたもののみ使用可
+#              (未インストールの集合・存在しないアイコンはビルド時にエラー)
+#   color    : 任意。リンクとアイコンの色 (16 進カラー)
+#   colorDark: 任意。ダークモード時の色 (未指定時は color のまま)。
+#              黒系アイコン (github 等) は暗色の背景に沈むため明るめを指定する
 # -----------------------------------------------------------------------------
 social:
   github:
     url: https://example.com/github
     icon: ri:github-fill
     color: '#191717'
+    colorDark: '#f0f6fc'
   email:
     url: mailto:you@example.com
     icon: ri:mail-line

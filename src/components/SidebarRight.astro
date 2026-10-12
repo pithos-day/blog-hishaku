@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { t } from '@/i18n';
 import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
 import { siteConfig, siteDisplayName } from '@/lib/config';
@@ -12,7 +13,20 @@ interface Props {
 const { similarPosts } = Astro.props;
 const calendar = await getSidebarCalendar();
 
-const socialEntries = Object.entries(siteConfig.social);
+// 色はインライン style でカスタムプロパティに載せて渡す。
+// color を直接指定するとインライン指定が最優先になりダークモード時に
+// CSS 側で上書きできないため (.profile-social a 参照)。
+const socialEntries = Object.entries(siteConfig.social).map(([name, social]) => ({
+  name,
+  social,
+  style:
+    [
+      social.color ? `--link-color: ${social.color}` : '',
+      social.colorDark ? `--link-color-dark: ${social.colorDark}` : '',
+    ]
+      .filter(Boolean)
+      .join('; ') || undefined,
+}));
 
 // 'calendar.weekdays' は「曜日名のカンマ区切り」形式 (ja.ts 側に注記あり)
 const weekdays = t('calendar.weekdays').split(',');
@@ -37,16 +51,16 @@ const weekdays = t('calendar.weekdays').split(',');
       {
         socialEntries.length > 0 && (
           <ul class="profile-social">
-            {socialEntries.map(([name, social]) => (
+            {socialEntries.map(({ name, social, style }) => (
               <li>
                 <a
                   href={social.url}
                   rel="noopener noreferrer"
                   aria-label={name}
                   title={name}
-                  style={social.color ? `color: ${social.color}` : undefined}
+                  style={style}
                 >
-                  {social.icon ? <iconify-icon icon={social.icon} aria-hidden="true" /> : name}
+                  {social.icon ? <Icon name={social.icon} aria-hidden="true" /> : name}
                 </a>
               </li>
             ))}
