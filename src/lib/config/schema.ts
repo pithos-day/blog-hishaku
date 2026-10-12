@@ -199,8 +199,6 @@ export const siteYamlSchema = z.object({
   analytics: analyticsSchema.optional(),
 });
 
-export type SiteYaml = z.infer<typeof siteYamlSchema>;
-
 /** `site.yaml` が持っていてもよいトップレベルキー(未対応のものは警告対象) */
 export const KNOWN_TOP_LEVEL_KEYS = [
   'site',
