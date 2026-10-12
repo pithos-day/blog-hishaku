@@ -7,6 +7,10 @@
  * (ここに存在しないキーは既定の ja にフォールバックする)。
  */
 
+/** 複数のキーが同一文言を使う場合はここから参照する (変更時に片方だけ取りこぼさない) */
+const NO_POSTS = 'まだ記事がありません。';
+const SEARCH_PLACEHOLDER = '記事を検索…';
+
 export const uiStrings = {
   // ── 共通 ─────────────────────────────────────────────────────
   'common.search': '検索',
@@ -16,7 +20,7 @@ export const uiStrings = {
   'common.home': 'ホーム',
   'common.yearMonth': '{year}年{month}月',
   'common.postCount': '{count} 件',
-  'common.noPosts': 'まだ記事がありません。',
+  'common.noPosts': NO_POSTS,
   'common.lightboxAria': '画像を拡大表示',
   'common.noCategories': 'まだカテゴリがありません。',
   'common.noTags': 'まだタグがありません。',
@@ -36,7 +40,7 @@ export const uiStrings = {
 
   // ── 記事一覧 (トップページ) ──────────────────────────────────
   'index.listAria': '記事一覧',
-  'index.empty': 'まだ記事がありません。',
+  'index.empty': NO_POSTS,
   'index.paginationAria': 'ページネーション',
   'index.prevPage': '← 前のページ',
   'index.nextPage': '次のページ →',
@@ -69,13 +73,14 @@ export const uiStrings = {
   'archives.month': '{year} 年 {month} 月',
 
   // ── カレンダー ──────────────────────────────────────────────
+  /** 曜日名のカンマ区切りリスト (SidebarRight が split(',') して使う。名中にカンマ不可) */
   'calendar.weekdays': '日,月,火,水,木,金,土',
   'calendar.dayPosts': '{count} 件の記事',
 
   // ── 検索 ────────────────────────────────────────────────────
   'search.label': 'サイト内検索',
-  'search.placeholder': '記事を検索…',
-  'search.sidebarPlaceholder': '記事を検索…',
+  'search.placeholder': SEARCH_PLACEHOLDER,
+  'search.sidebarPlaceholder': SEARCH_PLACEHOLDER,
   'search.noIndex': '検索インデックスが見つかりません。ビルド後のサイトで利用できます。',
   'search.noResults': '一致する記事がありません。',
 
