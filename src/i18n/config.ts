@@ -5,6 +5,10 @@
  * 基準に補完・検証され (src/lib/config/schema.ts)、辞書は
  * `src/i18n/translations/` に置かれる。
  *
+ * site.yaml の値は設定読み込み時に `configureDefaultLocale()` で反映される
+ * (src/lib/config/index.ts と astro.config.mjs の 2 箇所)。
+ * そのため、このモジュールは site.yaml を直接読まない。
+ *
  * このモジュールは astro.config (Node) とブラウザの両方から読まれるため、
  * yaml の `?raw` インポートなど Vite 固有の機能に依存しない。
  */
