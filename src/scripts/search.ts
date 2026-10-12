@@ -62,6 +62,9 @@ export const initSearch = (): void => {
       title.textContent = entry.meta.title ?? entry.url;
       const excerpt = document.createElement('div');
       excerpt.className = 'text-sm text-fg-muted';
+      // excerpt は Pagefind がビルド時にインデックスした自サイト HTML に
+      // ヒット語の <mark> を付けただけの文字列。外部入力を混ぜないため
+      // innerHTML でも XSS 面は閉じている。
       excerpt.innerHTML = entry.excerpt;
       link.append(title, excerpt);
       resultsBox.append(link);
