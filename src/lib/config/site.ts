@@ -1,6 +1,6 @@
 import { parse as parseYaml } from 'yaml';
 import {
-  type ContentFlags,
+  type ContentOptions,
   contentDefaults,
   defaultI18n,
   type I18nConfig,
@@ -35,7 +35,7 @@ function normalizeI18n(
   return i18n;
 }
 
-function normalizeContent(raw: Partial<ContentFlags> | undefined): ContentFlags {
+function normalizeContent(raw: Partial<ContentOptions> | undefined): ContentOptions {
   return { ...contentDefaults, ...raw };
 }
 

@@ -8,7 +8,15 @@ export const UMAMI_CLOUD_ORIGIN = 'https://cloud.umami.is';
 // (site.yaml の i18n はこの既定値を基準に補完される)
 export { defaultI18n, type I18nConfig } from '../../i18n/config';
 
-export interface ContentFlags {
+/**
+ * コンテンツ関連の設定 (`site.yaml` の `content`)。
+ * 主体は真偽値のスイッチだが、日数指定の `previewCacheTime` も同じグループに置く。
+ *
+ * `addBlankTarget` / `smoothScroll` / `addHeadingLevel` / `enhanceCodeBlock` は
+ * `enable*` 以前から存在するキーで、site.yaml の公開キーを変えると利用者の設定が
+ * 破れるため命名体系は揃えていない。
+ */
+export interface ContentOptions {
   addBlankTarget: boolean;
   smoothScroll: boolean;
   addHeadingLevel: boolean;
@@ -64,7 +72,7 @@ export interface SiteConfig {
       sitemap?: string | string[] | boolean;
     };
   };
-  content: ContentFlags;
+  content: ContentOptions;
   analytics: { umami?: UmamiConfig };
 }
 
@@ -108,7 +116,7 @@ const contentSchema = z.object({
   previewCacheTime: z.number().min(0).optional(),
 });
 
-export const contentDefaults: ContentFlags = {
+export const contentDefaults: ContentOptions = {
   addBlankTarget: true,
   smoothScroll: true,
   addHeadingLevel: true,

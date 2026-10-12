@@ -9,7 +9,7 @@ export const siteConfig = parseSiteYaml(rawSiteYaml);
 configureDefaultLocale(siteConfig.i18n.defaultLocale);
 
 export type {
-  ContentFlags,
+  ContentOptions,
   I18nConfig,
   SiteConfig,
 } from './schema';
