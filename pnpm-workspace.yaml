@@ -8,5 +8,6 @@ allowBuilds:
   # re2 は url-regex-safe が try/catch で読み込み、失敗時は native RegExp に
   # フォールバックするためネイティブコンパイルは不要
   re2: false
+  workerd: true
 minimumReleaseAgeExclude:
   - lucide@1.55.0
