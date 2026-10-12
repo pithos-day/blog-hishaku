@@ -26,6 +26,11 @@ pnpm-debug.log*
 .vercel
 .superset
 
+# wrangler / cloudflare
+.wrangler/
+# wrangler types が生成するランタイム型 ( DOM 型と衝突するため tsconfig には含めない )
+worker-configuration.d.ts
+
 # macOS-specific files
 .DS_Store
 

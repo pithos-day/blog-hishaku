@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import cloudflare from '@astrojs/cloudflare';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -108,6 +109,10 @@ if (content.enhanceCodeBlock) {
 export default defineConfig({
   site: siteConfig.site.url,
   integrations: [sitemap(), icon(), robotsTxt(siteConfig.seo?.robots ?? {})],
+  // prerenderEnvironment: 'node' — 静的ページのビルド時レンダリングを Node で行う。
+  // 既定の 'workerd' だとビルド中の .cache/*.json (類似記事・LQIP・OGキャッシュ) を
+  // 読めず、関連記事が静かに消えるため Node に固定している。
+  adapter: cloudflare({ prerenderEnvironment: 'node' }),
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',
