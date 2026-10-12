@@ -6,6 +6,11 @@
 const TIMESTAMP_PATTERN =
   /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{1,9}))?)?\s*(Z|[+-]\d{2}:?\d{2})?$/;
 
+/** Intl の formatToParts 結果から数値パートを取り出す (無ければ 0) */
+function partNumber(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes): number {
+  return Number(parts.find((part) => part.type === type)?.value ?? '0');
+}
+
 /** 指定時点におけるタイムゾーンの UTC オフセット(ms・東経 positive) */
 export function getTimezoneOffsetMs(timeZone: string, date: Date): number {
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -18,15 +23,13 @@ export function getTimezoneOffsetMs(timeZone: string, date: Date): number {
     minute: '2-digit',
     second: '2-digit',
   }).formatToParts(date);
-  const get = (type: Intl.DateTimeFormatPartTypes): number =>
-    Number(parts.find((part) => part.type === type)?.value ?? '0');
   const wallClockAsUtc = Date.UTC(
-    get('year'),
-    get('month') - 1,
-    get('day'),
-    get('hour'),
-    get('minute'),
-    get('second'),
+    partNumber(parts, 'year'),
+    partNumber(parts, 'month') - 1,
+    partNumber(parts, 'day'),
+    partNumber(parts, 'hour'),
+    partNumber(parts, 'minute'),
+    partNumber(parts, 'second'),
   );
   return wallClockAsUtc + date.getMilliseconds() - date.getTime();
 }
@@ -108,7 +111,5 @@ export function getYearMonth(date: Date, timeZone: string): { year: number; mont
     year: 'numeric',
     month: 'numeric',
   }).formatToParts(date);
-  const get = (type: Intl.DateTimeFormatPartTypes): number =>
-    Number(parts.find((part) => part.type === type)?.value ?? '0');
-  return { year: get('year'), month: get('month') };
+  return { year: partNumber(parts, 'year'), month: partNumber(parts, 'month') };
 }
