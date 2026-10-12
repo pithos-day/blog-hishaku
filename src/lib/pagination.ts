@@ -20,14 +20,8 @@ export function buildPostPage(
   const lastPage = Math.max(1, Math.ceil(total / pageSize));
   const start = (currentPage - 1) * pageSize;
 
-  let prev: string | undefined;
-  if (currentPage <= 1) {
-    prev = undefined;
-  } else if (currentPage === 2) {
-    prev = '/';
-  } else {
-    prev = `/posts/${currentPage - 1}/`;
-  }
+  const prev =
+    currentPage <= 1 ? undefined : currentPage === 2 ? '/' : `/posts/${currentPage - 1}/`;
 
   return {
     data: posts.slice(start, start + pageSize),
