@@ -2,21 +2,12 @@
  * リンクの検出・分類ユーティリティ (markdown 処理用)
  */
 
+import type { RootContent } from 'mdast';
+
 export interface LinkInfo {
   url: string;
   type: 'tweet' | 'general';
   tweetId?: string;
-}
-
-/** Markdown AST ノードの最小形状 */
-export interface MarkdownNode {
-  type: string;
-  children?: Array<{
-    type: string;
-    url?: string;
-    value?: string;
-    children?: Array<{ type: string; value?: string }>;
-  }>;
 }
 
 /**
@@ -59,19 +50,19 @@ export function classifyLink(url: string): LinkInfo {
  * 段落が「リンクだけの独行」かどうかを判定する
  * 行内リンク (文中のリンク) は対象外に保つ
  */
-export function isStandaloneLinkParagraph(node: MarkdownNode): boolean {
+export function isStandaloneLinkParagraph(node: RootContent): boolean {
   if (node.type !== 'paragraph') return false;
-  if (node.children?.length !== 1) return false;
+  if (node.children.length !== 1) return false;
 
   const child = node.children[0];
   if (child.type !== 'link') return false;
 
   // リンクテキストが URL 自身 (自動リンク) の場合のみ対象
-  if (child.children && child.children.length === 1) {
+  if (child.children.length === 1) {
     const textNode = child.children[0];
     if (textNode.type === 'text') {
-      const text = textNode.value?.trim() ?? '';
-      const url = child.url?.trim() ?? '';
+      const text = textNode.value.trim();
+      const url = child.url.trim();
       return text === url || url.endsWith(text) || text.endsWith(url);
     }
   }
