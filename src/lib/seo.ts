@@ -64,6 +64,7 @@ export function buildArticleJsonLd(
       url: site.url,
     },
     datePublished: toSeoDate(post.date, site.timezone),
+    // falsy だとスプレッド結果が空になり、キーごと出力されない (updated 無し記事向け)
     ...(post.updated && { dateModified: toSeoDate(post.updated, site.timezone) }),
     ...(post.image && { image: post.image }),
     mainEntityOfPage: post.mainEntityOfPage,
@@ -98,6 +99,7 @@ export function buildBreadcrumbJsonLd(
         name: input.homeLabel,
         item: new URL('/', input.siteUrl).href,
       },
+      // position はホームが 1 を使うため、カテゴリは 2 から数える
       ...categoryChain.map((name, index) => ({
         '@type': 'ListItem',
         position: index + 2,
