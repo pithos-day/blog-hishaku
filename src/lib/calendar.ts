@@ -30,13 +30,15 @@ export function buildMonthCalendar(
   timezone: string,
 ): CalendarMonth {
   const dayMap = new Map<number, PostEntry[]>();
+  // 日付の「日」だけ取り出すための Formatter (ループ外で1回だけ作る)
+  const dayFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    day: 'numeric',
+  });
   for (const post of posts) {
     const ym = getYearMonth(post.data.date, timezone);
     if (ym.year !== year || ym.month !== month) continue;
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      day: 'numeric',
-    }).formatToParts(post.data.date);
+    const parts = dayFormatter.formatToParts(post.data.date);
     const day = Number(parts.find((part) => part.type === 'day')?.value ?? '0');
     const list = dayMap.get(day);
     if (list) list.push(post);
