@@ -11,7 +11,7 @@ import type { uiStrings as jaStrings } from './translations/ja';
 /**
  * サポートするロケールコード。
  * ロケールは site.yaml で動的に設定されるためリテラル連合は持たず、
- * `isLocaleSupported()` でランタイムに絞り込む。
+ * `getDefaultLocale()` で現在の既定ロケールを読む。
  */
 export type Locale = string;
 

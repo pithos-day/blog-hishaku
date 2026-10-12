@@ -36,25 +36,3 @@ export function configureDefaultLocale(code: string): void {
 export function getDefaultLocale(): string {
   return defaultLocaleCode;
 }
-
-/** 有効なロケールコード一覧 */
-export const localeList: string[] = defaultI18n.locales
-  .filter((locale) => locale.enabled)
-  .map((locale) => locale.code);
-
-/** 複数ロケールが有効か */
-export const isI18nEnabled = localeList.length > 1;
-
-/**
- * ロケールコードが有効か
- */
-export function isLocaleSupported(code: string): boolean {
-  return localeList.includes(code);
-}
-
-/**
- * ロケールコードの表示名 (見つからなければコードそのもの)
- */
-export function getLocaleLabel(code: string): string {
-  return defaultI18n.locales.find((locale) => locale.code === code)?.label ?? code;
-}

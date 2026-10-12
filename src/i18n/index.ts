@@ -14,10 +14,6 @@ export {
   configureDefaultLocale,
   defaultI18n,
   getDefaultLocale,
-  getLocaleLabel,
-  isI18nEnabled,
-  isLocaleSupported,
-  localeList,
 } from './config';
 // Types — 外部で消費される型のみ
 export type { Locale, TranslationKey, TranslationParams, UIStrings } from './types';
