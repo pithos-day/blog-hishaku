@@ -9,7 +9,7 @@ export async function GET(context: APIContext): Promise<Response> {
     title: siteConfig.site.title,
     description: siteConfig.site.description ?? '',
     site: context.site ?? siteConfig.site.url,
-    customData: '<language>ja</language>',
+    customData: `<language>${siteConfig.i18n.defaultLocale}</language>`,
     items: posts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.date,
