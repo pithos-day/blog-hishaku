@@ -38,6 +38,13 @@
   margin-bottom: 0.3em;
 }
 
+/* --- 見出しの太さ: 700/800 は重いため 600 に寄せる ------------------------- */
+/* typography プラグイン既定 (h1=800, h2=700, h2〜h4内 strong=700) を上書き。
+   markdown.css が後ろで読まれ、指定子の重みも同等のため後勝ちになる */
+.prose :where(h1, h2, h2 strong, h3 strong, h4 strong):not(:where([class~='not-prose'] *)) {
+  font-weight: 600;
+}
+
 /* --- 箇条書きの行間を詰める ------------------------------------------------ */
 .prose :where(ul, ol):not(:where([class~='not-prose'] *)):where(:not([class~='not-prose'] *)) {
   margin-top: 0.6em;

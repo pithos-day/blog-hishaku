@@ -64,8 +64,12 @@
   --color-accent: var(--hishaku-accent);
   --color-accent-fg: var(--hishaku-accent-fg);
 
+  /* Gen Interface JP (Inter + Noto Sans JP)。webfont は public/fonts に同梱し、
+   * BaseLayout で /fonts/gen-interface-jp/gen-interface-jp.css を読み込んでいる。
+   * 後続は同梱ファイルに無いグリフ (絵文字など) のための OS 既定フォント */
   --font-sans:
-    system-ui, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+    'Gen Interface JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic',
+    sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
 }
 
@@ -74,6 +78,10 @@
     background-color: var(--hishaku-bg);
     color: var(--hishaku-fg);
     -webkit-text-size-adjust: 100%;
+    /* Gen Interface JP (Inter + Noto Sans JP) は旧 system-ui (Hiragino Sans 筈) より
+       小さく見えるため、rem 基準の全体をここで ~6% 引き上げて旧表示に合わせる。
+       px で書かれたレイアウト幅は影響を受けない。小さすぎ/大きすぎなら 112.5% (18px) 等へ。 */
+    font-size: 106.25%;
   }
 
   body {

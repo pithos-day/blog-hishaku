@@ -79,7 +79,7 @@
 
 .tweet-card-name {
   overflow: hidden;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--hishaku-fg);
   text-overflow: ellipsis;
   white-space: nowrap;

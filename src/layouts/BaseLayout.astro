@@ -159,6 +159,8 @@ const seoExtend = {
       twitter={seoTwitter}
       extend={seoExtend}
     />
+    <!-- フォント: Gen Interface JP (OFL 1.1)。woff2 と CSS は public/fonts/gen-interface-jp に同梱 -->
+    <link rel="stylesheet" href="/fonts/gen-interface-jp/gen-interface-jp.css" />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
     <UmamiAnalytics />
     <slot name="head" />
