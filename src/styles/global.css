@@ -10,9 +10,9 @@
 /* カラーパレットは astro-pithos (shadcn 準拠) の HSL 値を参照 */
 :root {
   color-scheme: light;
-  --hishaku-bg: hsl(0 3.6% 85%);
-  --hishaku-surface: hsl(240 4.8% 90%);
-  --hishaku-border: hsl(240 5.9% 80%);
+  --hishaku-bg: hsl(216 3.6% 85%);
+  --hishaku-surface: hsl(216 4.8% 90%);
+  --hishaku-border: hsl(216 5.9% 80%);
   --hishaku-fg: hsl(0 0% 20%);
   --hishaku-fg-muted: hsl(0 0% 35%);
   --hishaku-accent: hsl(206 77% 62%);
