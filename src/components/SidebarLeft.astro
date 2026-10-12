@@ -2,7 +2,7 @@
 import { t } from '@/i18n';
 import { getArchives } from '@/lib/archives';
 import { buildCategoryHref, getCategoryTree } from '@/lib/categories';
-import { getPostSlug, getPublishedPosts } from '@/lib/posts';
+import { getPostSlug, getPublishedPosts, postPath } from '@/lib/posts';
 import { buildTagHref, getAllTags } from '@/lib/tags';
 import { buildTocTree, type TocHeading } from '@/lib/toc';
 
@@ -45,7 +45,7 @@ const tocTree =
           <ul class="module-list">
             {recentPosts.map((post) => (
               <li>
-                <a href={`/post/${getPostSlug(post)}/`} title={post.data.title}>
+                <a href={postPath(getPostSlug(post))} title={post.data.title}>
                   {post.data.title}
                 </a>
               </li>

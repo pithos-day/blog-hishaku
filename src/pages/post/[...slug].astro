@@ -5,7 +5,13 @@ import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
-import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import {
+  getPostDescription,
+  getPostSlug,
+  getPublishedPosts,
+  type PostEntry,
+  postPath,
+} from '@/lib/posts';
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, toJsonLdHtml } from '@/lib/seo';
 import { getSimilarPosts } from '@/lib/similar-posts';
 import { buildTagHref } from '@/lib/tags';
@@ -129,7 +135,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
       <nav class="post-nav" aria-label={t('post.contextNavAria')}>
         {
           prev ? (
-            <a href={`/post/${getPostSlug(prev)}/`} class="post-nav-link">
+            <a href={postPath(getPostSlug(prev))} class="post-nav-link">
               <span class="post-nav-arrow">«</span>
               <span class="post-nav-title">{prev.data.title}</span>
             </a>
@@ -139,7 +145,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
         }
         {
           next ? (
-            <a href={`/post/${getPostSlug(next)}/`} class="post-nav-link post-nav-next">
+            <a href={postPath(getPostSlug(next))} class="post-nav-link post-nav-next">
               <span class="post-nav-title">{next.data.title}</span>
               <span class="post-nav-arrow">»</span>
             </a>

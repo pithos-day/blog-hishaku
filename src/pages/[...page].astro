@@ -6,7 +6,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { getLqipProps } from '@/lib/lqip';
 import { buildPostPage, POSTS_PAGE_SIZE } from '@/lib/pagination';
-import { getPostDescription, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import {
+  getPostDescription,
+  getPostSlug,
+  getPublishedPosts,
+  type PostEntry,
+  postPath,
+} from '@/lib/posts';
 import { buildTagHref } from '@/lib/tags';
 
 export async function getStaticPaths() {
@@ -46,14 +52,14 @@ const posts = page.data;
           {posts.map((post) => (
             <li class="entry">
               <h2 class="entry-title-bar">
-                <a href={`/post/${getPostSlug(post)}/`}>{post.data.title}</a>
+                <a href={postPath(getPostSlug(post))}>{post.data.title}</a>
               </h2>
               <div class="entry-body">
                 <p class="entry-submeta">
                   <PostMeta post={post} />
                 </p>
                 {post.data.cover && (
-                  <a href={`/post/${getPostSlug(post)}/`} tabindex={-1} aria-hidden="true">
+                  <a href={postPath(getPostSlug(post))} tabindex={-1} aria-hidden="true">
                     <img
                       src={post.data.cover}
                       alt=""

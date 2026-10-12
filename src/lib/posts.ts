@@ -12,6 +12,11 @@ export function getPostSlug(post: PostEntry): string {
   return (post.data.link ?? post.id).toLowerCase();
 }
 
+/** 記事 URL (`/post/<slug>/`) — 末尾スラッシュは sitemap / canonical の表記に合わせる */
+export function postPath(slug: string): string {
+  return `/post/${slug}/`;
+}
+
 /** 本番ビルドでは下書きを除外し、開発時は含める */
 function isPublished(post: PostEntry): boolean {
   return import.meta.env.DEV || !post.data.draft;
