@@ -61,10 +61,10 @@ export async function getCategoryTree(): Promise<{
     if (post.data.catalog === false) continue;
     const visited = new Set<string>();
     for (const chain of normalizeCategories(post.data.categories)) {
-      let names: string[] = [];
+      const names: string[] = [];
       for (const name of chain) {
         if (!name) continue;
-        names = [...names, name];
+        names.push(name);
         const key = names.join('\n');
         if (visited.has(key)) continue;
         visited.add(key);
