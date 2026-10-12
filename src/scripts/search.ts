@@ -4,6 +4,9 @@
  */
 import { t } from '@/i18n';
 
+/** 検索結果ダイアログに載せる最大件数 */
+const MAX_RESULTS = 10;
+
 interface PagefindSearchResult {
   data(): Promise<{ url: string; meta: { title?: string }; excerpt: string }>;
 }
@@ -47,8 +50,9 @@ export const initSearch = (): void => {
       resultsBox.textContent = t('search.noIndex');
       return;
     }
-    const found = await pagefind.search(query);
-    const entries = await Promise.all(found.results.slice(0, 10).map((result) => result.data()));
+    // 語彙: results = Pagefind の検索ヒット / entries = データ読み込み済みの表示対象
+    const { results } = await pagefind.search(query);
+    const entries = await Promise.all(results.slice(0, MAX_RESULTS).map((hit) => hit.data()));
     if (entries.length === 0) {
       resultsBox.textContent = t('search.noResults');
       return;
