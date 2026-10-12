@@ -347,7 +347,8 @@
   font-size: 0.75rem;
 }
 
-.entry-tags a::before {
+.entry-tags a::before,
+.entry-tags-inline a::before {
   content: '#';
   margin-right: 1px;
 }
@@ -356,11 +357,6 @@
   display: inline-flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.entry-tags-inline a::before {
-  content: '#';
-  margin-right: 1px;
 }
 
 .entry-divider {
