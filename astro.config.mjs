@@ -46,6 +46,8 @@ const remarkPlugins = [];
 // remarkDirective — :emoji[...] 等の textDirective をパースするため、
 // 他のプラグインより先に登録する (リパース側にも remark-preprocess.ts で入れている)。
 remarkPlugins.push(remarkDirective);
+// ガードに math が含まれないのは、math は再パース側のオプションにすぎず、
+// プラグインが走らないときの数式は先頭の remarkMath + rehype-katex が担当するため。
 if (content.enableShokaContainers || content.enableShokaHexoTags || content.enableShokaEffects) {
   remarkPlugins.push([
     remarkShokaPreprocess,
