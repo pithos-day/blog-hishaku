@@ -12,7 +12,7 @@ import { glob } from 'glob';
 import sharp from 'sharp';
 import { writeCacheJson } from '../src/lib/cache';
 
-import { runMain } from './cli';
+import { reportItemError, reportProgress, runMain } from './cli';
 
 const IMAGE_GLOB = 'public/img/**/*.{webp,jpg,jpeg,png,avif,gif}';
 const CACHE_FILENAME = 'lqips.json';
@@ -59,7 +59,7 @@ async function computeCompactLqip(imagePath: string): Promise<string | null> {
     const compact = `${colors[0].slice(1)}${colors[1].slice(1)}${colors[3].slice(1)}`;
     return compact;
   } catch (error) {
-    console.error(`  Error processing ${imagePath}:`, error);
+    reportItemError(imagePath, error);
     return null;
   }
 }
@@ -85,7 +85,7 @@ runMain(async () => {
   let failed = 0;
 
   for (const [index, file] of files.entries()) {
-    process.stdout.write(`\r  Processing ${index + 1}/${files.length}: ${path.basename(file)}...`);
+    reportProgress(index, files.length, path.basename(file));
 
     const compact = await computeCompactLqip(file);
     if (compact !== null) {

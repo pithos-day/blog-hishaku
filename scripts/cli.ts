@@ -3,6 +3,19 @@
  */
 
 /**
+ * 1 行を上書きしながら進捗を表示する (`  Processing 3/10: foo.png...`)。
+ * `label` はファイル名やスラッグなど、処理中を識別できる短い文字列。
+ */
+export function reportProgress(index: number, total: number, label: string): void {
+  process.stdout.write(`\r  Processing ${index + 1}/${total}: ${label}...`);
+}
+
+/** 1 件分の失敗を報告する (エントリ単位の continue 用。処理は続行する) */
+export function reportItemError(label: string, error: unknown): void {
+  console.error(`  Error processing ${label}:`, error);
+}
+
+/**
  * 時間計測付きでメイン処理を実行する。
  *
  * 戻り値の `done` を `in <elapsed>s` 付きで出力し、`after` はその後に実行する。

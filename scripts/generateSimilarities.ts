@@ -25,7 +25,7 @@ import matter from 'gray-matter';
 import { writeCacheJson } from '../src/lib/cache';
 import type { SimilarPost } from '../src/lib/similar-posts';
 import { toPlainText } from '../src/lib/text';
-import { parseCliArgs, runMain } from './cli';
+import { parseCliArgs, reportItemError, reportProgress, runMain } from './cli';
 
 const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILENAME = 'similarities.json';
@@ -114,7 +114,7 @@ async function readPostForSimilarity(filePath: string): Promise<PostData | null>
 
     return { slug, title: frontmatter.title as string, text };
   } catch (error) {
-    console.error(`  Error processing ${filePath}:`, error);
+    reportItemError(filePath, error);
     return null;
   }
 }
@@ -127,7 +127,7 @@ async function generateEmbeddings(
   console.log(`Generating embeddings for ${posts.length} posts...`);
   for (let i = 0; i < posts.length; i++) {
     const post = posts[i];
-    process.stdout.write(`\r  Processing ${i + 1}/${posts.length}: ${post.slug.slice(0, 40)}...`);
+    reportProgress(i, posts.length, post.slug.slice(0, 40));
     const output = (await extractor(post.text, {
       pooling: 'mean',
       normalize: false,
