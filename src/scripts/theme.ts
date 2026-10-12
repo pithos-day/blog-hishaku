@@ -1,3 +1,6 @@
+/** テーマ名を保存する localStorage のキー (初期化スクリプトとも共有する) */
+export const THEME_STORAGE_KEY = 'theme';
+
 /** テーマトグル (ライト / ダーク切替) の初期化 */
 export const initThemeToggle = (): void => {
   const themeToggle = document.getElementById('theme-toggle');
@@ -7,7 +10,7 @@ export const initThemeToggle = (): void => {
     root.classList.toggle('dark', next === 'dark');
     root.dataset.theme = next;
     try {
-      window.localStorage.setItem('theme', next);
+      window.localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
       // localStorage が使えない環境ではセッション内のみ反映
     }
