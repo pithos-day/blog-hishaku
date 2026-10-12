@@ -696,6 +696,9 @@
   transform: scale(0.9);
 }
 
+/* 展開時の段階表示: 下のボタンから 0.04 秒ずつ遅らせる。
+ * nth-child の連番は BaseLayout の .floating-actions 内のボタン順
+ * (1=テーマ / 2=トップ / 3=末尾) に依存する。並べ替えたらここも直す */
 .floating-group[data-expanded='true'] .floating-actions .floating-btn:nth-child(3) {
   transition-delay: 0.04s;
 }

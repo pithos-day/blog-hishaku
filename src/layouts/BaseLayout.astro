@@ -227,6 +227,8 @@ const seoExtend = {
     </dialog>
 
     <div id="floating-group" class="floating-group" data-expanded="false">
+      {/* ボタン順 (テーマ → トップ → 末尾) は layout.css の nth-child 段階表示の前提。
+          並べ替えたら CSS の transition-delay も更新する */}
       <div id="floating-actions" class="floating-actions">
         <button
           type="button"
