@@ -1,13 +1,8 @@
 import { getPublishedPosts, type PostEntry } from './posts';
 
-/** タグ名の正規化 (URL スラッグ用・小文字化) */
-export function normalizeTag(tag: string): string {
-  return tag.toLowerCase();
-}
-
-/** タグ名 → URL スラッグ */
+/** タグ名を小文字化して URL スラッグにする (日本語タグはそのまま通る) */
 export function tagToSlug(tag: string): string {
-  return normalizeTag(tag);
+  return tag.toLowerCase();
 }
 
 /** タグ名 → リンク先 ("/tags/astro/"・日本語タグはそのまま) */
