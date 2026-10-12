@@ -10,6 +10,11 @@ import type { PostEntry } from './posts';
 
 export const POSTS_PAGE_SIZE = 10;
 
+/** 総件数から最終ページ番号を求める (1 件も無くても 1) */
+export function calcLastPage(total: number, pageSize: number = POSTS_PAGE_SIZE): number {
+  return Math.max(1, Math.ceil(total / pageSize));
+}
+
 /** 記事一覧の Page オブジェクトを組み立てる (prev は 2 ページ目で `/` に戻る) */
 export function buildPostPage(
   posts: PostEntry[],
@@ -17,7 +22,7 @@ export function buildPostPage(
   pageSize: number = POSTS_PAGE_SIZE,
 ): Page<PostEntry> {
   const total = posts.length;
-  const lastPage = Math.max(1, Math.ceil(total / pageSize));
+  const lastPage = calcLastPage(total, pageSize);
   const start = (currentPage - 1) * pageSize;
 
   const prev =
