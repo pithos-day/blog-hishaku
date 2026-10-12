@@ -2,16 +2,18 @@
 import { siteConfig } from '@/lib/config';
 import { UMAMI_CLOUD_ORIGIN } from '@/lib/config/schema';
 
-const umami = siteConfig.analytics.umami;
-const enabled = umami?.enabled === true && umami.id !== '';
+const configured = siteConfig.analytics.umami;
+// enabled かつ id 有りの設定だけを採用し、出力条件をこの変数の truthy 判定に一本化する
+// (テンプレート側で enabled と umami を別々に再評価する必要が無くなる)
+const umami = configured?.enabled === true && configured.id !== '' ? configured : undefined;
 // 末尾スラッシュを除去 (自己ホスト時の data-host-url と一致させる)
-const endpoint = (umami?.endpoint ?? UMAMI_CLOUD_ORIGIN).replace(/\/+$/, '');
+const endpoint = (configured?.endpoint ?? UMAMI_CLOUD_ORIGIN).replace(/\/+$/, '');
 const scriptSrc = `${endpoint}/script.js`;
 const hostUrl = endpoint === UMAMI_CLOUD_ORIGIN ? undefined : endpoint;
 ---
 
 {
-  enabled && umami && (
+  umami && (
     <>
       {import.meta.env.DEV && <script is:inline>localStorage.setItem('umami.disabled', '1');</script>}
       <script
