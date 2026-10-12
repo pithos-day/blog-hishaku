@@ -57,12 +57,19 @@ export function isStandaloneLinkParagraph(node: RootContent): boolean {
   const child = node.children[0];
   if (child.type !== 'link') return false;
 
-  // リンクテキストが URL 自身 (自動リンク) の場合のみ対象
+  // リンクの中身がテキスト1つのときだけ「URL 表示か」を判定する
   if (child.children.length === 1) {
     const textNode = child.children[0];
     if (textNode.type === 'text') {
       const text = textNode.value.trim();
       const url = child.url.trim();
+      // 「表示が URL そのものに見えるか」で判定する:
+      //  - 完全一致 … <https://…> の自動リンク表示
+      //  - 片方が他を含む … 末尾スラッシュ等の表記ゆれや
+      //    ホスト名だけの短縮表示 (example.com / https://example.com/) も
+      //    URL だけの表示とみなす
+      // ラベル付きリンク ([公式サイト](https://…)) はいずれも不成立で、
+      // 行内リンクとして対象外のまま残る
       return text === url || url.endsWith(text) || text.endsWith(url);
     }
   }
