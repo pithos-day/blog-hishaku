@@ -104,7 +104,7 @@ async function readPostForSimilarity(filePath: string): Promise<PostData | null>
     if (frontmatter.draft === true) return null;
     if (!frontmatter.title) return null;
     // 類似度計算から除外する記事
-    if (frontmatter.excludeFromSummary === true) return null;
+    if (frontmatter.excludeFromSimilarities === true) return null;
 
     const slug = extractSlug(filePath, frontmatter.link as string | undefined);
     const description =

@@ -38,7 +38,7 @@ const blogCollection = defineCollection({
       math: z.boolean().optional(),
       keywords: z.array(z.string()).optional(),
       /** true で類似記事生成 (generate:similarities) の対象から除外 */
-      excludeFromSummary: z.boolean().optional(),
+      excludeFromSimilarities: z.boolean().optional(),
       /** 暗号化記事は未対応 (下記 superRefine でビルドエラー) */
       password: z.string().optional(),
     })

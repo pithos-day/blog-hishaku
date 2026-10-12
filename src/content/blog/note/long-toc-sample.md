@@ -7,7 +7,7 @@ tags:
   - 目次
 categories:
   - ノート
-excludeFromSummary: true
+excludeFromSimilarities: true
 keywords:
   - TOC
   - 目次
@@ -73,7 +73,7 @@ Shiki を使ったハイライトに加えて、メタ文字列でタイトル�
 
 ### 除外フラグ
 
-この記事には `excludeFromSummary: true` を指定しており、類似記事生成の対象から除外されている。類似記事パネルにこの記事が候補として現れないことを確認できる。
+この記事には `excludeFromSimilarities: true` を指定しており、類似記事生成の対象から除外されている。類似記事パネルにこの記事が候補として現れないことを確認できる。
 
 ## セクション6: アーカイブ
 

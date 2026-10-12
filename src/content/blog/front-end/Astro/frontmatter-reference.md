@@ -35,7 +35,7 @@ keywords:
 | `draft` | boolean | - | 下書きとして扱う |
 | `catalog` | boolean | - | カタログに含める (既定 true) |
 | `math` | boolean | - | 数式CSSを読み込む (既定 true) |
-| `excludeFromSummary` | boolean | - | 類似記事生成の対象外 |
+| `excludeFromSimilarities` | boolean | - | 類似記事生成の対象外 |
 
 ## title (必須)
 
@@ -172,10 +172,10 @@ math: false
 
 `false` を指定すると、その記事のページに KaTeX の CSS を読み込みません。数式を含まない記事でページ負荷を下げる用途です。
 
-## excludeFromSummary
+## excludeFromSimilarities
 
 ```yaml
-excludeFromSummary: true
+excludeFromSimilarities: true
 ```
 
 `pnpm generate:similarities` による類似記事生成の対象から除外されます。類似度計算に使う埋め込み入力(タイトル + description/本文冒頭)に含めたくない記事向けです。
@@ -211,6 +211,6 @@ sticky: false
 draft: false
 catalog: true
 math: true
-excludeFromSummary: false
+excludeFromSimilarities: false
 ---
 ```
