@@ -56,8 +56,7 @@ async function computeCompactLqip(imagePath: string): Promise<string | null> {
     }
 
     // compact format: 3 hex colors (top-left, top-right, bottom-right) without #
-    const compact = `${colors[0].slice(1)}${colors[1].slice(1)}${colors[3].slice(1)}`;
-    return compact;
+    return `${colors[0].slice(1)}${colors[1].slice(1)}${colors[3].slice(1)}`;
   } catch (error) {
     reportItemError(imagePath, error);
     return null;
