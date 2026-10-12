@@ -79,19 +79,20 @@ remarkPlugins.push([
 remarkPlugins.push(remarkEmojiImage);
 
 // rehype プラグイン — 見出しアンカー → 属性構文 → 画像 figure 化 → KaTeX
-const rehypePlugins = [
-  rehypeSlug,
-  [
-    rehypeAutolinkHeadings,
-    {
-      behavior: 'append',
-      properties: {
-        className: ['anchor-link'],
-        ariaLabel: t('post.headingLink'),
-      },
+// (remark / shiki transformers と同じく、登録順にコメントを添えるため push で組み立てる)
+const rehypePlugins = [];
+// slug を先に確定させてから、見出しへアンカーリンクを追記する
+rehypePlugins.push(rehypeSlug);
+rehypePlugins.push([
+  rehypeAutolinkHeadings,
+  {
+    behavior: 'append',
+    properties: {
+      className: ['anchor-link'],
+      ariaLabel: t('post.headingLink'),
     },
-  ],
-];
+  },
+]);
 if (content.enableShokaAttrs) rehypePlugins.push(rehypeShokaAttrs);
 // 画像の figure 化 — attrs 後 (data-* 等が確定した後)、KaTeX 前
 rehypePlugins.push(rehypeImagePlaceholder);
