@@ -738,9 +738,13 @@
 /* --------------------------------------------------------------------------
    画像ライトボックス
    -------------------------------------------------------------------------- */
+/* ダイアログの見た目はここで完結させる (Tailwind utility との二重定義を避ける) */
 .lightbox-dialog {
+  margin: auto;
+  padding: 0;
   border: none;
   background: transparent;
+  box-shadow: none;
   outline: none;
   overflow: visible;
   width: 95vw;
