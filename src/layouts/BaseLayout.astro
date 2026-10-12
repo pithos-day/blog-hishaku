@@ -50,7 +50,8 @@ const {
   robotsMeta,
 } = Astro.props;
 
-const hasMath = siteConfig.content.enableMath && math !== false;
+// math は destructuring の既定で false に落としているため、判定はこれ1本で十分
+const hasMath = siteConfig.content.enableMath && math;
 
 const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title;
 const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, siteConfig.site.url);
