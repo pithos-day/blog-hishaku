@@ -26,8 +26,9 @@ function normalizeI18n(
       ? raw.locales.map((l) => ({ ...l }))
       : defaultI18n.locales.map((l) => ({ ...l })),
   };
-  const defaultEntry = i18n.locales.find((l) => l.code === i18n.defaultLocale && l.enabled);
-  if (!defaultEntry) {
+  // defaultLocale が有効なエントリとして locales に在るか (不在なら設定不備)
+  const hasDefaultEntry = i18n.locales.some((l) => l.code === i18n.defaultLocale && l.enabled);
+  if (!hasDefaultEntry) {
     throw new Error(
       `config/site.yaml: i18n.defaultLocale "${i18n.defaultLocale}" は i18n.locales に有効なエントリとして存在しません`,
     );
@@ -40,6 +41,7 @@ function normalizeContent(raw: Partial<ContentOptions> | undefined): ContentOpti
 }
 
 function warnIgnoredTopLevelKeys(doc: unknown): void {
+  // astro.config (Node) では import.meta.env が無いため、警告は dev 起動時のみに限る
   if (typeof import.meta !== 'object' || import.meta.env?.DEV !== true) return;
   if (doc === null || typeof doc !== 'object' || Array.isArray(doc)) return;
   const ignored = Object.keys(doc).filter(
