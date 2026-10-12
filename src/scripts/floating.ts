@@ -1,7 +1,7 @@
 /** フローティングツールバー (右下) の初期化モジュール */
 
 /** カスタムスクロールの所要時間 (ms) — ネイティブ smooth より高速 */
-const SCROLL_DURATION = 1000;
+const SCROLL_DURATION_MS = 1000;
 
 /** easeOutQuart: 初速が速く末尾で減速するイージング */
 function easeOutQuart(t: number): number {
@@ -23,7 +23,7 @@ function scrollToY(targetY: number): void {
   const startTime = performance.now();
   const step = (now: number): void => {
     const elapsed = now - startTime;
-    const progress = Math.min(elapsed / SCROLL_DURATION, 1);
+    const progress = Math.min(elapsed / SCROLL_DURATION_MS, 1);
     window.scrollTo(0, startY + distance * easeOutQuart(progress));
     if (progress < 1) requestAnimationFrame(step);
   };
