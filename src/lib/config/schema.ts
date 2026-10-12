@@ -8,40 +8,6 @@ export const UMAMI_CLOUD_ORIGIN = 'https://cloud.umami.is';
 // (site.yaml の i18n はこの既定値を基準に補完される)
 export { defaultI18n, type I18nConfig } from '../../i18n/config';
 
-/**
- * コンテンツ関連の設定 (`site.yaml` の `content`)。
- * 主体は真偽値のスイッチだが、日数指定の `previewCacheTime` も同じグループに置く。
- *
- * `addBlankTarget` / `smoothScroll` / `addHeadingLevel` / `enhanceCodeBlock` は
- * `enable*` 以前から存在するキーで、site.yaml の公開キーを変えると利用者の設定が
- * 破れるため命名体系は揃えていない。
- */
-export interface ContentOptions {
-  addBlankTarget: boolean;
-  smoothScroll: boolean;
-  addHeadingLevel: boolean;
-  enableToc: boolean;
-  enhanceCodeBlock: boolean;
-  enableCodeCopy: boolean;
-  enableCodeFullscreen: boolean;
-  enableShokaContainers: boolean;
-  enableShokaAttrs: boolean;
-  enableShokaEffects: boolean;
-  enableShokaSpoiler: boolean;
-  enableShokaRuby: boolean;
-  enableShokaHexoTags: boolean;
-  enableMath: boolean;
-  enableCodeMeta: boolean;
-  /** 独行リンクを埋め込みカードに変換する (総スイッチ) */
-  enableLinkEmbed: boolean;
-  /** 独行の Twitter/X リンクをツイート埋め込みにする */
-  enableTweetEmbed: boolean;
-  /** 独行の一般リンクに OG プレビューカードを表示 (ビルド時にメタデータ取得) */
-  enableOGPreview: boolean;
-  /** OG プレビューデータのキャッシュ日数 */
-  previewCacheTime: number;
-}
-
 export interface SiteConfig {
   site: {
     title: string;
@@ -110,11 +76,31 @@ const contentSchema = z.object({
   enableShokaHexoTags: z.boolean().optional(),
   enableMath: z.boolean().optional(),
   enableCodeMeta: z.boolean().optional(),
+  /** 独行リンクを埋め込みカードに変換する (総スイッチ) */
   enableLinkEmbed: z.boolean().optional(),
+  /** 独行の Twitter/X リンクをツイート埋め込みにする */
   enableTweetEmbed: z.boolean().optional(),
+  /** 独行の一般リンクに OG プレビューカードを表示 (ビルド時にメタデータ取得) */
   enableOGPreview: z.boolean().optional(),
+  /** OG プレビューデータのキャッシュ日数 */
   previewCacheTime: z.number().min(0).optional(),
 });
+
+/** contentSchema が受け付けるキーの形 (全フィールドが optional) */
+type ContentSchemaOutput = z.infer<typeof contentSchema>;
+
+/**
+ * コンテンツ関連の設定 (`site.yaml` の `content`)。
+ * 主体は真偽値のスイッチだが、日数指定の `previewCacheTime` も同じグループに置く。
+ *
+ * 形状は `contentSchema` から導出するので、フィールド追加は contentSchema と
+ * contentDefaults の 2 箇所を直せばよく、型の追従はコンパイラが担保する。
+ *
+ * `addBlankTarget` / `smoothScroll` / `addHeadingLevel` / `enhanceCodeBlock` は
+ * `enable*` 以前から存在するキーで、site.yaml の公開キーを変えると利用者の設定が
+ * 破れるため命名体系は揃えていない。
+ */
+export type ContentOptions = { [K in keyof ContentSchemaOutput]-?: ContentSchemaOutput[K] };
 
 export const contentDefaults: ContentOptions = {
   addBlankTarget: true,
