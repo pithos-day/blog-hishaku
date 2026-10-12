@@ -6,7 +6,7 @@
 
 const API_BASE = 'https://api.fxtwitter.com/status';
 const TIMEOUT_MS = 5000;
-const MAX_PHOTOS = 4;
+export const MAX_PHOTOS = 4;
 /** 埋め込み動画の高さ上限。これを超える解像度は重すぎるため選ばない */
 const MAX_EMBED_HEIGHT = 720;
 const TWEET_ID_PATTERN = /^[0-9]{1,20}$/;

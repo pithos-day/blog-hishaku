@@ -6,7 +6,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { escapeHtml } from './escape';
 import type { OGData } from './og-fetcher';
-import type { TweetData, TweetVideo } from './tweet-fetcher';
+import { MAX_PHOTOS, type TweetData, type TweetVideo } from './tweet-fetcher';
 
 /** ユーザー由来テキストから全 HTML タグを取り除く */
 function sanitizeText(text: string): string {
@@ -210,10 +210,10 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     })
     .filter(Boolean);
 
-  // 複数枚は昔の Twitter 風のグリッドにまとめる (枚数は MAX_PHOTOS=4 が上限)
+  // 複数枚は昔の Twitter 風のグリッドにまとめる (枚数は MAX_PHOTOS が上限)
   const photosHtml =
     imageTags.length > 1
-      ? `<div class="tweet-card-images tweet-card-images-${Math.min(imageTags.length, 4)}">${imageTags.join('')}</div>`
+      ? `<div class="tweet-card-images tweet-card-images-${Math.min(imageTags.length, MAX_PHOTOS)}">${imageTags.join('')}</div>`
       : imageTags.join('');
 
   const videoHtml = tweet.video ? renderTweetVideo(tweet.video) : '';
