@@ -36,6 +36,10 @@ const MODEL_NAME = 'intfloat/multilingual-e5-small';
 // frontmatter.description が無い記事の埋め込み入力に使う本文の文字数
 const BODY_SNIPPET_LENGTH = 500;
 
+// 埋め込み入力 (タイトル + description/本文冒頭) の最大文字数。
+// トークン上限を超えてモデルに渡すと失敗するため、入力側で打ち切る
+const EMBED_INPUT_MAX_LENGTH = 8000;
+
 // モデル重みのローカルキャッシュ
 env.cacheDir = './.cache/transformers';
 
@@ -110,7 +114,7 @@ async function readPostForSimilarity(filePath: string): Promise<PostData | null>
     const slug = extractSlug(filePath, frontmatter.link as string | undefined);
     const description =
       (frontmatter.description as string) || toPlainText(content).slice(0, BODY_SNIPPET_LENGTH);
-    const text = `${frontmatter.title}. ${description}`.slice(0, 8000);
+    const text = `${frontmatter.title}. ${description}`.slice(0, EMBED_INPUT_MAX_LENGTH);
 
     return { slug, title: frontmatter.title as string, text };
   } catch (error) {
