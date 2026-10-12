@@ -5,7 +5,7 @@ import SidebarLeft from '@/components/SidebarLeft.astro';
 import SidebarRight from '@/components/SidebarRight.astro';
 import UmamiAnalytics from '@/components/UmamiAnalytics.astro';
 import { t } from '@/i18n';
-import { siteConfig } from '@/lib/config';
+import { siteConfig, siteDisplayName } from '@/lib/config';
 import { mergeSiteKeywords } from '@/lib/seo';
 import type { SimilarPost } from '@/lib/similar-posts';
 import type { TocHeading } from '@/lib/toc';
@@ -65,11 +65,10 @@ const resolvedOgDescription = ogDescription ?? description;
 const ogImageUrl = ogImage ? new URL(ogImage, siteConfig.site.url) : undefined;
 // Twitter カード: 画像があれば大画像、なければサマリー
 const twitterCard: TwitterCardType = ogImageUrl ? 'summary_large_image' : 'summary';
-// フッターのコピーライト表記: name@alternate (alternate がなければ name)
-const siteName = siteConfig.site.name || siteConfig.site.title;
+// フッターのコピーライト表記: name@alternate (alternate がなければ表示名)
 const copyrightHolder = siteConfig.site.alternate
-  ? `${siteName}@${siteConfig.site.alternate}`
-  : siteName;
+  ? `${siteDisplayName}@${siteConfig.site.alternate}`
+  : siteDisplayName;
 
 // <SEO> へ渡す構造体 (テンプレートを平らに保つため frontmatter で組み立てる)
 const seoOpenGraph = {
@@ -80,7 +79,7 @@ const seoOpenGraph = {
     url: canonicalUrl.href,
   },
   optional: {
-    siteName,
+    siteName: siteDisplayName,
     description: resolvedOgDescription,
   },
 };

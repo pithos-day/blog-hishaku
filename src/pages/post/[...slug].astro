@@ -4,7 +4,7 @@ import PostMeta from '@/components/PostMeta.astro';
 import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
-import { siteConfig } from '@/lib/config';
+import { siteConfig, siteDisplayName } from '@/lib/config';
 import {
   getPostDescription,
   getPostSlug,
@@ -65,7 +65,8 @@ const jsonLd = buildArticleJsonLd(
     url: siteConfig.site.url,
     timezone: siteConfig.site.timezone,
     keywords: siteConfig.site.keywords,
-    authorName: siteConfig.site.author ?? siteConfig.site.name ?? siteConfig.site.title,
+    // 著者名 — author が無ければ(空文字も)サイト表示名へフォールバック
+    authorName: siteConfig.site.author || siteDisplayName,
   },
 );
 

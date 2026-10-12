@@ -1,7 +1,7 @@
 ---
 import { t } from '@/i18n';
 import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
-import { siteConfig } from '@/lib/config';
+import { siteConfig, siteDisplayName } from '@/lib/config';
 import { postPath } from '@/lib/posts';
 import type { SimilarPost } from '@/lib/similar-posts';
 
@@ -13,7 +13,6 @@ const { similarPosts } = Astro.props;
 const calendar = await getSidebarCalendar();
 
 const socialEntries = Object.entries(siteConfig.social);
-const profileName = siteConfig.site.name || siteConfig.site.title;
 
 // 'calendar.weekdays' は「曜日名のカンマ区切り」形式 (ja.ts 側に注記あり)
 const weekdays = t('calendar.weekdays').split(',');
@@ -34,7 +33,7 @@ const weekdays = t('calendar.weekdays').split(',');
           />
         )
       }
-      <p class="profile-name">{profileName}</p>
+      <p class="profile-name">{siteDisplayName}</p>
       {
         socialEntries.length > 0 && (
           <ul class="profile-social">
