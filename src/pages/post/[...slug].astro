@@ -37,8 +37,8 @@ const { Content, headings } = await render(post);
 const description = getPostDescription(post);
 const similarPosts = getSimilarPosts(getPostSlug(post));
 
-// 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (enableToc 判定込み)
-const tocHeadings = collectTocHeadings(headings);
+// 目次 (左サイドバー) 用に h2/h3 の見出しを抽出 (enableToc が無効なら空)
+const tocHeadings = siteConfig.content.enableToc ? collectTocHeadings(headings) : [];
 
 const categoryChains = normalizeCategories(post.data.categories);
 

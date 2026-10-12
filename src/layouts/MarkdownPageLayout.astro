@@ -1,6 +1,7 @@
 ---
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { siteConfig } from '@/lib/config';
 import { collectTocHeadings } from '@/lib/toc';
 
 interface Props {
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const { frontmatter, headings } = Astro.props;
-const tocHeadings = collectTocHeadings(headings);
+// enableToc が無効なら目次は空 (判定は呼び出し側の責務)
+const tocHeadings = siteConfig.content.enableToc ? collectTocHeadings(headings) : [];
 ---
 
 <BaseLayout
