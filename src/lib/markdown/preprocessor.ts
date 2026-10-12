@@ -438,7 +438,9 @@ function mapOutsideProtected(
   if (lastIndex < text.length) {
     parts.push(fn(text.slice(lastIndex)));
   }
-  return parts.length > 0 ? parts.join('') : fn(text);
+  // 空文字入力のみ parts が空になるが、その場合も join 結果は '' で fn('') と同値
+  // (両呼び出し元は pure な replace 連鎖)。そのため三項は不要。
+  return parts.join('');
 }
 
 /** `~sub~` `^sup^` を HTML に変換 (GFM strikethrough 衝突回避のためパース前) */
