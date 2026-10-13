@@ -53,6 +53,10 @@ const {
 
 // math は destructuring の既定で false に落としているため、判定はこれ1本で十分
 const hasMath = siteConfig.content.enableMath && math;
+// 等幅フォント: JetBrains Mono (OFL 1.1)。public/fonts/jetbrains-mono に同梱。
+// type="article" (= markdown 本文を持つ post / about) のときだけ読む。
+// 一覧系は type を渡さないため 'website' のままとなり、読み込まれない。
+const hasCode = type === 'article';
 
 const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title;
 const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, siteConfig.site.url);
@@ -158,8 +162,8 @@ const seoExtend = {
     <!-- フォント: Gen Interface JP (OFL 1.1)。woff2 と CSS は public/fonts/gen-interface-jp に同梱。
          FCP 後の非同期読み込みなので <link> ではなく FontLoader が担当する -->
     <FontLoader />
-    <!-- 等幅: JetBrains Mono (OFL 1.1)。コードブロック用。public/fonts/jetbrains-mono に同梱 -->
-    <link rel="stylesheet" href="/fonts/jetbrains-mono/jetbrains-mono.css" />
+    {/* 等幅: JetBrains Mono (OFL 1.1)。コードブロック用。public/fonts/jetbrains-mono に同梱 */}
+    {hasCode && <link rel="stylesheet" href="/fonts/jetbrains-mono/jetbrains-mono.css" />}
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
     <UmamiAnalytics />
     <slot name="head" />
