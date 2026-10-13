@@ -111,22 +111,18 @@ const COVER_HEIGHT = 700;
     {
       page.lastPage > 1 && (
         <nav class="pagination" aria-label={t('index.paginationAria')}>
-          {page.url.prev ? (
-            <a href={page.url.prev} class="page-link">
+          {page.url.prev && (
+            <a href={page.url.prev} class="page-link pagination-prev">
               {t('index.prevPage')}
             </a>
-          ) : (
-            <span class="page-link page-link-disabled">{t('index.prevPage')}</span>
           )}
           <span class="page-status">
             {page.currentPage} / {page.lastPage}
           </span>
-          {page.url.next ? (
-            <a href={page.url.next} class="page-link">
+          {page.url.next && (
+            <a href={page.url.next} class="page-link pagination-next">
               {t('index.nextPage')}
             </a>
-          ) : (
-            <span class="page-link page-link-disabled">{t('index.nextPage')}</span>
           )}
         </nav>
       )
