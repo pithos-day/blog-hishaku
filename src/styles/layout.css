@@ -325,8 +325,11 @@
 .entry-cover {
   display: block;
   width: 100%;
-  /* width/height 属性 (presentational hint) が固定高さとして効かないよう auto で無効化し、
-     高さは aspect-ratio に一本化する */
+  /* レイアウトはインラインスタイル (src/pages/[...page].astro の COVER_INLINE_STYLE) と
+     同じ値を保つこと。CSS が届くまでの未整形状態でも 16 : 7 のままに保つための
+     二重化であり、片方だけ変更するとロード時の比率ズレ (一瞬の引き伸ばし表示) が
+     復活する。height は presentational hint (img の幅・高さ属性) の固定高を
+     無効化して高さは aspect-ratio に一本化する */
   height: auto;
   aspect-ratio: 16 / 7;
   object-fit: cover;

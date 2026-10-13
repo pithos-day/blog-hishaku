@@ -4,7 +4,7 @@ import PostMeta from '@/components/PostMeta.astro';
 import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
-import { getLqipProps } from '@/lib/lqip';
+import { getLqipGradient } from '@/lib/lqip';
 import { buildPostPage, calcLastPage } from '@/lib/pagination';
 import {
   getPostDescription,
@@ -43,12 +43,24 @@ const { page } = Astro.props;
 const posts = page.data;
 
 /**
- * カバー画像の width/height 属性。
- * レイアウトは CSS (.entry-cover の aspect-ratio: 16 / 7) が担うため、
- * 属性値も 16 : 7 に合わせておき、ロード前の初期描画でも比率がずれないようにする。
+ * カバー画像のインラインレイアウト指定。
+ *
+ * 本来のレイアウトは CSS (.entry-cover) が担うが、外部スタイルシートが届くまでの
+ * 未整形状態では img の幅・高さ属性 (presentational hint) が 1600×700px の
+ * 固定サイズとして効いてしまい、「引き伸ばされた巨大なカバー」が一瞬出る
+ * 経路になっていた (属性を付けた 5470b52 以降に発生)。
+ *
+ * インラインスタイルは presentational hint より優先度が高く、HTML をパースした
+ * 瞬間から適用されるため、CSS が 0 バイトでも最初の描画から 16 : 7 のサイズ
+ * 予約が保たれる。CSS 側 (.entry-cover) と必ず同じ値に揃えること。
  */
-const COVER_WIDTH = 1600;
-const COVER_HEIGHT = 700;
+const COVER_INLINE_STYLE = 'width:100%;height:auto;aspect-ratio:16/7;object-fit:cover';
+
+/** 上記のレイアウト指定と LQIP グラデーションを1つの style 属性に結合する */
+function coverStyle(cover: string): string {
+  const gradient = getLqipGradient(cover);
+  return gradient ? `${COVER_INLINE_STYLE};background-image:${gradient}` : COVER_INLINE_STYLE;
+}
 ---
 
 <BaseLayout canonicalPath={page.url.current}>
@@ -73,10 +85,8 @@ const COVER_HEIGHT = 700;
                       src={post.data.cover}
                       alt=""
                       class="entry-cover"
-                      width={COVER_WIDTH}
-                      height={COVER_HEIGHT}
                       loading="lazy"
-                      {...getLqipProps(post.data.cover)}
+                      style={coverStyle(post.data.cover)}
                     />
                   </a>
                 )}

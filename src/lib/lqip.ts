@@ -29,8 +29,3 @@ export function getLqipGradient(imagePath: string): string | undefined {
   const bottomRight = colorAt(COLOR_LENGTH * 2);
   return `linear-gradient(135deg, ${topLeft} 0%, ${topRight} 50%, ${bottomRight} 100%)`;
 }
-
-export function getLqipProps(imagePath: string): { style?: string } {
-  const gradient = getLqipGradient(imagePath);
-  return gradient ? { style: `background-image:${gradient}` } : {};
-}
