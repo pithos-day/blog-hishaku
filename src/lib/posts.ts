@@ -2,7 +2,6 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import { toPlainText } from './text';
 
 export type PostEntry = CollectionEntry<'blog'>;
-export { toPlainText };
 
 /**
  * 記事の URL スラッグ。`link` があればそれを使い、なければファイル名 (id)。

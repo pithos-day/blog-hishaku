@@ -2,7 +2,7 @@ import { siteConfig } from './config';
 import { getYearMonth } from './date';
 import { getPublishedPosts, type PostEntry, sortByDateDesc } from './posts';
 
-export interface ArchiveMonth {
+interface ArchiveMonth {
   year: number;
   /** 1–12 */
   month: number;

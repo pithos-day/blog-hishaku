@@ -42,7 +42,7 @@ export interface SiteConfig {
   analytics: { umami?: UmamiConfig };
 }
 
-export interface UmamiConfig {
+interface UmamiConfig {
   enabled: boolean;
   id: string;
   endpoint: string;

@@ -12,10 +12,3 @@ export const siteDisplayName = siteConfig.site.name || siteConfig.site.title;
 
 // i18n の既定ロケールを site.yaml の値へ反映する (t() が追従する)
 configureDefaultLocale(siteConfig.i18n.defaultLocale);
-
-export type {
-  ContentOptions,
-  I18nConfig,
-  SiteConfig,
-} from './schema';
-export { parseSiteYaml } from './site';
