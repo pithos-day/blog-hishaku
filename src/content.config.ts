@@ -12,7 +12,17 @@ const dateInSiteTimezone = z
   .transform((value) => parsePostDate(value, siteConfig.site.timezone));
 
 const blogCollection = defineCollection({
-  loader: glob({ pattern: BLOG_CONTENT_GLOB_PATTERN, base: './src/content/blog' }),
+  // deferRender: 記事本文の HTML を data-store にキャッシュしない。
+  // キャッシュの digest は Markdown ファイル本文のみで計算されるため、
+  // `.cache/lqips.json` (LQIP) や `.cache/og-data.json` (OGカード) の変更が
+  // キャッシュを無効化できず、古い HTML が再利用され続けていた。
+  // レンダリングをページ描画時へ送ることで、これらのキャッシュが
+  // 変わっても常に最新の HTML が生成される。
+  loader: glob({
+    pattern: BLOG_CONTENT_GLOB_PATTERN,
+    base: './src/content/blog',
+    deferRender: true,
+  }),
   schema: z
     .object({
       title: z.string().min(1),
