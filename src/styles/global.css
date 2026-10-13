@@ -15,7 +15,7 @@
   --hishaku-border: hsl(216 5.9% 80%);
   --hishaku-fg: hsl(0 0% 20%);
   --hishaku-fg-muted: hsl(0 0% 25%);
-  --hishaku-accent: hsl(214 48.7% 45%);
+  --hishaku-accent: hsl(220 50.7% 42.9%);
   --hishaku-accent-fg: hsl(210.7 100% 97.3%);
   /* 記事本文の意味色 — note / collapse / label / 行ハイライトが共有する。
    * 暗色でも同値を使うため .dark 側の上書きは無い */
