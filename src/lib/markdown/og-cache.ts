@@ -12,7 +12,7 @@ export const DEFAULT_CACHE_TTL_DAYS = 30;
 /** 1日のミリ秒数 */
 export const MS_PER_DAY = 24 * 60 * 60 * 1000;
 /** エラー項目は早く失効させ、一時的な失敗は次回ビルドで再試行する */
-export const ERROR_CACHE_TTL = MS_PER_DAY;
+export const ERROR_CACHE_TTL = 24 * 60 * 60 * 1000;
 
 export interface OGCacheEntry<T = OGData> {
   data: T;
