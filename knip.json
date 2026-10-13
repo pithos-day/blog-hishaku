@@ -1,7 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": [
-    "astro.config.mjs",
     "src/pages/**/*.astro",
     "src/pages/**/*.ts",
     "src/layouts/**/*.astro",
@@ -12,19 +11,12 @@
     "scripts/**/*.{ts,mjs}",
     "test/**/*.mjs"
   ],
-  "project": ["src/**/*.{ts,tsx,astro}", "scripts/**/*.{ts,mjs}", "test/**/*.mjs"],
-  "ignore": ["src/assets/**", "src/content/**", "public/**", "dist/**", ".cache/**"],
+  "project": ["src/**/*.{ts,tsx,astro,css}", "scripts/**/*.{ts,mjs}", "test/**/*.mjs"],
   "ignoreDependencies": [
-    "@biomejs/biome",
     "@iconify-json/fa7-solid",
     "@iconify-json/lucide",
     "@iconify-json/ri",
-    "@tailwindcss/typography",
-    "husky",
     "katex",
-    "lint-staged",
-    "pagefind",
-    "tailwindcss",
-    "typescript"
+    "wrangler"
   ]
 }
