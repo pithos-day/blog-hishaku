@@ -38,7 +38,7 @@ categories: [ノート]
 要件: **Node.js ≥ 22.12.0** / **pnpm 12.10.1** ([package.json](./package.json) 準拠)
 
 ```bash
-git https://github.com/pithos-day/blog-hishaku.git
+git clone https://github.com/pithos-day/blog-hishaku.git
 cd blog-hishaku
 pnpm install
 pnpm dev
