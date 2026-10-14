@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { t } from '@/i18n';
 import { getDayLink, getSidebarCalendar } from '@/lib/calendar';
 import { siteConfig, siteDisplayName } from '@/lib/config';
+import type { SiteConfig } from '@/lib/config/schema';
 import { postPath } from '@/lib/posts';
 import type { SimilarPost } from '@/lib/similar-posts';
 
@@ -16,16 +17,17 @@ const calendar = await getSidebarCalendar();
 // 色はインライン style でカスタムプロパティに載せて渡す。
 // color を直接指定するとインライン指定が最優先になりダークモード時に
 // CSS 側で上書きできないため (.profile-social a 参照)。
+function socialStyle(social: SiteConfig['social'][string]): string | undefined {
+  const props = [];
+  if (social.color) props.push(`--link-color: ${social.color}`);
+  if (social.colorDark) props.push(`--link-color-dark: ${social.colorDark}`);
+  return props.length > 0 ? props.join('; ') : undefined;
+}
+
 const socialEntries = Object.entries(siteConfig.social).map(([name, social]) => ({
   name,
   social,
-  style:
-    [
-      social.color ? `--link-color: ${social.color}` : '',
-      social.colorDark ? `--link-color-dark: ${social.colorDark}` : '',
-    ]
-      .filter(Boolean)
-      .join('; ') || undefined,
+  style: socialStyle(social),
 }));
 
 // 'calendar.weekdays' は「曜日名のカンマ区切り」形式 (ja.ts 側に注記あり)
