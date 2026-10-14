@@ -169,7 +169,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
       }
     }
 
-    function painted() {
+    function hasPainted() {
       var entries = performance.getEntriesByType ? performance.getEntriesByType('paint') : [];
       return entries.some(function (entry) {
         return entry.name === 'first-contentful-paint';
@@ -192,7 +192,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     //   3. 観測できない環境では DOM 構築後の2フレーム描画を代用
     // どれも上限は PAINT_TIMEOUT_MS。
     function waitForPaint() {
-      if (painted()) return Promise.resolve();
+      if (hasPainted()) return Promise.resolve();
       return new Promise(function (resolve) {
         var settled = false;
         var timer;
