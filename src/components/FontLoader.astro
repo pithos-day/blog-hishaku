@@ -33,15 +33,15 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
   (function () {
     'use strict';
 
-    var CACHE_PREFIX = 'hishaku-webfont:';
+    const CACHE_PREFIX = 'hishaku-webfont:';
     /** FCP を待ちすぎる環境でもフォント読み込みを止めない上限 (ms) */
-    var PAINT_TIMEOUT_MS = 3000;
+    const PAINT_TIMEOUT_MS = 3000;
     /** href → 現在 document.fonts に載っている FontFace と元の CSS 文字列 */
-    var installed = new Map();
+    const installed = new Map();
     /** href ごとの fetch を1回にまとめる */
-    var requests = new Map();
+    const requests = new Map();
     /** 動的注入済みの href (二重注入の防止) */
-    var injected = new Set();
+    const injected = new Set();
 
     // FontFace / CSSOM が揃っていれば、@font-face を JS で直接登録できる
     function supportsFontFaceApi() {
@@ -58,7 +58,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
       for (const href of fontHrefs) {
         if (installed.has(href) || injected.has(href)) continue;
         injected.add(href);
-        var link = document.createElement('link');
+        const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = href;
         document.head.appendChild(link);
@@ -104,7 +104,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
 
     // src の url() を stylesheet 基準の絶対 URL に書き換える。
     // data: 等のスキーム付き・ローカルフォント指定はそのまま残す。
-    var SCHEME_RE = /^[a-z][a-z\d+\-.]*:/i;
+    const SCHEME_RE = /^[a-z][a-z\d+\-.]*:/i;
     function toAbsoluteUrls(src, baseUrl) {
       return src.replace(/url\((["']?)([^"')]+)\1\)/g, function (match, _quote, path) {
         if (SCHEME_RE.test(path)) return match;
@@ -115,27 +115,27 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     // CSS 文字列をパースして FontFace の配列を作る。
     // 1つでも作れない場合は例外を投げ、呼び出し側が旧状態を保つ (登録前に全部作る)。
     function buildFaces(text, baseUrl) {
-      var sheet = new CSSStyleSheet();
+      const sheet = new CSSStyleSheet();
       sheet.replaceSync(text);
       // [CSS の記述子名, FontFace のオプション名]。未指定のものは渡さない (既定値のまま)
-      var descriptors = [
+      const descriptors = [
         ['font-style', 'style'],
         ['font-weight', 'weight'],
         ['font-stretch', 'stretch'],
         ['font-display', 'display'],
         ['unicode-range', 'unicodeRange'],
       ];
-      var faces = [];
-      for (var i = 0; i < sheet.cssRules.length; i++) {
-        var rule = sheet.cssRules[i];
+      const faces = [];
+      for (let i = 0; i < sheet.cssRules.length; i++) {
+        const rule = sheet.cssRules[i];
         if (!(rule instanceof CSSFontFaceRule)) continue;
-        var style = rule.style;
-        var family = style.getPropertyValue('font-family').trim().replace(/^["']|["']$/g, '');
-        var source = toAbsoluteUrls(style.getPropertyValue('src').trim(), baseUrl);
+        const style = rule.style;
+        const family = style.getPropertyValue('font-family').trim().replace(/^["']|["']$/g, '');
+        const source = toAbsoluteUrls(style.getPropertyValue('src').trim(), baseUrl);
         if (!family || !source) continue;
-        var options = {};
-        for (var j = 0; j < descriptors.length; j++) {
-          var descriptor = style.getPropertyValue(descriptors[j][0]).trim();
+        const options = {};
+        for (let j = 0; j < descriptors.length; j++) {
+          const descriptor = style.getPropertyValue(descriptors[j][0]).trim();
           if (descriptor) options[descriptors[j][1]] = descriptor;
         }
         faces.push(new FontFace(family, source, options));
@@ -146,8 +146,8 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
 
     // 旧 FontFace を外して新しい配列を document.fonts に載せる
     function install(href, text) {
-      var faces = buildFaces(text, new URL(href, location.href).href);
-      var previous = installed.get(href);
+      const faces = buildFaces(text, new URL(href, location.href).href);
+      const previous = installed.get(href);
       if (previous) {
         previous.faces.forEach(function (face) {
           document.fonts.delete(face);
@@ -170,7 +170,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     }
 
     function hasPainted() {
-      var entries = performance.getEntriesByType ? performance.getEntriesByType('paint') : [];
+      const entries = performance.getEntriesByType ? performance.getEntriesByType('paint') : [];
       return entries.some(function (entry) {
         return entry.name === 'first-contentful-paint';
       });
@@ -194,8 +194,8 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     function waitForPaint() {
       if (hasPainted()) return Promise.resolve();
       return new Promise(function (resolve) {
-        var settled = false;
-        var timer;
+        let settled = false;
+        let timer;
         function finish() {
           if (settled) return;
           settled = true;
@@ -204,7 +204,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
         }
         timer = setTimeout(finish, PAINT_TIMEOUT_MS);
         if (canWatchPaint()) {
-          var observer = new PerformanceObserver(function (list) {
+          const observer = new PerformanceObserver(function (list) {
             if (
               !list.getEntries().some(function (entry) {
                 return entry.name === 'first-contentful-paint';
@@ -218,7 +218,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
           observer.observe({ type: 'paint', buffered: true });
           return;
         }
-        var afterFrames = function () {
+        const afterFrames = function () {
           requestAnimationFrame(function () {
             requestAnimationFrame(finish);
           });
@@ -251,10 +251,10 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
       }
 
       // 再訪分は保存コピーから即時登録、未保存・破損なら初回訪問と同じ流れにする
-      var revisit = [];
-      var firstVisit = [];
+      const revisit = [];
+      const firstVisit = [];
       for (const href of fontHrefs) {
-        var saved = readCache(href);
+        const saved = readCache(href);
         if (saved !== null && tryInstall(href, saved)) {
           revisit.push(href);
         } else {
@@ -268,7 +268,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
         await waitForPaint();
         try {
           for (const href of firstVisit) {
-            var text = await fetchText(href);
+            const text = await fetchText(href);
             await nextIdle();
             install(href, text);
             writeCache(href, text);
@@ -286,8 +286,8 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
         await nextIdle();
         for (const href of revisit) {
           try {
-            var latest = await fetchText(href);
-            var current = installed.get(href);
+            const latest = await fetchText(href);
+            const current = installed.get(href);
             if (latest === current.text) continue;
             install(href, latest);
             writeCache(href, latest);
