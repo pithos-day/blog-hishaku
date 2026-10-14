@@ -29,18 +29,31 @@ export function normalizeCategories(
 }
 
 /** カテゴリ名 → URL スラッグセグメント (categoryMap 適用・未登録は名前のまま) */
-function resolveSegment(name: string): string {
-  return siteConfig.categoryMap[name] ?? name;
+function resolveSegment(name: string, categoryMap: Record<string, string>): string {
+  return categoryMap[name] ?? name;
 }
 
-/** 表示名の並び → URL スラッグパス ("note/front-end") */
-export function buildCategorySlugPath(names: string[]): string {
-  return names.map(resolveSegment).join('/');
+/**
+ * 表示名の並び → URL スラッグパス ("note/front-end")
+ * categoryMap は既定で siteConfig を使う。テストは site.yaml の内容に
+ * 依存しないよう自前のマップを渡せる。
+ */
+export function buildCategorySlugPath(
+  names: string[],
+  categoryMap: Record<string, string> = siteConfig.categoryMap,
+): string {
+  return names.map((name) => resolveSegment(name, categoryMap)).join('/');
 }
 
 /** 表示名の並び → リンク先 ("/categories/note/front-end/") */
-export function buildCategoryHref(names: string[]): string {
-  const encoded = buildCategorySlugPath(names).split('/').map(encodeURIComponent).join('/');
+export function buildCategoryHref(
+  names: string[],
+  categoryMap: Record<string, string> = siteConfig.categoryMap,
+): string {
+  const encoded = buildCategorySlugPath(names, categoryMap)
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/');
   return `/categories/${encoded}/`;
 }
 
