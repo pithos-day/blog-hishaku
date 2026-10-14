@@ -28,11 +28,6 @@ export function normalizeCategories(
   return [categories as string[]];
 }
 
-/** カテゴリ名 → URL スラッグセグメント (categoryMap 適用・未登録は名前のまま) */
-function resolveSegment(name: string, categoryMap: Record<string, string>): string {
-  return categoryMap[name] ?? name;
-}
-
 /**
  * 表示名の並び → URL スラッグパス ("note/front-end")
  * categoryMap は既定で siteConfig を使う。テストは site.yaml の内容に
@@ -42,7 +37,8 @@ export function buildCategorySlugPath(
   names: string[],
   categoryMap: Record<string, string> = siteConfig.categoryMap,
 ): string {
-  return names.map((name) => resolveSegment(name, categoryMap)).join('/');
+  // カテゴリ名 → URL スラッグセグメント (categoryMap 適用・未登録は名前のまま)
+  return names.map((name) => categoryMap[name] ?? name).join('/');
 }
 
 /** 表示名の並び → リンク先 ("/categories/note/front-end/") */
