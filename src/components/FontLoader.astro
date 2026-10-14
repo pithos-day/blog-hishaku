@@ -194,11 +194,9 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     function waitForPaint() {
       if (hasPainted()) return Promise.resolve();
       return new Promise(function (resolve) {
-        let settled = false;
         let timer;
+        // resolve の2回呼び出しが起きても Promise は無視するので重複ガードは不要
         function finish() {
-          if (settled) return;
-          settled = true;
           clearTimeout(timer);
           resolve();
         }
