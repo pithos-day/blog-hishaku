@@ -54,6 +54,14 @@ test('toPlainText: Shoka のインライン構文は中身だけ残して記号�
   assert.doesNotMatch(text, /==|\+\+|!!|\{|\}|\[|\]/);
 });
 
+test('toPlainText: インライン絵文字は alt の中身だけ残す', () => {
+  assert.equal(
+    toPlainText('走る人: :emoji[/img/emojis/person_running_right_animated.gif]{alt="🏃‍➡️"} です。'),
+    '走る人: 🏃‍➡️ です。',
+  );
+  assert.equal(toPlainText(':emoji[/img/emojis/smile.png]'), '');
+});
+
 test('toPlainText: ブロック構文のマーカーと中身の YAML を落とす', () => {
   const markdown = [
     ':::info',

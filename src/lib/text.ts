@@ -147,14 +147,19 @@ function collectText(node: PlainNode, out: string[]): void {
 function stripSyntax(text: string): string {
   return (
     text
+      // インライン絵文字 :emoji[url]{alt="🏃"} — 属性構文のルールが角括弧を
+      // 落とす前に処理し、alt があれば残す
+      .replace(
+        /:emoji\[[^\]]*\](\{[^}\n]*\})?/g,
+        (_match, attrs: string | undefined) =>
+          /(?:^|[{[\s])alt="([^"]*)"/.exec(attrs ?? '')?.[1] ?? '',
+      )
       // 属性構文: [テキスト]{.class} → テキスト
       .replace(/\[([^\]\n]*)\]\{[^}\n]+\}/g, '$1')
       // 直後の属性ブロック {.class #id key=value} / {key=value}
       .replace(/\s*\{(?:[.#][^}]*|[A-Za-z_-][\w-]*=[^}]*)\}/g, '')
       // preprocessor が対応しない Hexo タグ {% tag %} … {% endtag %}
       .replace(/\{%[^{}]*%\}/g, '')
-      // インライン絵文字 :emoji[url]
-      .replace(/:emoji\[[^\]]*\]/g, '')
       // 開始タグが消費されなかった閉じタグ
       .replace(/^\s*:::\s*$/gm, '')
   );
