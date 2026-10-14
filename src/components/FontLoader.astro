@@ -44,7 +44,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     var injected = new Set();
 
     // FontFace / CSSOM が揃っていれば、@font-face を JS で直接登録できる
-    function isSupported() {
+    function supportsFontFaceApi() {
       return (
         typeof window.FontFace === 'function' &&
         typeof window.CSSFontFaceRule === 'function' &&
@@ -245,7 +245,7 @@ const { hrefs = ['/fonts/gen-interface-jp/gen-interface-jp.css'] } = Astro.props
     }
 
     async function run() {
-      if (!isSupported()) {
+      if (!supportsFontFaceApi()) {
         injectLinks();
         return;
       }
