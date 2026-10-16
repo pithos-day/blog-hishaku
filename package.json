@@ -29,7 +29,12 @@
     "blog",
     "template"
   ],
+  "author": "pithos",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pithos-day/blog-hishaku.git"
+  },
   "engines": {
     "node": ">=22.12.0"
   },
