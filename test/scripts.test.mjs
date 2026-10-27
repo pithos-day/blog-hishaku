@@ -99,6 +99,8 @@ globalThis.window = {
 // `instanceof` で要素の種類を判定するモジュールのために型の名前だけ Node へ持たせる
 globalThis.HTMLDialogElement ??= class HTMLDialogElement {};
 globalThis.HTMLInputElement ??= class HTMLInputElement {};
+// Node は DOM 専用のグローバル。テキストノード判定だけを再現する。
+globalThis.Node ??= { TEXT_NODE: 3 };
 
 beforeEach(() => {
   registry.clear();
@@ -212,6 +214,69 @@ test('initPostEnhancements: タブ切替で active と aria-selected が移る',
     [false, false, true],
     'パネルも追随',
   );
+});
+
+// ---- image-enhancer.ts -----------------------------------------------------------
+
+test('isPortraitImage: 高さが幅の1.2倍を超える画像だけを縦長と判定', async () => {
+  const { isPortraitImage } = await import('../src/scripts/image-enhancer.ts');
+
+  assert.equal(isPortraitImage(1080, 1920), true, '9:16 は縦長');
+  assert.equal(isPortraitImage(640, 960), true, '2:3 は縦長');
+  assert.equal(isPortraitImage(1920, 1080), false, '16:9 は縦長ではない');
+  assert.equal(isPortraitImage(1000, 1200), false, 'ちょうど1.2倍は縦長にしない');
+  assert.equal(isPortraitImage(0, 0), false, '読み込み前は判定しない');
+});
+
+test('groupPortraitImages: 連続する縦長画像を1行にまとめる', async () => {
+  const { groupPortraitImages } = await import('../src/scripts/image-enhancer.ts');
+
+  const first = makeElement({ classes: ['markdown-image-wrapper', 'is-portrait'] });
+  const second = makeElement({ classes: ['markdown-image-wrapper', 'is-portrait'] });
+  first.dataset.aspectRatio = '0.5625';
+  second.dataset.aspectRatio = '0.5625';
+
+  // 段落間の改行 (空白テキスト) を挟んでも隣接扱いになることを確認する
+  first.nextSibling = { nodeType: Node.TEXT_NODE, textContent: '\n', nextSibling: second };
+
+  const container = makeElement({
+    queries: {
+      '.markdown-image-strip': [],
+      '.markdown-image-wrapper': [first, second],
+    },
+  });
+
+  let strip = null;
+  first.before = (node) => {
+    strip = node;
+  };
+
+  const createElement = document.createElement;
+  const createDocumentFragment = document.createDocumentFragment;
+  document.createElement = () => {
+    const element = { className: '', children: [] };
+    element.appendChild = (node) => {
+      element.children.push(...(node.children ?? [node]));
+    };
+    return element;
+  };
+  document.createDocumentFragment = () => {
+    const fragment = { children: [] };
+    fragment.appendChild = (node) => fragment.children.push(node);
+    return fragment;
+  };
+
+  try {
+    groupPortraitImages(container);
+  } finally {
+    document.createElement = createElement;
+    document.createDocumentFragment = createDocumentFragment;
+  }
+
+  assert.equal(strip?.className, 'markdown-image-strip');
+  assert.deepEqual(strip?.children, [first, second], '元の順序で1行にまとめる');
+  assert.equal(first.style.flex, '0.5625 1 0%', '縦横比を flex-grow に使う');
+  assert.equal(second.style.flex, '0.5625 1 0%');
 });
 
 // ---- lightbox.ts -----------------------------------------------------------------
