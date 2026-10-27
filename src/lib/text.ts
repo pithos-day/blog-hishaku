@@ -2,6 +2,7 @@
  * Markdown 本文から表示用のプレーンテキストを取り出す。
  *
  * 記事一覧の抜粋・OGP description・文字数カウントで使う。
+ * 見出しは本文の説明ではないため、抜粋に混ざらないよう中身ごと除外する。
  * 正規表現で構文を列挙すると Shoka 拡張構文を取りこぼして記号がそのまま残る
  * ため、本文レンダラと同じ前処理を当てたうえで remark にパースさせ、
  * テキストノードとインライン HTML の中身だけを集める。
@@ -25,7 +26,6 @@ interface PlainNode {
 /** 段落境界。ブロックの後ろに改行を入れて単語が連結するのを防ぐ */
 const BLOCK_NODES = new Set([
   'paragraph',
-  'heading',
   'blockquote',
   'listItem',
   'tableCell',
@@ -40,6 +40,12 @@ const BLOCK_NODES = new Set([
  */
 const DROPPED_HTML_ELEMENTS = new Set([
   'div',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
   'pre',
   'script',
   'style',
@@ -111,8 +117,9 @@ function htmlToText(html: string): string {
   return decodeEntities(text);
 }
 
-/** ツリーを走査してテキストだけを拾う (code ブロックと画像は除外) */
+/** ツリーを走査してテキストだけを拾う (見出し・code ブロック・画像は除外) */
 function collectText(node: PlainNode, out: string[]): void {
+  if (node.type === 'heading') return;
   if (node.type === 'code') return;
   if (node.type === 'html') {
     out.push(htmlToText(node.value ?? ''));

@@ -74,7 +74,7 @@ updated: 2026-10-07 09:00:00
 description: 一覧やOGPに表示される説明文。
 ```
 
-省略した場合は本文のプレーンテキスト冒頭150字が自動で使われます。記事一覧の抜粋、`<meta name="description">`、JSON-LD に使用されます。
+省略した場合は見出しを除いた本文のプレーンテキスト冒頭150字が自動で使われます。記事一覧の抜粋、`<meta name="description">`、JSON-LD に使用されます。
 
 ## subtitle
 

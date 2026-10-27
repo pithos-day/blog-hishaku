@@ -28,8 +28,19 @@ test('toPlainText: 標準 Markdown の記号を残さずに本文だけを取り
 
   assert.equal(
     toPlainText(markdown),
-    '見出し 太字と斜体と取り消し線。 項目1 完了したタスク 引用です。 構文 種別 **太字** 強調 リンクと。',
+    '太字と斜体と取り消し線。 項目1 完了したタスク 引用です。 構文 種別 **太字** 強調 リンクと。',
   );
+});
+
+test('toPlainText: 見出しの文字は出力に含めない', () => {
+  assert.equal(toPlainText('## 見出し\n\nこれが本文です'), 'これが本文です');
+  // Setext 見出し・引用内の見出しも同様に落とす
+  assert.equal(toPlainText('見出し\n===\n\nこれが本文です'), 'これが本文です');
+  assert.equal(toPlainText('> ## 引用内の見出し\n>\n> 引用の本文です'), '引用の本文です');
+  // 生の HTML 見出しも落とす
+  assert.equal(toPlainText('<h2>見出し</h2>\n\nこれが本文です'), 'これが本文です');
+  // 見出しだけの記事は空になる
+  assert.equal(toPlainText('# 見出しだけ'), '');
 });
 
 test('toPlainText: Shoka のインライン構文は中身だけ残して記号を消す', () => {
