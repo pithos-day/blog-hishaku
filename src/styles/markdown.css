@@ -751,11 +751,11 @@ kbd {
   text-align: center;
   margin-top: 0.2em;
 }
-/* 実寸から縦長と判定された画像 (スクリプトが付与) は画像幅に合わせて中央寄せする */
-.prose .markdown-image-wrapper.is-portrait {
+/* 実寸から縦長・正方形と判定された画像 (スクリプトが付与) は画像幅に合わせて中央寄せする */
+.prose .markdown-image-wrapper.is-narrow {
   width: fit-content;
 }
-/* 連続する縦長画像を横に並べる行 (スクリプトが生成) */
+/* 連続する縦長・正方形画像を横に並べる行 (スクリプトが生成) */
 .prose .markdown-image-strip {
   display: flex;
   align-items: flex-start;

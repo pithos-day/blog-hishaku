@@ -218,23 +218,24 @@ test('initPostEnhancements: タブ切替で active と aria-selected が移る',
 
 // ---- image-enhancer.ts -----------------------------------------------------------
 
-test('isPortraitImage: 高さが幅の1.2倍を超える画像だけを縦長と判定', async () => {
-  const { isPortraitImage } = await import('../src/scripts/image-enhancer.ts');
+test('isNarrowImage: 縦長または正方形の画像を横並び対象と判定', async () => {
+  const { isNarrowImage } = await import('../src/scripts/image-enhancer.ts');
 
-  assert.equal(isPortraitImage(1080, 1920), true, '9:16 は縦長');
-  assert.equal(isPortraitImage(640, 960), true, '2:3 は縦長');
-  assert.equal(isPortraitImage(1920, 1080), false, '16:9 は縦長ではない');
-  assert.equal(isPortraitImage(1000, 1200), false, 'ちょうど1.2倍は縦長にしない');
-  assert.equal(isPortraitImage(0, 0), false, '読み込み前は判定しない');
+  assert.equal(isNarrowImage(1080, 1920), true, '9:16 は対象');
+  assert.equal(isNarrowImage(640, 960), true, '2:3 は対象');
+  assert.equal(isNarrowImage(1000, 1000), true, '1:1 は対象');
+  assert.equal(isNarrowImage(1920, 1080), false, '16:9 は対象外');
+  assert.equal(isNarrowImage(1000, 999), false, 'わずかに横長なら対象外');
+  assert.equal(isNarrowImage(0, 0), false, '読み込み前は判定しない');
 });
 
-test('groupPortraitImages: 連続する縦長画像を1行にまとめる', async () => {
-  const { groupPortraitImages } = await import('../src/scripts/image-enhancer.ts');
+test('groupNarrowImages: 連続する正方形画像を1行にまとめる', async () => {
+  const { groupNarrowImages } = await import('../src/scripts/image-enhancer.ts');
 
-  const first = makeElement({ classes: ['markdown-image-wrapper', 'is-portrait'] });
-  const second = makeElement({ classes: ['markdown-image-wrapper', 'is-portrait'] });
-  first.dataset.aspectRatio = '0.5625';
-  second.dataset.aspectRatio = '0.5625';
+  const first = makeElement({ classes: ['markdown-image-wrapper', 'is-narrow'] });
+  const second = makeElement({ classes: ['markdown-image-wrapper', 'is-narrow'] });
+  first.dataset.aspectRatio = '1';
+  second.dataset.aspectRatio = '1';
 
   // 段落間の改行 (空白テキスト) を挟んでも隣接扱いになることを確認する
   first.nextSibling = { nodeType: Node.TEXT_NODE, textContent: '\n', nextSibling: second };
@@ -267,7 +268,7 @@ test('groupPortraitImages: 連続する縦長画像を1行にまとめる', asyn
   };
 
   try {
-    groupPortraitImages(container);
+    groupNarrowImages(container);
   } finally {
     document.createElement = createElement;
     document.createDocumentFragment = createDocumentFragment;
@@ -275,8 +276,8 @@ test('groupPortraitImages: 連続する縦長画像を1行にまとめる', asyn
 
   assert.equal(strip?.className, 'markdown-image-strip');
   assert.deepEqual(strip?.children, [first, second], '元の順序で1行にまとめる');
-  assert.equal(first.style.flex, '0.5625 1 0%', '縦横比を flex-grow に使う');
-  assert.equal(second.style.flex, '0.5625 1 0%');
+  assert.equal(first.style.flex, '1 1 0%', '縦横比を flex-grow に使う');
+  assert.equal(second.style.flex, '1 1 0%');
 });
 
 // ---- lightbox.ts -----------------------------------------------------------------

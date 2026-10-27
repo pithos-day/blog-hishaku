@@ -1,13 +1,10 @@
 /**
  * 本文画像のレイアウト調整。
  *
- * 画像の実寸から縦長かどうかを判定し、連続する縦長画像を横一列にまとめる。
+ * 画像の実寸から縦長・正方形かどうかを判定し、連続する画像を横一列にまとめる。
  * 高さの上限は CSS 側でも設定しているため、このスクリプトは
- * 縦長判定と横並びの組み立てだけを担当する。
+ * 横並び対象の判定と行の組み立てだけを担当する。
  */
-
-/** 縦長とみなす縦横比の下限 (高さ / 幅) */
-const PORTRAIT_RATIO_THRESHOLD = 1.2;
 
 /** 画像の読み込みが落ち着いてから横並びを組み替える */
 const REGROUP_DELAY_MS = 100;
@@ -15,9 +12,9 @@ const REGROUP_DELAY_MS = 100;
 /** 同じ画像に load ハンドラを重ねないための記録 */
 const preparedImages = new WeakSet<HTMLImageElement>();
 
-/** 実寸が縦長かどうか。読み込み前 (0px) は false。 */
-export function isPortraitImage(width: number, height: number): boolean {
-  return width > 0 && height > width * PORTRAIT_RATIO_THRESHOLD;
+/** 縦長または正方形かどうか。読み込み前 (0px) は false。 */
+export function isNarrowImage(width: number, height: number): boolean {
+  return width > 0 && height >= width;
 }
 
 /** 幅を明示した画像は、指定幅を優先して横並びの対象外にする。 */
@@ -31,13 +28,13 @@ function markWrapper(image: HTMLImageElement): void {
   if (!wrapper) return;
 
   if (hasExplicitWidth(image) || !image.naturalWidth || !image.naturalHeight) {
-    wrapper.classList.remove('is-portrait');
+    wrapper.classList.remove('is-narrow');
     wrapper.removeAttribute('data-aspect-ratio');
     return;
   }
 
   wrapper.dataset.aspectRatio = String(image.naturalWidth / image.naturalHeight);
-  wrapper.classList.toggle('is-portrait', isPortraitImage(image.naturalWidth, image.naturalHeight));
+  wrapper.classList.toggle('is-narrow', isNarrowImage(image.naturalWidth, image.naturalHeight));
 }
 
 /** 空白テキストだけを挟んで隣り合っているか。 */
@@ -68,7 +65,7 @@ function unwrapStrips(container: Element): void {
   }
 }
 
-/** 縦長画像のまとまりを 1 行に収める。 */
+/** 縦長・正方形画像のまとまりを 1 行に収める。 */
 function createStrip(wrappers: HTMLElement[]): void {
   const strip = document.createElement('div');
   strip.className = 'markdown-image-strip';
@@ -84,8 +81,8 @@ function createStrip(wrappers: HTMLElement[]): void {
   strip.appendChild(fragment);
 }
 
-/** 連続する縦長画像を 1 行にまとめる。3 枚以上も同じ行に並べる。 */
-export function groupPortraitImages(container: Element): void {
+/** 連続する縦長・正方形画像を 1 行にまとめる。3 枚以上も同じ行に並べる。 */
+export function groupNarrowImages(container: Element): void {
   unwrapStrips(container);
 
   const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.markdown-image-wrapper'));
@@ -97,7 +94,7 @@ export function groupPortraitImages(container: Element): void {
   };
 
   for (const wrapper of wrappers) {
-    if (!wrapper.classList.contains('is-portrait')) {
+    if (!wrapper.classList.contains('is-narrow')) {
       flush();
       continue;
     }
@@ -113,7 +110,7 @@ export function groupPortraitImages(container: Element): void {
   flush();
 }
 
-/** 本文の画像を監視し、読み込みに合わせて縦長画像の行を組み替える。 */
+/** 本文の画像を監視し、読み込みに合わせて縦長・正方形画像の行を組み替える。 */
 export function initImageEnhancements(): void {
   const container = document.querySelector<HTMLElement>('article');
   if (!container) return;
@@ -124,7 +121,7 @@ export function initImageEnhancements(): void {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const schedule = () => {
     clearTimeout(timer);
-    timer = setTimeout(() => groupPortraitImages(container), REGROUP_DELAY_MS);
+    timer = setTimeout(() => groupNarrowImages(container), REGROUP_DELAY_MS);
   };
 
   for (const image of images) {
