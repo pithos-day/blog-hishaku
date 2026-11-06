@@ -1,0 +1,42 @@
+name: Release draft
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Extract release notes from CHANGELOG.md
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          # "## [1.0.1] - ..." から次の "## [" またはリンク定義の手前までを取り出す
+          awk -v ver="${VERSION#v}" '
+            index($0, "## [" ver "]") == 1 { found = 1; next }
+            found && (/^## \[/ || /^\[[^]]+\]: /) { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+
+          if [ -z "$(tr -d '[:space:]' < notes.md)" ]; then
+            echo "::error::CHANGELOG.md に ${VERSION#v} のセクションがありません"
+            exit 1
+          fi
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --draft \
+            --verify-tag \
+            --title "$TAG" \
+            --notes-file notes.md
