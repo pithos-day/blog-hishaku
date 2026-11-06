@@ -641,14 +641,69 @@
 }
 
 /* --------------------------------------------------------------------------
-   モバイル: 1 カラムにし、サイドバー (左・右) は非表示
+   モバイル / タブレット: 1 カラムにし、サイドバーは本文の下に積む
+   (非表示にすると検索・カテゴリ・タグ等への導線がなくなるため)
    -------------------------------------------------------------------------- */
 @media (max-width: 1023px) {
   .site-layout {
     grid-template-columns: minmax(0, 1fr);
+    /* .site-layout は flex-1 で伸びるため、余った高さを行間に配らない */
+    align-content: start;
+    gap: 0;
+    padding-top: 16px;
+  }
+  /* PC 用の固定幅 (600px) を解除して画面幅に追従させる */
+  .site-content {
+    min-width: 0;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-bottom: 24px;
+  }
+  /* DOM 順は 左サイドバー → 本文 → 右サイドバー なので、本文を先頭に出す */
+  .site-content {
+    order: -1;
   }
   .sidebar {
-    display: none;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .sidebar-module {
+    margin-bottom: 20px;
+  }
+  /* 本文の幅が足りない表は横スクロールさせる (ページ全体を横に広げない) */
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 639px) {
+  .site-container {
+    padding: 0 12px;
+  }
+  .site-banner {
+    padding: 14px 0 10px;
+  }
+  .site-banner h1 {
+    font-size: 1.4rem;
+  }
+  .entry {
+    margin-bottom: 24px;
+  }
+  .entry-title-bar,
+  .post-title {
+    font-size: 1.1rem;
+    padding: 6px 10px;
+  }
+  .entry-body,
+  .post-body {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .pagination {
+    gap: 10px;
   }
 }
 
