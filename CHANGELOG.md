@@ -3,6 +3,18 @@
 このプロジェクトの主な変更点を記録する。
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) に従う。
 
+## [1.0.2] - 2026-11-09
+
+### Added
+
+- 独行の YouTube リンクを埋め込みプレイヤーに変換する機能を追加（`content.enableYouTubeEmbed` で切り替え）
+
+### Fixed
+
+- ラベル付きリンク（`[docs](https://example.com/docs)` など）が独行リンクとして埋め込みカードになる問題を修正
+- 記事ページの前後ナビがピン留め記事の並びに引きずられ、日付順にたどれない問題を修正
+- 続けて検索すると古い結果が混ざり、結果が重複する問題を修正
+
 ## [1.0.1] - 2026-11-06
 
 ### Added
@@ -65,5 +77,6 @@
 - Umami によるアクセス解析の設定
 - Cloudflare へのデプロイ対応
 
+[1.0.2]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pithos-day/blog-hishaku/releases/tag/v1.0.0
