@@ -41,11 +41,18 @@ export const initSearch = (): void => {
     return pagefindPromise;
   };
 
+  // 検索は await を挟むので、後から始まった検索が先に終わることがある。
+  // 最新の検索以外の結果は捨て、古い結果の混入や同じ結果の二重表示を防ぐ
+  let latestSearchId = 0;
+
   const runSearch = async (): Promise<void> => {
+    const searchId = ++latestSearchId;
+    const isStale = (): boolean => searchId !== latestSearchId;
     const query = input.value.trim();
     resultsBox.replaceChildren();
     if (!query) return;
     const pagefind = await loadPagefind();
+    if (isStale()) return;
     if (!pagefind) {
       resultsBox.textContent = t('search.noIndex');
       return;
@@ -53,6 +60,7 @@ export const initSearch = (): void => {
     // 語彙: results = Pagefind の検索ヒット / entries = データ読み込み済みの表示対象
     const { results } = await pagefind.search(query);
     const entries = await Promise.all(results.slice(0, MAX_RESULTS).map((hit) => hit.data()));
+    if (isStale()) return;
     if (entries.length === 0) {
       resultsBox.textContent = t('search.noResults');
       return;
