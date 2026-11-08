@@ -113,6 +113,14 @@ export function classifyLink(url: string): LinkInfo {
   return { url, type: 'general' };
 }
 
+/** URL 表示の比較用に、プロトコル (`https://` など) と末尾スラッシュを取り除く */
+function normalizeUrlText(value: string): string {
+  return value
+    .trim()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, '')
+    .replace(/\/+$/, '');
+}
+
 /**
  * 段落が「リンクだけの独行」かどうかを判定する
  * 行内リンク (文中のリンク) は対象外に保つ
@@ -128,16 +136,13 @@ export function isStandaloneLinkParagraph(node: RootContent): boolean {
   if (child.children.length === 1) {
     const textNode = child.children[0];
     if (textNode.type === 'text') {
-      const text = textNode.value.trim();
-      const url = child.url.trim();
-      // 「表示が URL そのものに見えるか」で判定する:
-      //  - 完全一致 … <https://…> の自動リンク表示
-      //  - 片方が他を含む … 末尾スラッシュ等の表記ゆれや
-      //    ホスト名だけの短縮表示 (example.com / https://example.com/) も
-      //    URL だけの表示とみなす
-      // ラベル付きリンク ([公式サイト](https://…)) はいずれも不成立で、
-      // 行内リンクとして対象外のまま残る
-      return text === url || url.endsWith(text) || text.endsWith(url);
+      // 「表示が URL そのものに見えるか」で判定する。
+      // プロトコルと末尾スラッシュの表記ゆれだけを吸収して比べるので、
+      // <https://…> の自動リンクや example.com / https://example.com/ は URL 表示とみなし、
+      // ラベル付きリンク ([docs](https://example.com/docs) のように URL の末尾と
+      // 同じ文字列でも) は行内リンクとして対象外のまま残る
+      const text = normalizeUrlText(textNode.value);
+      return text !== '' && text === normalizeUrlText(child.url);
     }
   }
 

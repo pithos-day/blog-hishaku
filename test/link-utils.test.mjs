@@ -7,7 +7,11 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { classifyLink, extractYouTubeVideo } from '../src/lib/markdown/link-utils.ts';
+import {
+  classifyLink,
+  extractYouTubeVideo,
+  isStandaloneLinkParagraph,
+} from '../src/lib/markdown/link-utils.ts';
 
 const ID = 'dQw4w9WgXcQ';
 
@@ -61,4 +65,33 @@ test('classifyLink: YouTube / ツイート / 一般リンクを分類する', ()
   assert.equal(classifyLink(`https://youtu.be/${ID}`).type, 'youtube');
   assert.equal(classifyLink('https://x.com/jack/status/20').type, 'tweet');
   assert.equal(classifyLink('https://www.youtube.com/@channel').type, 'general');
+});
+
+/** リンク 1 個だけの段落 (表示テキスト text・リンク先 url) */
+const linkParagraph = (text, url) => ({
+  type: 'paragraph',
+  children: [{ type: 'link', url, children: [{ type: 'text', value: text }] }],
+});
+
+test('isStandaloneLinkParagraph: URL をそのまま表示したリンクは独行リンク', () => {
+  for (const [text, url] of [
+    ['https://example.com/docs', 'https://example.com/docs'],
+    ['https://example.com', 'https://example.com/'],
+    ['example.com', 'https://example.com/'],
+    ['www.example.com', 'http://www.example.com'],
+  ]) {
+    assert.equal(isStandaloneLinkParagraph(linkParagraph(text, url)), true, `${text} → ${url}`);
+  }
+});
+
+test('isStandaloneLinkParagraph: ラベル付きリンクは URL の末尾と同じ文字列でも対象外', () => {
+  for (const [text, url] of [
+    ['公式サイト', 'https://example.com/'],
+    ['docs', 'https://example.com/docs'],
+    ['e', 'https://example.com/e'],
+    ['example.com/docs', 'https://example.com/'],
+    [' ', 'https://example.com/'],
+  ]) {
+    assert.equal(isStandaloneLinkParagraph(linkParagraph(text, url)), false, `${text} → ${url}`);
+  }
 });
