@@ -70,6 +70,7 @@ remarkPlugins.push([
   {
     enableLinkEmbed: content.enableLinkEmbed,
     enableTweetEmbed: content.enableTweetEmbed,
+    enableYouTubeEmbed: content.enableYouTubeEmbed,
     enableOGPreview: content.enableOGPreview,
     previewCacheTime: content.previewCacheTime,
   },

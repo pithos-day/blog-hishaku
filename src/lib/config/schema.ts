@@ -82,6 +82,8 @@ const contentSchema = z.object({
   enableLinkEmbed: z.boolean().optional(),
   /** 独行の Twitter/X リンクをツイート埋め込みにする */
   enableTweetEmbed: z.boolean().optional(),
+  /** 独行の YouTube リンクを埋め込みプレイヤーにする */
+  enableYouTubeEmbed: z.boolean().optional(),
   /** 独行の一般リンクに OG プレビューカードを表示 (ビルド時にメタデータ取得) */
   enableOGPreview: z.boolean().optional(),
   /** OG プレビューデータのキャッシュ日数 */
@@ -122,6 +124,7 @@ export const contentDefaults: ContentOptions = {
   enableCodeMeta: true,
   enableLinkEmbed: true,
   enableTweetEmbed: true,
+  enableYouTubeEmbed: true,
   enableOGPreview: true,
   previewCacheTime: 30,
 };

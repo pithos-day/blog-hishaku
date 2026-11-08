@@ -18,6 +18,27 @@
   display: none;
 }
 
+/* --- YouTube 埋め込み --- */
+
+.youtube-embed {
+  margin: 1.5rem 0;
+}
+
+.youtube-embed iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+/* ショート動画は縦長。横幅いっぱいだと高すぎるので幅を絞って中央に置く */
+.youtube-embed-short iframe {
+  max-width: 20rem;
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
+}
+
 /* --- ツイート埋め込み --- */
 
 .tweet-embed {

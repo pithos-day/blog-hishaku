@@ -6,8 +6,70 @@ import type { RootContent } from 'mdast';
 
 export interface LinkInfo {
   url: string;
-  type: 'tweet' | 'general';
+  type: 'tweet' | 'youtube' | 'general';
   tweetId?: string;
+  youtube?: YouTubeVideo;
+}
+
+export interface YouTubeVideo {
+  id: string;
+  /** 再生開始位置 (秒) */
+  start?: number;
+  /** ショート動画 (縦長) かどうか */
+  isShort: boolean;
+}
+
+const YOUTUBE_HOSTS = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com'];
+const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+
+/** `t` / `start` パラメータ (`90`, `90s`, `1m30s`, `1h2m3s`) を秒に変換する */
+function parseStartTime(value: string | null): number | undefined {
+  if (!value) return undefined;
+  if (/^\d+s?$/.test(value)) return Number.parseInt(value, 10) || undefined;
+  const match = value.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+  if (!match) return undefined;
+  const [, h = '0', m = '0', sec = '0'] = match;
+  const total = Number(h) * 3600 + Number(m) * 60 + Number(sec);
+  return total > 0 ? total : undefined;
+}
+
+/**
+ * YouTube URL から動画 ID と開始位置を抽出
+ * 対応形式:
+ * - https://www.youtube.com/watch?v=VIDEO_ID
+ * - https://youtu.be/VIDEO_ID
+ * - https://www.youtube.com/shorts/VIDEO_ID
+ * - https://www.youtube.com/embed/VIDEO_ID
+ * - https://www.youtube.com/live/VIDEO_ID
+ * - `t` / `start` パラメータ付き
+ */
+export function extractYouTubeVideo(url: string): YouTubeVideo | null {
+  let urlObj: URL;
+  try {
+    urlObj = new URL(url);
+  } catch {
+    return null;
+  }
+  const hostname = urlObj.hostname.toLowerCase();
+  const segments = urlObj.pathname.split('/').filter(Boolean);
+
+  let id: string | undefined;
+  let isShort = false;
+  if (hostname === 'youtu.be') {
+    id = segments[0];
+  } else if (YOUTUBE_HOSTS.includes(hostname)) {
+    if (segments[0] === 'watch') {
+      id = urlObj.searchParams.get('v') ?? undefined;
+    } else if (['shorts', 'embed', 'live'].includes(segments[0])) {
+      id = segments[1];
+      isShort = segments[0] === 'shorts';
+    }
+  }
+
+  if (!id || !YOUTUBE_ID_PATTERN.test(id)) return null;
+
+  const start = parseStartTime(urlObj.searchParams.get('t') ?? urlObj.searchParams.get('start'));
+  return { id, isShort, ...(start ? { start } : {}) };
 }
 
 /**
@@ -41,6 +103,11 @@ export function classifyLink(url: string): LinkInfo {
 
   if (tweetId) {
     return { url, type: 'tweet', tweetId };
+  }
+
+  const youtube = extractYouTubeVideo(url);
+  if (youtube) {
+    return { url, type: 'youtube', youtube };
   }
 
   return { url, type: 'general' };

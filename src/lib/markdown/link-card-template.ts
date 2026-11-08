@@ -5,6 +5,7 @@
 
 import sanitizeHtml from 'sanitize-html';
 import { escapeHtml } from './escape';
+import type { YouTubeVideo } from './link-utils';
 import type { OGData } from './og-fetcher';
 import { MAX_PHOTOS, type TweetData, type TweetVideo } from './tweet-fetcher';
 
@@ -250,4 +251,15 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
 export function renderTweetFallback(url: string): string {
   const safeUrl = sanitizeUrlAttribute(url);
   return `<div class="tweet-embed not-prose"><a class="tweet-embed-fallback" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a></div>`;
+}
+
+/**
+ * YouTube 動画の埋め込みプレイヤー。
+ * youtube-nocookie.com を使い、再生するまで Cookie を置かせない。
+ */
+export function renderYouTubeEmbed({ id, start, isShort }: YouTubeVideo): string {
+  // id は extractYouTubeVideo で [A-Za-z0-9_-]{11} に検証済みだが、念のためエスケープする
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}${start ? `?start=${start}` : ''}`;
+  const modifier = isShort ? ' youtube-embed-short' : '';
+  return `<div class="youtube-embed${modifier} not-prose"><iframe src="${escapeHtml(src)}" title="YouTube video player" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
 }

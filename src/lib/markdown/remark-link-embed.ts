@@ -2,6 +2,7 @@
  * 独行リンクを埋め込みカードへ変換する remark プラグイン。
  * 段落がリンク 1 個 (テキスト = URL) のみなら検出し、
  * - ツイート → ビルド時に fxtwitter API から取得して静的カード
+ * - YouTube → 埋め込みプレイヤー (iframe。ビルド時の外部アクセスなし)
  * - 一般リンク → ビルド時に OG メタデータを取得して静的カード (`.cache/og-data.json` でキャッシュ)
  * に置き換える。
  */
@@ -9,8 +10,13 @@
 import type { Html, Link, Paragraph, Root } from 'mdast';
 import type { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
-import { renderLinkPreview, renderTweetCard, renderTweetFallback } from './link-card-template';
-import { classifyLink, isStandaloneLinkParagraph } from './link-utils';
+import {
+  renderLinkPreview,
+  renderTweetCard,
+  renderTweetFallback,
+  renderYouTubeEmbed,
+} from './link-card-template';
+import { classifyLink, isStandaloneLinkParagraph, type YouTubeVideo } from './link-utils';
 import { DEFAULT_CACHE_TTL_DAYS, getSharedOGCache, MS_PER_DAY } from './og-cache';
 import { fetchOGData, type OGData } from './og-fetcher';
 import type { TweetData } from './tweet-fetcher';
@@ -19,6 +25,7 @@ import { fetchTweetData } from './tweet-fetcher';
 interface RemarkLinkEmbedOptions {
   enableLinkEmbed?: boolean;
   enableTweetEmbed?: boolean;
+  enableYouTubeEmbed?: boolean;
   enableOGPreview?: boolean;
   /** 成功エントリのキャッシュ期間 (日数) */
   previewCacheTime?: number;
@@ -30,6 +37,7 @@ interface EmbedCandidate {
   url: string;
   type: string;
   tweetId?: string;
+  youtube?: YouTubeVideo;
 }
 
 /** 独行リンクを埋め込みカードに変換する (OG 取得はキャッシュ済みを優先) */
@@ -37,6 +45,7 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
   const {
     enableLinkEmbed = true,
     enableTweetEmbed = true,
+    enableYouTubeEmbed = true,
     enableOGPreview = true,
     previewCacheTime = DEFAULT_CACHE_TTL_DAYS,
   } = options;
@@ -70,11 +79,20 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
     return renderTweetFallback(url);
   };
 
-  const renderEmbed = async ({ url, type, tweetId }: EmbedCandidate): Promise<string | null> => {
+  const renderEmbed = async ({
+    url,
+    type,
+    tweetId,
+    youtube,
+  }: EmbedCandidate): Promise<string | null> => {
     if (type === 'tweet' && enableTweetEmbed && tweetId) {
       return renderTweet(tweetId, url);
     }
-    if (type === 'general' && enableOGPreview) {
+    if (type === 'youtube' && enableYouTubeEmbed && youtube) {
+      return renderYouTubeEmbed(youtube);
+    }
+    // YouTube 埋め込みを無効にした場合は一般リンクとして OG カードにする
+    if ((type === 'general' || type === 'youtube') && enableOGPreview) {
       const cached = cache.get(url) as OGData | null;
       if (cached) return renderLinkPreview(cached);
 
@@ -86,7 +104,7 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
   };
 
   return async (tree: Root) => {
-    if (!enableLinkEmbed || (!enableTweetEmbed && !enableOGPreview)) return;
+    if (!enableLinkEmbed || (!enableTweetEmbed && !enableYouTubeEmbed && !enableOGPreview)) return;
 
     const candidates: EmbedCandidate[] = [];
 
@@ -102,6 +120,7 @@ export function remarkLinkEmbed(options: RemarkLinkEmbedOptions = {}) {
         url,
         type: linkInfo.type,
         tweetId: linkInfo.tweetId,
+        youtube: linkInfo.youtube,
       });
     });
 
