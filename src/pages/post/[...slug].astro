@@ -12,6 +12,7 @@ import {
   type PostEntry,
   postPath,
   shouldShowDraft,
+  sortByDateDesc,
 } from '@/lib/posts';
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, toJsonLdHtml } from '@/lib/seo';
 import { getSimilarPosts } from '@/lib/similar-posts';
@@ -19,7 +20,9 @@ import { buildTagHref } from '@/lib/tags';
 import { collectTocHeadings } from '@/lib/toc';
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
+  // 前後ナビは日付順でたどる (一覧用の sticky 優先の並びを使うと、ピン留め記事が
+  // 先頭に寄って「次の記事」が古い記事を指してしまう)
+  const posts = sortByDateDesc(await getPublishedPosts());
   return posts.map((post, index) => ({
     params: { slug: getPostSlug(post) },
     props: { post, prev: posts[index + 1] ?? null, next: posts[index - 1] ?? null },
