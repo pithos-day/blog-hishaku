@@ -116,3 +116,16 @@ test('preprocessShokaMarkdown: 空白を挟まず並ぶ脚注参照を上付き�
   assert.equal(p(source), source);
   assert.equal(p('x^2^ と注[^a]'), 'x<sup>2</sup> と注[^a]');
 });
+
+test('preprocessShokaMarkdown: コンテナ内のコードフェンスにある閉じタグでブロックを閉じない', () => {
+  const note = p(':::info\n```\n:::\n```\n後の行\n:::\n\n外');
+  assert.match(note, /```\n:::\n```\n後の行\n\n<\/div>/);
+  assert.match(note, /<\/div>\n+外$/);
+
+  const collapse = p('+++info T\n~~~\n+++\n~~~\n+++');
+  assert.match(collapse, /~~~\n\+\+\+\n~~~\n\n<\/div>\n<\/details>/);
+
+  const tab = p(';;;g A\n```\n;;;\n```\n;;;');
+  assert.match(tab, /```\n;;;\n```/);
+  assert.equal(tab.match(/class="tab-panel/g)?.length, 1);
+});

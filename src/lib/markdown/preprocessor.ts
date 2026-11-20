@@ -78,7 +78,36 @@ const COLLAPSE_OPEN_PATTERN = /^\+\+\+(\w+)\s+(.+)$/;
 /** `;;;groupId TabName` の開始行 */
 const TAB_OPEN_PATTERN = /^;;;(\S+)\s+(.+)$/;
 
-/** 閉じタグに一致する間、行を消費しながら中身を収集する */
+/**
+ * コードフェンスの開閉を 1 行ずつ追跡する関数を作る。
+ * 戻り値の関数は、その行がフェンス (開き・中身・閉じ) に属するなら true を返す。
+ * フェンス内の `:::` などをブロック構文の開閉と取り違えないために使う。
+ */
+function createFenceTracker(): (line: string) => boolean {
+  let fenceChar = '';
+  let fenceLen = 0;
+  return (line) => {
+    const match = line.match(/^(`{3,}|~{3,})/);
+    if (!fenceChar) {
+      if (!match) return false;
+      fenceChar = match[1][0];
+      fenceLen = match[1].length;
+      return true;
+    }
+    if (
+      match &&
+      match[1][0] === fenceChar &&
+      match[1].length >= fenceLen &&
+      /^(`{3,}|~{3,})\s*$/.test(line)
+    ) {
+      fenceChar = '';
+      fenceLen = 0;
+    }
+    return true;
+  };
+}
+
+/** 閉じタグに一致する間、行を消費しながら中身を収集する (コードフェンス内は開閉とみなさない) */
 function collectBlock(
   lines: string[],
   start: number,
@@ -86,10 +115,13 @@ function collectBlock(
   isClose: (line: string) => boolean,
 ): { inner: string[]; next: number } {
   const inner: string[] = [];
+  const isInFence = createFenceTracker();
   let i = start;
   let depth = 1;
   while (i < lines.length && depth > 0) {
-    if (isClose(lines[i])) {
+    if (isInFence(lines[i])) {
+      // 中身として残す (開閉の判定はしない)
+    } else if (isClose(lines[i])) {
       depth--;
       if (depth === 0) {
         i++;
@@ -302,36 +334,13 @@ function processBlocks(text: string, opts: PreprocessOptions, depth = 0): string
   };
 
   // コードフェンス内は構文を処理しない
-  let inFence = false;
-  let fenceChar = '';
-  let fenceLen = 0;
+  const isInFence = createFenceTracker();
 
   while (i < lines.length) {
     const line = lines[i];
 
-    const fenceMatch = line.match(/^(`{3,}|~{3,})/);
-    if (fenceMatch) {
-      const char = fenceMatch[1][0];
-      const len = fenceMatch[1].length;
-      if (!inFence) {
-        inFence = true;
-        fenceChar = char;
-        fenceLen = len;
-        flushTabs();
-        output.push(line);
-        i++;
-        continue;
-      }
-      if (char === fenceChar && len >= fenceLen && /^(`{3,}|~{3,})\s*$/.test(line)) {
-        inFence = false;
-        fenceChar = '';
-        fenceLen = 0;
-        output.push(line);
-        i++;
-        continue;
-      }
-    }
-    if (inFence) {
+    if (isInFence(line)) {
+      flushTabs();
       output.push(line);
       i++;
       continue;
