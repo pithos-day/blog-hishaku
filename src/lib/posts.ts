@@ -47,10 +47,12 @@ export function sortByDateDesc(posts: Iterable<PostEntry>): PostEntry[] {
 
 /**
  * 記事の表示用説明。手書き description がなければ本文の冒頭 150 字を使う。
+ * 文字数はコードポイントで数える (UTF-16 で切ると絵文字などのサロゲートペアが半分残る)。
  */
 export function getPostDescription(post: PostEntry, maxLength = 150): string {
   if (post.data.description) return post.data.description;
   const plain = toPlainText(post.body ?? '');
-  if (plain.length <= maxLength) return plain;
-  return `${plain.slice(0, maxLength)}…`;
+  const chars = Array.from(plain);
+  if (chars.length <= maxLength) return plain;
+  return `${chars.slice(0, maxLength).join('')}…`;
 }
