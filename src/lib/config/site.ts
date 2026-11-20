@@ -48,11 +48,29 @@ function warnIgnoredTopLevelKeys(doc: unknown): void {
   }
 }
 
+/** 環境変数などで `site.url` を上書きする値を検証する (http(s) の絶対 URL に限る) */
+function assertSiteUrlOverride(siteUrl: string): void {
+  let protocol = '';
+  try {
+    protocol = new URL(siteUrl).protocol;
+  } catch {
+    // 下で投げる
+  }
+  if (protocol !== 'http:' && protocol !== 'https:') {
+    throw new Error(`SITE_URL "${siteUrl}" は http(s) の絶対 URL ではありません`);
+  }
+}
+
+export interface ParseSiteYamlOptions {
+  /** `site.url` を上書きする URL (環境変数 SITE_URL など)。空文字・未指定なら site.yaml の値を使う */
+  siteUrl?: string;
+}
+
 /**
  * `config/site.yaml` の生文字列を検証・正規化して `SiteConfig` を返す純関数。
  * `astro.config.mjs` と `src/` の両方から使われる単一の入口。
  */
-export function parseSiteYaml(raw: string): SiteConfig {
+export function parseSiteYaml(raw: string, options: ParseSiteYamlOptions = {}): SiteConfig {
   let doc: unknown;
   try {
     doc = parseYaml(raw);
@@ -74,9 +92,12 @@ export function parseSiteYaml(raw: string): SiteConfig {
 
   warnIgnoredTopLevelKeys(doc);
 
+  const siteUrl = options.siteUrl?.trim();
+  if (siteUrl) assertSiteUrlOverride(siteUrl);
+
   const i18n = normalizeI18n(parsed.i18n);
   return {
-    site: parsed.site,
+    site: siteUrl ? { ...parsed.site, url: siteUrl } : parsed.site,
     i18n,
     categoryMap: parsed.categoryMap,
     social: parsed.social,

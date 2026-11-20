@@ -2,8 +2,12 @@ import rawSiteYaml from '../../../config/site.yaml?raw';
 import { configureDefaultLocale } from '../../i18n/config';
 import { parseSiteYaml } from './site';
 
-/** `config/site.yaml` を検証・正規化した設定(単一インスタンス) */
-export const siteConfig = parseSiteYaml(rawSiteYaml);
+/**
+ * `config/site.yaml` を検証・正規化した設定(単一インスタンス)。
+ * site.url は astro.config で決めた値 (環境変数 SITE_URL で上書き済み) を import.meta.env.SITE から受け取る。
+ * Astro を通さないテストでは import.meta.env が無いため、site.yaml の値のまま。
+ */
+export const siteConfig = parseSiteYaml(rawSiteYaml, { siteUrl: import.meta.env?.SITE });
 
 // サイト表示名 — `name` が無ければ(空文字も含む)`title` へフォールバックする。
 // title は schema 上1文字以上の保証があるため、この値が空になることは無い。

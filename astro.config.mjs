@@ -26,9 +26,11 @@ import { remarkShokaSpoiler } from './src/lib/markdown/remark-spoiler.ts';
 
 // astro.config は Vite プラグインが有効化される前に読み込まれるため、
 // site.yaml は Node の fs で直接読む(パースは src/lib/config と共有)。
+// 環境変数 SITE_URL があれば site.url より優先する (デプロイ先ごとに URL を変えるため)。
+// src 側は Astro が配る import.meta.env.SITE (= 下の defineConfig の site) で同じ値を受け取る。
 function loadSiteConfig() {
   const configPath = path.join(process.cwd(), 'config', 'site.yaml');
-  return parseSiteYaml(fs.readFileSync(configPath, 'utf8'));
+  return parseSiteYaml(fs.readFileSync(configPath, 'utf8'), { siteUrl: process.env.SITE_URL });
 }
 
 const siteConfig = loadSiteConfig();

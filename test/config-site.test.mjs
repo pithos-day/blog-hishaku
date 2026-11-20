@@ -65,6 +65,28 @@ test('parseSiteYaml: 必須キーが無いときはエラーに内容を添え�
   );
 });
 
+test('parseSiteYaml: siteUrl を渡すと site.url を上書きする', () => {
+  assert.equal(
+    parseSiteYaml(minimal, { siteUrl: 'https://blog.example.org/' }).site.url,
+    'https://blog.example.org/',
+  );
+  assert.equal(
+    parseSiteYaml(minimal, { siteUrl: '' }).site.url,
+    'https://example.com/',
+    '空文字は無視',
+  );
+  assert.equal(
+    parseSiteYaml(minimal, {}).site.url,
+    'https://example.com/',
+    '未指定は site.yaml の値',
+  );
+});
+
+test('parseSiteYaml: siteUrl が http(s) の絶対 URL でなければエラーにする', () => {
+  assert.throws(() => parseSiteYaml(minimal, { siteUrl: 'blog.example.org' }), /SITE_URL/);
+  assert.throws(() => parseSiteYaml(minimal, { siteUrl: 'ftp://example.org/' }), /SITE_URL/);
+});
+
 test('parseSiteYaml: YAML として解析できないときはエラーにする', () => {
   assert.throws(() => parseSiteYaml('site: ['), /YAML 解析に失敗しました/);
 });
