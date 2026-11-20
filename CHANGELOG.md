@@ -3,6 +3,19 @@
 このプロジェクトの主な変更点を記録する。
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) に従う。
 
+## [1.2.0] - 2026-11-20
+
+### Added
+
+- カバー未指定の記事の OGP 画像を、記事のタイトル・カテゴリー・タグ・日付とサイト名・アイコンを載せてビルド時に自動生成する機能を追加（`/og/<slug>.png` に出力し、JSON-LD の `image` にも使う）
+- 記事の下部に旧 Twitter 風のツイートボタンと URL コピーボタンを追加（`content.enableShareButtons` で切り替え）
+- ビルド時の環境変数 `SITE_URL` で `site.url` を上書きする機能を追加（http(s) の絶対 URL 以外を指定するとビルドがエラーになる）
+
+### Changed
+
+- カバー未指定の記事の OGP 画像を、`site.defaultOgImage` から自動生成した画像に変更（`site.defaultOgImage` は記事以外のページだけで使う）
+- ホームの `twitter:card` を、画像の有無にかかわらず `summary` に変更
+
 ## [1.1.1] - 2026-11-20
 
 ### Fixed
@@ -113,6 +126,7 @@
 - Umami によるアクセス解析の設定
 - Cloudflare へのデプロイ対応
 
+[1.2.0]: https://github.com/pithos-day/blog-hishaku/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/pithos-day/blog-hishaku/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.1...v1.0.2
