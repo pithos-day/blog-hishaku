@@ -6,7 +6,7 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildMonthCalendar, getDayLink, getWeekdayNames } from '../src/lib/calendar.ts';
+import { buildMonthCalendar, getDayLink } from '../src/lib/calendar.ts';
 
 const TZ = 'Asia/Tokyo';
 
@@ -76,17 +76,4 @@ test('getDayLink: 記事の無い日はリンク無し、ある日は最新記�
   const cal = buildMonthCalendar(2026, 1, [post('2026-01-15T03:00:00Z', 'Note/Hello')], TZ);
   const day15 = cal.weeks[2][4];
   assert.equal(getDayLink(day15), '/post/note/hello/', 'スラッグは小文字化される');
-});
-
-test('getWeekdayNames: 日曜始まりで 7 曜日の正式名を返す', () => {
-  assert.deepEqual(getWeekdayNames('en'), [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ]);
-  assert.equal(getWeekdayNames('ja')[0], '日曜日');
 });

@@ -22,16 +22,6 @@ export interface CalendarMonth {
   weeks: (CalendarDay | null)[][];
 }
 
-/**
- * 曜日の正式名 (日曜始まり)。カレンダー見出しの略称 (S, M…) の読み上げ用で、
- * スクリーンリーダーが「S」ではなく「Sunday」と読めるようにする。
- */
-export function getWeekdayNames(locale: string): string[] {
-  const formatter = new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' });
-  // 2023-01-01 は日曜日
-  return Array.from({ length: 7 }, (_, i) => formatter.format(new Date(Date.UTC(2023, 0, 1 + i))));
-}
-
 /** 指定年月のカレンダーを組み立てる (記事は空でも月だけ返す) */
 export function buildMonthCalendar(
   year: number,
