@@ -122,6 +122,7 @@ content:
   enableShokaHexoTags: true # {% links %} {% media %} Hexo タグ
   enableMath: true # $数式$ KaTeX
   enableCodeMeta: true # コードブロックメタ (title, mark)
+  enableShareButtons: true # 記事の下部にシェアボタン (ツイート / URL コピー)
   # リンク埋め込み (独行リンクをカード化) — previewCacheTime の単位は日数
   # 初回ビルド時に外部 URL へメタデータ取得でアクセスします (失敗時はフォールバック)
   enableLinkEmbed: true # 独行リンクを埋め込みカードに変換 (総スイッチ)

@@ -55,6 +55,10 @@ export const uiStrings = {
   'post.headingLink': 'このセクションへのリンク',
   'post.badgePin': 'ピン留め',
   'post.badgeDraft': '下書き',
+  'post.shareAria': 'この記事をシェア',
+  'post.shareTweet': 'ツイート',
+  'post.shareCopyUrl': 'URL をコピー',
+  'post.shareCopied': 'コピーしました',
 
   // ── カテゴリー ──────────────────────────────────────────────
   'category.title': 'カテゴリ',

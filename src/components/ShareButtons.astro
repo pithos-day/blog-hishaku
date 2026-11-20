@@ -1,0 +1,57 @@
+---
+/**
+ * 記事下部のシェアボタン (旧 Twitter 風のツイートボタン + URL コピー)。
+ * 公式の widgets.js は使わず、Web Intent へのリンクで済ませる (外部スクリプト・トラッキングなし)。
+ */
+import { Icon } from 'astro-icon/components';
+import { t } from '@/i18n';
+import { buildTweetIntentUrl, TWITTER_BIRD_PATH } from '@/lib/twitter-logo';
+
+interface Props {
+  title: string;
+  /** シェアする記事の絶対 URL */
+  url: string;
+}
+
+const { title, url } = Astro.props;
+const tweetHref = buildTweetIntentUrl(title, url);
+---
+
+<div class="share-buttons not-prose" data-pagefind-ignore="all" role="group" aria-label={t('post.shareAria')}>
+  <a class="share-btn share-btn-tweet" href={tweetHref} target="_blank" rel="noopener noreferrer">
+    <svg class="share-btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={TWITTER_BIRD_PATH}></path></svg>
+    <span>{t('post.shareTweet')}</span>
+  </a>
+  <button
+    type="button"
+    class="share-btn share-btn-copy"
+    data-share-url={url}
+    data-label-copied={t('post.shareCopied')}
+  >
+    <Icon name="lucide:link" class="share-btn-icon" aria-hidden="true" />
+    <span class="share-btn-label" aria-live="polite">{t('post.shareCopyUrl')}</span>
+  </button>
+</div>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>('.share-btn-copy')) {
+    const label = button.querySelector('.share-btn-label');
+    if (!label) continue;
+    const defaultText = label.textContent;
+    let resetTimer: ReturnType<typeof setTimeout> | undefined;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.shareUrl ?? location.href);
+      } catch {
+        return; // クリップボードが使えない環境
+      }
+      label.textContent = button.dataset.labelCopied ?? '';
+      button.classList.add('is-copied');
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
+        label.textContent = defaultText;
+        button.classList.remove('is-copied');
+      }, 2000);
+    });
+  }
+</script>

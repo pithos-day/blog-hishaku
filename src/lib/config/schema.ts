@@ -81,6 +81,8 @@ const contentSchema = z.object({
   enableShokaHexoTags: z.boolean().optional(),
   enableMath: z.boolean().optional(),
   enableCodeMeta: z.boolean().optional(),
+  /** 記事の下部にシェアボタン (ツイート / URL コピー) を表示する */
+  enableShareButtons: z.boolean().optional(),
   /** 独行リンクを埋め込みカードに変換する (総スイッチ) */
   enableLinkEmbed: z.boolean().optional(),
   /** 独行の Twitter/X リンクをツイート埋め込みにする */
@@ -125,6 +127,7 @@ export const contentDefaults: ContentOptions = {
   enableShokaHexoTags: true,
   enableMath: true,
   enableCodeMeta: true,
+  enableShareButtons: true,
   enableLinkEmbed: true,
   enableTweetEmbed: true,
   enableYouTubeEmbed: true,

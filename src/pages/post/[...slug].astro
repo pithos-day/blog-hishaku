@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import PostMeta from '@/components/PostMeta.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
 import { t } from '@/i18n';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
@@ -136,6 +137,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
         <p class="mb-3 text-sm text-accent">{t('post.draftNotice')}</p>
       )}
       <Content />
+      {siteConfig.content.enableShareButtons && (
+        <ShareButtons
+          title={post.data.title}
+          url={new URL(Astro.url.pathname, siteConfig.site.url).href}
+        />
+      )}
       <hr class="post-nav-divider" />
       <nav class="post-nav" aria-label={t('post.contextNavAria')}>
         {

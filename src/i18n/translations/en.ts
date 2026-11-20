@@ -60,6 +60,10 @@ export const uiStrings: DefaultUIStrings = {
   'post.headingLink': 'Link to this section',
   'post.badgePin': 'Pinned',
   'post.badgeDraft': 'Draft',
+  'post.shareAria': 'Share this post',
+  'post.shareTweet': 'Tweet',
+  'post.shareCopyUrl': 'Copy URL',
+  'post.shareCopied': 'Copied!',
 
   // ── カテゴリー ──────────────────────────────────────────────
   'category.title': 'Categories',
