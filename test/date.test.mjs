@@ -99,3 +99,14 @@ test('getYearMonth: TZ で年月が変わる瞬間 (日付境界) を正しく�
   );
   assert.deepEqual(getYearMonth(edge, 'UTC'), { year: 2026, month: 1 }, 'UTC では 1/31');
 });
+
+test('formatDate: locale を省略すると既定ロケールの書式になる', async () => {
+  const { configureDefaultLocale, getDefaultLocale } = await import('../src/i18n/index.ts');
+  const original = getDefaultLocale();
+  try {
+    configureDefaultLocale('en');
+    assert.equal(formatDate(new Date('2026-01-01T15:00:00Z'), 'Asia/Tokyo'), 'January 2, 2026');
+  } finally {
+    configureDefaultLocale(original);
+  }
+});

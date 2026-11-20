@@ -4,6 +4,7 @@
  */
 
 import sanitizeHtml from 'sanitize-html';
+import { getDefaultLocale, t } from '../../i18n';
 import { escapeHtml } from './escape';
 import type { YouTubeVideo } from './link-utils';
 import type { OGData } from './og-fetcher';
@@ -159,7 +160,7 @@ function renderTweetText(text: string): string {
 function formatTweetDate(iso: string): string | null {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat('ja-JP', {
+  return new Intl.DateTimeFormat(getDefaultLocale(), {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -241,7 +242,7 @@ export function renderTweetCard(tweet: TweetData, sourceUrl: string): string {
     ${videoHtml}
     <div class="tweet-card-footer">
       ${dateHtml}
-      <a class="tweet-card-link" href="${href}" target="_blank" rel="noopener noreferrer">Twitter で見る</a>
+      <a class="tweet-card-link" href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('embed.viewOnTwitter'))}</a>
     </div>
   </div>
 </div>`;

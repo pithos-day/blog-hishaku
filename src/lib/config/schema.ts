@@ -48,8 +48,23 @@ interface UmamiConfig {
   endpoint: string;
 }
 
+/** Intl に渡せる BCP 47 タグか (不正だと日付・数値の整形が RangeError で落ちる) */
+function isValidLocaleTag(code: string): boolean {
+  try {
+    Intl.getCanonicalLocales(code);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const localeTagSchema = z
+  .string()
+  .min(1)
+  .refine(isValidLocaleTag, { message: 'BCP 47 の言語タグではありません (例: ja, en)' });
+
 const localeSchema = z.object({
-  code: z.string().min(1),
+  code: localeTagSchema,
   label: z.string().min(1),
   enabled: z.boolean().default(true),
 });
@@ -173,7 +188,7 @@ export const siteYamlSchema = z.object({
   }),
   i18n: z
     .object({
-      defaultLocale: z.string().optional(),
+      defaultLocale: localeTagSchema.optional(),
       locales: z.array(localeSchema).optional(),
     })
     .optional(),

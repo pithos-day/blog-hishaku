@@ -3,6 +3,8 @@
  * 依存ライブラリなしの最小実装。
  */
 
+import { getDefaultLocale } from '../i18n/config';
+
 const TIMESTAMP_PATTERN =
   /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{1,9}))?)?\s*(Z|[+-]\d{2}:?\d{2})?$/;
 
@@ -96,11 +98,11 @@ export function parsePostDate(value: string | Date, timeZone: string): Date {
   return reinterpretUtcAsTimezone(new Date(wallClock), timeZone);
 }
 
-/** 日付をサイトタイムゾーン基準でローカライズして整形する */
+/** 日付をサイトタイムゾーン基準でローカライズして整形する (locale 省略時は既定ロケール) */
 export function formatDate(
   date: Date,
   timeZone: string,
-  locale = 'ja-JP',
+  locale = getDefaultLocale(),
   options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' },
 ): string {
   return new Intl.DateTimeFormat(locale, { ...options, timeZone }).format(date);

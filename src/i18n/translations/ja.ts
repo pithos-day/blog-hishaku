@@ -99,6 +99,9 @@ export const uiStrings = {
   'code.fullscreen': '全画面',
   'code.copy': 'コピー',
 
+  // ── 埋め込み ────────────────────────────────────────────────
+  'embed.viewOnTwitter': 'Twitter で見る',
+
   // ── 目次 ────────────────────────────────────────────────────
   'toc.title': '目次',
 
