@@ -6,7 +6,7 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildTagHref, tagToSlug } from '../src/lib/tags.ts';
+import { buildTagHref, collectTags, tagToSlug } from '../src/lib/tags.ts';
 
 test('tagToSlug: 英字タグは小文字化する', () => {
   assert.equal(tagToSlug('Astro'), 'astro');
@@ -25,4 +25,13 @@ test('buildTagHref: 前後を /tags/ で挟み末尾スラッシュを付ける'
     `/tags/${encodeURIComponent('日記')}/`,
     '日本語タグはエンコードされる',
   );
+});
+
+test('collectTags: 大文字小文字ゆれは 1 つのタグにまとめ、件数は記事の数で数える', () => {
+  const post = (tags) => ({ data: { tags } });
+  const tags = collectTags([post(['Astro', 'astro']), post(['astro', 'ブログ']), post(undefined)]);
+  assert.deepEqual(tags, [
+    { name: 'Astro', slug: 'astro', count: 2 },
+    { name: 'ブログ', slug: 'ブログ', count: 1 },
+  ]);
 });

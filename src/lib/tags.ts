@@ -18,13 +18,19 @@ export interface TagInfo {
   count: number;
 }
 
-/** 全タグと件数 (日付降順記事ベース・下書きは開発時のみ) */
-export async function getAllTags(): Promise<TagInfo[]> {
-  const posts = await getPublishedPosts();
+/**
+ * 記事一覧からタグと件数を集める (件数の降順・同数はスラッグ順)。
+ * 件数は記事の数で数える。1 つの記事に `Astro` と `astro` のように同じスラッグの
+ * タグがあっても 1 件とする (タグページに並ぶ記事の数と揃える)。
+ */
+export function collectTags(posts: readonly PostEntry[]): TagInfo[] {
   const bySlug = new Map<string, TagInfo>();
   for (const post of posts) {
+    const slugsInPost = new Set<string>();
     for (const tag of post.data.tags ?? []) {
       const slug = tagToSlug(tag);
+      if (slugsInPost.has(slug)) continue;
+      slugsInPost.add(slug);
       const existing = bySlug.get(slug);
       if (existing) {
         existing.count += 1;
@@ -36,6 +42,11 @@ export async function getAllTags(): Promise<TagInfo[]> {
   return [...bySlug.values()].sort(
     (a, b) => b.count - a.count || a.slug.localeCompare(b.slug, 'ja'),
   );
+}
+
+/** 全タグと件数 (日付降順記事ベース・下書きは開発時のみ) */
+export async function getAllTags(): Promise<TagInfo[]> {
+  return collectTags(await getPublishedPosts());
 }
 
 /** スラッグに一致する記事 (日付降順) */
