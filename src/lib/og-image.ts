@@ -41,7 +41,10 @@ export interface OgImageInput {
   /** 右下に表示する日付 (整形済み) */
   date: string;
   siteTitle: string;
-  /** public/ からのパス。svg / png / jpeg のみ描画する (それ以外や外部 URL はアクセント色の丸) */
+  /**
+   * public/ からのパス。svg / png / jpeg はそのまま、webp / avif / gif / tiff は PNG に変換して描く
+   * (それ以外の形式・外部 URL・読めないファイルはアクセント色の丸)
+   */
   avatar?: string;
 }
 
@@ -105,6 +108,7 @@ async function loadFonts(texts: { weight: number; text: string }[]) {
   return { fonts, fontFamily: families.join(', ') };
 }
 
+/** satori がそのまま描ける形式 */
 const AVATAR_TYPES: Record<string, string> = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
@@ -112,16 +116,42 @@ const AVATAR_TYPES: Record<string, string> = {
   '.jpeg': 'image/jpeg',
 };
 
-async function loadAvatarDataUri(avatar: string | undefined): Promise<string | undefined> {
+/** satori が描けないため、PNG に変換してから渡す形式 */
+const CONVERTIBLE_AVATAR_EXTS = new Set(['.webp', '.avif', '.gif', '.tif', '.tiff']);
+
+/** アバター画像の一辺 (px)。描画サイズ (約 74px) の倍程度に縮めて PNG を軽くする */
+const AVATAR_RASTER_SIZE = 256;
+
+let avatarPromise: Promise<string | undefined> | undefined;
+let avatarPromiseKey: string | undefined;
+
+async function readAvatarDataUri(avatar: string | undefined): Promise<string | undefined> {
   if (!avatar?.startsWith('/')) return undefined;
-  const mime = AVATAR_TYPES[path.extname(avatar).toLowerCase()];
-  if (!mime) return undefined;
+  const ext = path.extname(avatar).toLowerCase();
+  const mime = AVATAR_TYPES[ext];
+  if (!mime && !CONVERTIBLE_AVATAR_EXTS.has(ext)) return undefined;
   try {
     const data = await fs.readFile(path.join(process.cwd(), 'public', avatar));
-    return `data:${mime};base64,${data.toString('base64')}`;
+    if (mime) return `data:${mime};base64,${data.toString('base64')}`;
+    // sharp はビルド時にしか使わないため、ここで初めて読み込む
+    const { default: sharp } = await import('sharp');
+    const png = await sharp(data)
+      .resize(AVATAR_RASTER_SIZE, AVATAR_RASTER_SIZE, { fit: 'cover', withoutEnlargement: true })
+      .png()
+      .toBuffer();
+    return `data:image/png;base64,${png.toString('base64')}`;
   } catch {
     return undefined;
   }
+}
+
+/** アバターを data URI にする (全記事で同じ画像のため、1 度だけ読む) */
+function loadAvatarDataUri(avatar: string | undefined): Promise<string | undefined> {
+  if (!avatarPromise || avatarPromiseKey !== avatar) {
+    avatarPromiseKey = avatar;
+    avatarPromise = readAvatarDataUri(avatar);
+  }
+  return avatarPromise;
 }
 
 let themePromise: Promise<OgThemeColors> | undefined;
