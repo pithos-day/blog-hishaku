@@ -33,3 +33,14 @@ test('t: 存在しないロケールでも既定 (ja) 辞書へフォールバ�
   }
   assert.equal(getDefaultLocale(), original, '呼び出し後は元のロケールに戻る');
 });
+
+test('t: 既定ロケールを en にすると en 辞書の文字列を返す', () => {
+  const original = getDefaultLocale();
+  try {
+    configureDefaultLocale('en');
+    assert.equal(t('common.search'), 'Search');
+    assert.equal(t('post.charCount', { count: '1,200' }), '1,200 characters');
+  } finally {
+    configureDefaultLocale(original);
+  }
+});
