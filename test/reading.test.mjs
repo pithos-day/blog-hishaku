@@ -87,7 +87,7 @@ test('parseSiteYaml: reading 未指定は既定の速度になる', () => {
 });
 
 test('parseSiteYaml: サイト言語が zh なら文字の既定速度が変わる', () => {
-  const config = parseSiteYaml(`${minimal}i18n:\n  defaultLocale: zh-CN\n`);
+  const config = parseSiteYaml(`${minimal}i18n:\n  defaultLocale: zh\n`);
   assert.deepEqual(config.reading, { charsPerMinute: 300, wordsPerMinute: 230 });
 });
 

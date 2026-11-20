@@ -49,20 +49,13 @@ interface UmamiConfig {
   endpoint: string;
 }
 
-/** Intl に渡せる BCP 47 タグか (不正だと日付・数値の整形が RangeError で落ちる) */
-function isValidLocaleTag(code: string): boolean {
-  try {
-    Intl.getCanonicalLocales(code);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-const localeTagSchema = z
-  .string()
-  .min(1)
-  .refine(isValidLocaleTag, { message: 'BCP 47 の言語タグではありません (例: ja, en)' });
+/**
+ * サイトの言語は、地域などを付けない小文字 2〜3 字の言語コード (ISO 639) に限る。
+ * 辞書の名前 (translations/ja.ts など) や言語ごとの設定のキーと、そのまま突き合わせるため。
+ */
+const languageCodeSchema = z.string().regex(/^[a-z]{2,3}$/, {
+  message: '言語コード (例: ja, en) で指定してください。地域付きのタグ (en-US など) は使えません',
+});
 
 const socialLinkSchema = z.object({
   url: z.string().min(1),
@@ -168,7 +161,7 @@ export const readingDefaults: ReadingOptions = {
 };
 
 /**
- * サイト言語 (BCP 47 の言語サブタグ) ごとの既定値の上書き。
+ * サイトの言語 (i18n.defaultLocale) ごとの既定値の上書き。
  * 中国語は漢字だけで書かれ、日本語より 1 文字あたりの情報量が多いため遅めにする
  * (IReST 2012 の中国語の黙読速度 約 255 字/分 と Web 記事の目安の間)。
  * config/site.yaml の `reading` のコメントにも同じ値を書いている。変えたら合わせる。
@@ -221,7 +214,7 @@ export const siteYamlSchema = z.object({
   }),
   i18n: z
     .object({
-      defaultLocale: localeTagSchema.optional(),
+      defaultLocale: languageCodeSchema.optional(),
     })
     .optional(),
   categoryMap: z.record(z.string(), z.string()).default({}),

@@ -51,8 +51,10 @@ test('parseSiteYaml: 廃止した i18n.locales が残っていてもエラーに
   assert.deepEqual(parseSiteYaml(yaml).i18n, { defaultLocale: 'en' });
 });
 
-test('parseSiteYaml: defaultLocale が BCP 47 の言語タグでなければエラーにする', () => {
-  assert.throws(() => parseSiteYaml(`${minimal}i18n:\n  defaultLocale: ja_JP\n`), /BCP 47/);
+test('parseSiteYaml: defaultLocale が言語コードでなければエラーにする', () => {
+  assert.throws(() => parseSiteYaml(`${minimal}i18n:\n  defaultLocale: ja_JP\n`), /言語コード/);
+  assert.throws(() => parseSiteYaml(`${minimal}i18n:\n  defaultLocale: en-US\n`), /地域付き/);
+  assert.throws(() => parseSiteYaml(`${minimal}i18n:\n  defaultLocale: EN\n`), /言語コード/);
 });
 
 test('parseSiteYaml: 必須キーが無いときはエラーに内容を添える', () => {

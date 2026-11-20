@@ -18,7 +18,7 @@
  * 記事は翻訳されないため、UI の文言だけ切り替えても読者の得にならないという判断。
  */
 export interface I18nConfig {
-  /** UI の文言・日付や数値の書式・<html lang> に使う言語 (BCP 47) */
+  /** UI の文言・日付や数値の書式・<html lang> に使う言語コード (ja, en など。地域は付けない) */
   defaultLocale: string;
 }
 
@@ -27,7 +27,7 @@ export const defaultI18n: I18nConfig = {
   defaultLocale: 'ja',
 };
 
-/** サイトの言語 (BCP 47) — site.yaml 読み込み時に上書きされる。辞書のフォールバック先は常に ja */
+/** サイトの言語コード — site.yaml 読み込み時に上書きされる。辞書のフォールバック先は常に ja */
 let defaultLocaleCode: string = defaultI18n.defaultLocale;
 
 /** site.yaml の `i18n.defaultLocale` を既定ロケールへ反映する (設定読み込み時に 1 回呼ぶ) */
@@ -35,7 +35,7 @@ export function configureDefaultLocale(code: string): void {
   defaultLocaleCode = code;
 }
 
-/** 現在のサイトの言語 (BCP 47) */
+/** 現在のサイトの言語コード */
 export function getDefaultLocale(): string {
   return defaultLocaleCode;
 }

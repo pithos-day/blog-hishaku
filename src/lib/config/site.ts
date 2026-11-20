@@ -33,8 +33,7 @@ function normalizeReading(
   raw: Partial<ReadingOptions> | undefined,
   defaultLocale: string,
 ): ReadingOptions {
-  const language = new Intl.Locale(defaultLocale).language;
-  return { ...readingDefaults, ...readingDefaultsByLanguage[language], ...raw };
+  return { ...readingDefaults, ...readingDefaultsByLanguage[defaultLocale], ...raw };
 }
 
 function warnIgnoredTopLevelKeys(doc: unknown): void {

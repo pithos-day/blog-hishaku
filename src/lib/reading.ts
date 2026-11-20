@@ -86,7 +86,7 @@ export function getTextStats(post: PostEntry): TextStats {
 }
 
 /**
- * 本文の量を語数で表示する言語 (BCP 47 の言語サブタグ)。
+ * 本文の量を語数で表示する言語 (i18n.defaultLocale の値)。
  * 空白で語を区切る言語は語数 (word count) で示すのが一般的で、
  * それ以外 (日本語など) は文字数で示す。
  */
@@ -94,8 +94,7 @@ const WORD_COUNT_LANGUAGES = new Set(['en']);
 
 /** 本文の量を、サイト言語に合わせて文字数か語数で表示する */
 export function formatTextLength(stats: TextStats): string {
-  const language = new Intl.Locale(getDefaultLocale()).language;
-  return WORD_COUNT_LANGUAGES.has(language)
+  return WORD_COUNT_LANGUAGES.has(getDefaultLocale())
     ? t('post.wordCount', { count: stats.words })
     : t('post.charCount', { count: stats.characters });
 }
