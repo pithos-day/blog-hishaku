@@ -39,6 +39,7 @@ export interface SiteConfig {
     };
   };
   content: ContentOptions;
+  reading: ReadingOptions;
   analytics: { umami?: UmamiConfig };
 }
 
@@ -145,6 +146,41 @@ export const contentDefaults: ContentOptions = {
 };
 
 /**
+ * 読了時間の見積もり速度 (`site.yaml` の `reading`)。
+ * 本文は文字種で数え分け、漢字・かなは文字数、それ以外は単語数で割る (src/lib/reading.ts)。
+ */
+export interface ReadingOptions {
+  /** 1 分あたりに読む文字数 (漢字・かな) */
+  charsPerMinute: number;
+  /** 1 分あたりに読む単語数 (英語など、漢字・かな以外) */
+  wordsPerMinute: number;
+}
+
+const readingSchema = z.object({
+  charsPerMinute: z.number().positive().optional(),
+  wordsPerMinute: z.number().positive().optional(),
+});
+
+/**
+ * 読了速度の既定値。
+ * - 400 字/分: 日本語 Web 記事で一般的な目安
+ * - 230 語/分: 英語の黙読速度の目安 (Brysbaert 2019 のノンフィクション 238 wpm 付近)
+ */
+export const readingDefaults: ReadingOptions = {
+  charsPerMinute: 400,
+  wordsPerMinute: 230,
+};
+
+/**
+ * サイト言語 (BCP 47 の言語サブタグ) ごとの既定値の上書き。
+ * 中国語は漢字だけで書かれ、日本語より 1 文字あたりの情報量が多いため遅めにする
+ * (IReST 2012 の中国語の黙読速度 約 255 字/分 と Web 記事の目安の間)。
+ */
+export const readingDefaultsByLanguage: Record<string, Partial<ReadingOptions>> = {
+  zh: { charsPerMinute: 300 },
+};
+
+/**
  * `config/site.yaml` のスキーマ。
  * 未知のキーは Zod の既定挙動で strip されるため、対応外のキーが含まれていても
  * エラーにはなりません(対応するキーだけが反映されます)。
@@ -216,6 +252,7 @@ export const siteYamlSchema = z.object({
     })
     .optional(),
   content: contentSchema.optional(),
+  reading: readingSchema.optional(),
   analytics: analyticsSchema.optional(),
 });
 
@@ -227,5 +264,6 @@ export const KNOWN_TOP_LEVEL_KEYS = [
   'social',
   'seo',
   'content',
+  'reading',
   'analytics',
 ] as const;

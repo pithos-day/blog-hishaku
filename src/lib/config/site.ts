@@ -5,6 +5,9 @@ import {
   defaultI18n,
   type I18nConfig,
   KNOWN_TOP_LEVEL_KEYS,
+  type ReadingOptions,
+  readingDefaults,
+  readingDefaultsByLanguage,
   type SiteConfig,
   siteYamlSchema,
 } from './schema';
@@ -38,6 +41,15 @@ function normalizeI18n(
 
 function normalizeContent(raw: Partial<ContentOptions> | undefined): ContentOptions {
   return { ...contentDefaults, ...raw };
+}
+
+/** 読了速度: 共通の既定値 → サイト言語ごとの既定値 → site.yaml の指定 の順に重ねる */
+function normalizeReading(
+  raw: Partial<ReadingOptions> | undefined,
+  defaultLocale: string,
+): ReadingOptions {
+  const language = new Intl.Locale(defaultLocale).language;
+  return { ...readingDefaults, ...readingDefaultsByLanguage[language], ...raw };
 }
 
 function warnIgnoredTopLevelKeys(doc: unknown): void {
@@ -78,13 +90,15 @@ export function parseSiteYaml(raw: string): SiteConfig {
 
   warnIgnoredTopLevelKeys(doc);
 
+  const i18n = normalizeI18n(parsed.i18n);
   return {
     site: parsed.site,
-    i18n: normalizeI18n(parsed.i18n),
+    i18n,
     categoryMap: parsed.categoryMap,
     social: parsed.social,
     seo: { robots: parsed.seo?.robots ?? undefined },
     content: normalizeContent(parsed.content),
+    reading: normalizeReading(parsed.reading, i18n.defaultLocale),
     analytics: parsed.analytics ?? {},
   };
 }
