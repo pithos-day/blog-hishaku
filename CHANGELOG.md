@@ -3,6 +3,29 @@
 このプロジェクトの主な変更点を記録する。
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) に従う。
 
+## [1.1.0] - 2026-11-20
+
+### Added
+
+- 英語 (en) の UI 文字列辞書を追加（`i18n.defaultLocale: en` で UI の文言・日付と数値の書式・`<html lang>` が英語になる）
+- 件数の文言を数に応じて単数形と複数形で切り替える機能を追加
+- 英語のサイトでは記事メタ情報の本文の量を文字数ではなく語数で表示
+- 読了時間を文字種ごとに見積もる機能を追加（漢字・かなは文字数、それ以外は語数で数える）。速度は `reading.charsPerMinute` / `reading.wordsPerMinute` で変更でき、既定値は 400 字/分・230 語/分（`i18n.defaultLocale: zh` なら 300 字/分）
+
+### Changed
+
+- 日付と数値の整形で固定していた `ja-JP` を、`i18n.defaultLocale` に従うように変更
+- **破壊的変更**: `i18n.defaultLocale` を地域を付けない言語コード（`ja`・`en` など）に限定。`ja-JP` や `en-US` のような地域付きのタグを指定するとビルドがエラーになるため、`ja` などに書き換える
+- 曜日名が 3 文字以上の辞書を使うとき、カレンダーの曜日名が詰まって繋がって見えないよう列を詰めるように変更
+
+### Removed
+
+- `config/site.yaml` の `i18n.locales` を廃止（サイトの言語は `i18n.defaultLocale` だけで決まる。指定しても無視される）
+
+### Fixed
+
+- `src/content/blog` を symlink で外部のディレクトリにつないだとき、記事本文の編集が dev サーバーに反映されない問題を修正
+
 ## [1.0.2] - 2026-11-09
 
 ### Added
@@ -77,6 +100,7 @@
 - Umami によるアクセス解析の設定
 - Cloudflare へのデプロイ対応
 
+[1.1.0]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pithos-day/blog-hishaku/releases/tag/v1.0.0
