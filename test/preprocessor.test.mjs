@@ -110,3 +110,9 @@ test('preprocessShokaMarkdown: containers 無効時は ::: を変換しない', 
 test('preprocessShokaMarkdown: superSub 無効時は ~sub~ を変換しない', () => {
   assert.equal(p('H~2~O', { superSub: false }), 'H~2~O');
 });
+
+test('preprocessShokaMarkdown: 空白を挟まず並ぶ脚注参照を上付きにしない', () => {
+  const source = '本文[^1]の続き[^2]です';
+  assert.equal(p(source), source);
+  assert.equal(p('x^2^ と注[^a]'), 'x<sup>2</sup> と注[^a]');
+});

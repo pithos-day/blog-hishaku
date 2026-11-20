@@ -452,8 +452,10 @@ function processInlineSuperSub(text: string): string {
         /(?<![~\\])~([^~\s]+)~(?!~)/g,
         (_, content: string) => `<sub>${escapeHtml(content)}</sub>`,
       );
+      // `[^` は脚注参照 (`[^1]`) の開始なので上付きの開始とみなさない
+      // (空白を挟まない日本語では `本文[^1]の続き[^2]` が 1 つの上付きに見えてしまう)
       segment = segment.replace(
-        /(?<![\\^])\^([^^\s]+)\^/g,
+        /(?<![\\^[])\^([^^\s]+)\^/g,
         (_, content: string) => `<sup>${escapeHtml(content)}</sup>`,
       );
       return segment;
