@@ -26,13 +26,18 @@ export interface TextStats {
   minutes: number;
 }
 
-/** 1 文字ずつ数える文字 (漢字・かな と、それらと併用される長音記号など) */
-const CJK_CHAR =
-  /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/gu;
+/** 漢字・かな と、それらと併用される長音記号など (正規表現の文字クラスの中身) */
+const CJK_SCRIPTS =
+  '\\p{Script_Extensions=Han}\\p{Script_Extensions=Hiragana}\\p{Script_Extensions=Katakana}';
 
-/** 和文の約物 (語ではない部分のうち文字数に含めるもの): CJK の記号・全角形・… — ― */
-const CJK_PUNCTUATION =
-  /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\u3001-\u303F\uFF01-\uFFEF\u2014\u2015\u2026]/gu;
+/** 和文の約物: CJK の記号・全角形・… — ― (正規表現の文字クラスの中身) */
+const CJK_PUNCTUATION = '\\u3001-\\u303F\\uFF01-\\uFFEF\\u2014\\u2015\\u2026';
+
+/** 語の中で 1 文字ずつ数える文字 */
+const CJK_CHAR = new RegExp(`[${CJK_SCRIPTS}]`, 'gu');
+
+/** 語ではない部分のうち文字数に含めるもの (約物と、語に入らなかった漢字・かな) */
+const CJK_CHAR_OR_PUNCTUATION = new RegExp(`[${CJK_SCRIPTS}${CJK_PUNCTUATION}]`, 'gu');
 
 /** 本文の量。読了時間は速度 (charsPerMinute / wordsPerMinute) で割る単位ごとに分けて数える */
 interface ReadingUnits {
@@ -52,7 +57,7 @@ export function countReadingUnits(plain: string, locale: string): ReadingUnits {
   let allWords = 0;
   for (const { segment, isWordLike } of segmenter.segment(plain)) {
     if (!isWordLike) {
-      cjkChars += segment.match(CJK_PUNCTUATION)?.length ?? 0;
+      cjkChars += segment.match(CJK_CHAR_OR_PUNCTUATION)?.length ?? 0;
       continue;
     }
     allWords += 1;
