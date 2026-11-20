@@ -91,6 +91,7 @@
     "@types/mdast": "^4.0.4",
     "@types/sanitize-html": "^2.16.2",
     "@types/unist": "^3.0.3",
+    "github-slugger": "^2.0.0",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
     "husky": "^9.1.7",

@@ -26,8 +26,8 @@ import { writeCacheJson } from '../src/lib/cache';
 import type { SimilarPost } from '../src/lib/similar-posts';
 import { toPlainText } from '../src/lib/text';
 import { parseCliArgs, reportItemError, reportProgress, runMain } from './cli';
+import { BLOG_CONTENT_GLOB, BLOG_CONTENT_GLOB_IGNORE, postSlugFromFile } from './post-slug';
 
-const CONTENT_GLOB = 'src/content/blog/**/*.md';
 const CACHE_FILENAME = 'similarities.json';
 const OUTPUT_FILE = `.cache/${CACHE_FILENAME}`;
 const TOP_N_SIMILAR = 5;
@@ -94,14 +94,6 @@ function dotProduct(a: Float32Array, b: Float32Array): number {
   return sum;
 }
 
-function extractSlug(filePath: string, link?: string): string {
-  if (link) return link.toLowerCase();
-  return filePath
-    .replace(/^src\/content\/blog\//, '')
-    .replace(/\.md$/, '')
-    .toLowerCase();
-}
-
 async function readPostForSimilarity(filePath: string): Promise<PostData | null> {
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
@@ -111,7 +103,7 @@ async function readPostForSimilarity(filePath: string): Promise<PostData | null>
     // 類似度計算から除外する記事
     if (frontmatter.excludeFromSimilarities === true) return null;
 
-    const slug = extractSlug(filePath, frontmatter.link as string | undefined);
+    const slug = postSlugFromFile(filePath, frontmatter);
     const description =
       (frontmatter.description as string) || toPlainText(content).slice(0, BODY_SNIPPET_LENGTH);
     const text = `${frontmatter.title}. ${description}`.slice(0, EMBED_INPUT_MAX_LENGTH);
@@ -172,7 +164,7 @@ runMain(async () => {
   const extractor = await pipeline('feature-extraction', MODEL_NAME, { device });
   console.log('Model loaded!\n');
 
-  const files = await glob(CONTENT_GLOB);
+  const files = await glob(BLOG_CONTENT_GLOB, { ignore: BLOG_CONTENT_GLOB_IGNORE });
   if (!files.length) {
     console.log('No content files found.');
     return;
