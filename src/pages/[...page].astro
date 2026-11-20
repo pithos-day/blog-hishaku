@@ -63,7 +63,8 @@ function coverStyle(cover: string): string {
 }
 ---
 
-<BaseLayout canonicalPath={page.url.current}>
+{/* ホームの twitter:card は画像の有無にかかわらず summary にする */}
+<BaseLayout canonicalPath={page.url.current} twitterCard="summary">
   <section aria-label={t('index.listAria')}>
     {
       posts.length === 0 ? (

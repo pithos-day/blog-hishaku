@@ -32,6 +32,8 @@ interface Props {
   ogTitle?: string;
   /** og:description の上書き (既定: description) */
   ogDescription?: string;
+  /** twitter:card の上書き (既定: 画像があれば summary_large_image、なければ summary) */
+  twitterCard?: TwitterCardType;
   /** ページ単位の robots ディレクティブ (例: noindex, nofollow) — robots.txt の policy 設定とは別物 */
   robotsMeta?: string;
 }
@@ -48,6 +50,7 @@ const {
   canonicalPath,
   ogTitle,
   ogDescription,
+  twitterCard: twitterCardOverride,
   robotsMeta,
 } = Astro.props;
 
@@ -69,8 +72,9 @@ const metaKeywords = mergeSiteKeywords(keywords ?? [], siteConfig.site.keywords)
 const resolvedOgTitle = ogTitle ?? pageTitle;
 const resolvedOgDescription = ogDescription ?? description;
 const ogImageUrl = ogImage ? new URL(ogImage, siteConfig.site.url) : undefined;
-// Twitter カード: 画像があれば大画像、なければサマリー
-const twitterCard: TwitterCardType = ogImageUrl ? 'summary_large_image' : 'summary';
+// Twitter カード: 指定がなければ、画像があれば大画像、なければサマリー
+const twitterCard: TwitterCardType =
+  twitterCardOverride ?? (ogImageUrl ? 'summary_large_image' : 'summary');
 // フッターのコピーライト表記: name@alternate (alternate がなければ表示名)
 const copyrightHolder = siteConfig.site.alternate
   ? `${siteDisplayName}@${siteConfig.site.alternate}`
