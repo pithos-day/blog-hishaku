@@ -159,6 +159,8 @@ const readingSchema = z.object({
  * 読了速度の既定値。
  * - 400 字/分: 日本語 Web 記事で一般的な目安
  * - 230 語/分: 英語の黙読速度の目安 (Brysbaert 2019 のノンフィクション 238 wpm 付近)
+ *
+ * config/site.yaml の `reading` のコメントにも同じ値を書いている。変えたら合わせる。
  */
 export const readingDefaults: ReadingOptions = {
   charsPerMinute: 400,
@@ -169,6 +171,7 @@ export const readingDefaults: ReadingOptions = {
  * サイト言語 (BCP 47 の言語サブタグ) ごとの既定値の上書き。
  * 中国語は漢字だけで書かれ、日本語より 1 文字あたりの情報量が多いため遅めにする
  * (IReST 2012 の中国語の黙読速度 約 255 字/分 と Web 記事の目安の間)。
+ * config/site.yaml の `reading` のコメントにも同じ値を書いている。変えたら合わせる。
  */
 export const readingDefaultsByLanguage: Record<string, Partial<ReadingOptions>> = {
   zh: { charsPerMinute: 300 },
