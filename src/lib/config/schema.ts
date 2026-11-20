@@ -64,12 +64,6 @@ const localeTagSchema = z
   .min(1)
   .refine(isValidLocaleTag, { message: 'BCP 47 の言語タグではありません (例: ja, en)' });
 
-const localeSchema = z.object({
-  code: localeTagSchema,
-  label: z.string().min(1),
-  enabled: z.boolean().default(true),
-});
-
 const socialLinkSchema = z.object({
   url: z.string().min(1),
   icon: z.string().optional(),
@@ -225,7 +219,6 @@ export const siteYamlSchema = z.object({
   i18n: z
     .object({
       defaultLocale: localeTagSchema.optional(),
-      locales: z.array(localeSchema).optional(),
     })
     .optional(),
   categoryMap: z.record(z.string(), z.string()).default({}),

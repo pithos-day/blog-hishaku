@@ -20,23 +20,8 @@ function assertTimeZone(timezone: string): void {
   }
 }
 
-function normalizeI18n(
-  raw: { defaultLocale?: string; locales?: I18nConfig['locales'] } | undefined,
-): I18nConfig {
-  const i18n: I18nConfig = {
-    defaultLocale: raw?.defaultLocale ?? defaultI18n.defaultLocale,
-    locales: raw?.locales
-      ? raw.locales.map((l) => ({ ...l }))
-      : defaultI18n.locales.map((l) => ({ ...l })),
-  };
-  // defaultLocale が有効なエントリとして locales に在るか (不在なら設定不備)
-  const hasDefaultEntry = i18n.locales.some((l) => l.code === i18n.defaultLocale && l.enabled);
-  if (!hasDefaultEntry) {
-    throw new Error(
-      `config/site.yaml: i18n.defaultLocale "${i18n.defaultLocale}" は i18n.locales に有効なエントリとして存在しません`,
-    );
-  }
-  return i18n;
+function normalizeI18n(raw: Partial<I18nConfig> | undefined): I18nConfig {
+  return { defaultLocale: raw?.defaultLocale ?? defaultI18n.defaultLocale };
 }
 
 function normalizeContent(raw: Partial<ContentOptions> | undefined): ContentOptions {

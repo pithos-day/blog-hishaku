@@ -13,15 +13,18 @@
  * yaml の `?raw` インポートなど Vite 固有の機能に依存しない。
  */
 
+/**
+ * サイトは単一言語で出力する (読者が言語を切り替える仕組みは持たない)。
+ * 記事は翻訳されないため、UI の文言だけ切り替えても読者の得にならないという判断。
+ */
 export interface I18nConfig {
+  /** UI の文言・日付や数値の書式・<html lang> に使う言語 (BCP 47) */
   defaultLocale: string;
-  locales: { code: string; label: string; enabled: boolean }[];
 }
 
 /** 既定のロケール設定 — site.yaml の i18n の既定値 */
 export const defaultI18n: I18nConfig = {
   defaultLocale: 'ja',
-  locales: [{ code: 'ja', label: '日本語', enabled: true }],
 };
 
 /** 既定ロケールコード (辞書のフォールバック先) — site.yaml 読み込み時に上書きされる */
