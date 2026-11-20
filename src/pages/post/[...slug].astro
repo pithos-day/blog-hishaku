@@ -54,6 +54,8 @@ const seoKeywords = [
 
 // OGP / JSON-LD 共通の画像 (cover が無ければビルド時に生成した画像)
 const ogImage = getPostOgImage(post);
+// JSON-LD / シェアボタン共通の記事の絶対 URL
+const postUrl = new URL(Astro.url.pathname, siteConfig.site.url).href;
 
 const jsonLd = buildArticleJsonLd(
   {
@@ -63,7 +65,7 @@ const jsonLd = buildArticleJsonLd(
     date: post.data.date,
     updated: post.data.updated,
     image: new URL(ogImage, siteConfig.site.url).href,
-    mainEntityOfPage: new URL(Astro.url.pathname, siteConfig.site.url).href,
+    mainEntityOfPage: postUrl,
   },
   {
     url: siteConfig.site.url,
@@ -138,10 +140,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
       )}
       <Content />
       {siteConfig.content.enableShareButtons && (
-        <ShareButtons
-          title={post.data.title}
-          url={new URL(Astro.url.pathname, siteConfig.site.url).href}
-        />
+        <ShareButtons title={post.data.title} url={postUrl} />
       )}
       <hr class="post-nav-divider" />
       <nav class="post-nav" aria-label={t('post.contextNavAria')}>
