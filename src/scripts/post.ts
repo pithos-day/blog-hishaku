@@ -41,11 +41,19 @@ const setupSmoothScroll = (): void => {
   }
 };
 
+/**
+ * タブグループ直下の見出しとパネル。
+ * パネルの中に入れ子のタブグループがあるため、子孫全体ではなく直下だけを拾う
+ * (子孫まで拾うと内側のタブが混ざり、番号とパネルの対応がずれる)。
+ */
+const TAB_HEADER_SELECTOR = ':scope > .tab-headers > .tab-header';
+const TAB_PANEL_SELECTOR = ':scope > .tab-panel';
+
 /** ;;; タブの切替 */
 const setupTabs = (): void => {
   for (const group of document.querySelectorAll('.tab-group')) {
-    const headers = group.querySelectorAll<HTMLButtonElement>('.tab-header');
-    const panels = group.querySelectorAll<HTMLElement>('.tab-panel');
+    const headers = group.querySelectorAll<HTMLButtonElement>(TAB_HEADER_SELECTOR);
+    const panels = group.querySelectorAll<HTMLElement>(TAB_PANEL_SELECTOR);
     headers.forEach((header, index) => {
       header.addEventListener('click', () => {
         headers.forEach((item, i) => {

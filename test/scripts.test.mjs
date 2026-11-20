@@ -195,7 +195,14 @@ test('initPostEnhancements: タブ切替で active と aria-selected が移る',
   const headers = [makeElement(), makeElement(), makeElement()];
   const panels = [makeElement(), makeElement(), makeElement()];
   const group = makeElement({
-    queries: { '.tab-header': headers, '.tab-panel': panels },
+    queries: {
+      ':scope > .tab-headers > .tab-header': headers,
+      ':scope > .tab-panel': panels,
+      // 子孫全体を拾うと、1 枚目のパネル内にある入れ子のタブが文書順で混ざり、
+      // 番号とパネルの対応がずれる (直下だけを拾っていれば使われない)
+      '.tab-header': [...headers, makeElement()],
+      '.tab-panel': [panels[0], makeElement(), panels[1], panels[2]],
+    },
   });
   queries.set('.tab-group', [group]);
 
