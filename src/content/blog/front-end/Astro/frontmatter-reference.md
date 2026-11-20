@@ -98,7 +98,7 @@ link: custom-permalink
 cover: /img/covers/sticky.svg
 ```
 
-`public/` からの相対パスを指定します。一覧のサムネイル、OGP画像、JSON-LDの画像に使われます。省略時は `defaultOgImage` → `avatar` の順にフォールバックします。
+`public/` からの相対パスを指定します。一覧のサムネイル、OGP画像、JSON-LDの画像に使われます。省略時は、記事のタイトル・カテゴリ・タグ・日付を描いた OGP 画像をビルド時に生成します（`/og/<スラッグ>.png`）。
 
 ## tags
 

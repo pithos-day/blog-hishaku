@@ -51,6 +51,7 @@
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/og": "0.9.0",
     "astro": "^7.3.7",
     "astro-icon": "^1.2.0",
     "astro-robots-txt": "^1.0.0",
@@ -77,6 +78,7 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0",
     "vfile": "^6.0.3",
+    "wawoff2": "^2.0.1",
     "yaml": "^2.9.1"
   },
   "devDependencies": {

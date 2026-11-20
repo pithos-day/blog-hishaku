@@ -16,6 +16,16 @@ export function postPath(slug: string): string {
   return `/post/${slug}/`;
 }
 
+/** ビルド時に生成する OGP 画像のパス (src/pages/og/[...path].ts が出力する) */
+export function generatedOgImagePath(slug: string): string {
+  return `/og/${slug}.png`;
+}
+
+/** 記事の OGP 画像 (JSON-LD の image と共用)。cover が無ければ生成した画像を使う */
+export function getPostOgImage(post: PostEntry): string {
+  return post.data.cover ?? generatedOgImagePath(getPostSlug(post));
+}
+
 /** 本番ビルドでは下書きを除外し、開発時は含める */
 function isPublished(post: PostEntry): boolean {
   return import.meta.env.DEV || !post.data.draft;

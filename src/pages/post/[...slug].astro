@@ -7,6 +7,7 @@ import { buildCategoryHref, normalizeCategories } from '@/lib/categories';
 import { siteConfig, siteDisplayName } from '@/lib/config';
 import {
   getPostDescription,
+  getPostOgImage,
   getPostSlug,
   getPublishedPosts,
   type PostEntry,
@@ -50,9 +51,8 @@ const seoKeywords = [
   ...new Set([...(post.data.keywords ?? []), ...(post.data.tags ?? []), ...categoryChains.flat()]),
 ];
 
-// OGP 画像と同一のフォールバック (cover → defaultOgImage → avatar)
-const jsonLdImageSrc = post.data.cover ?? siteConfig.site.defaultOgImage ?? siteConfig.site.avatar;
-const jsonLdImage = jsonLdImageSrc ? new URL(jsonLdImageSrc, siteConfig.site.url).href : undefined;
+// OGP / JSON-LD 共通の画像 (cover が無ければビルド時に生成した画像)
+const ogImage = getPostOgImage(post);
 
 const jsonLd = buildArticleJsonLd(
   {
@@ -61,7 +61,7 @@ const jsonLd = buildArticleJsonLd(
     keywords: seoKeywords,
     date: post.data.date,
     updated: post.data.updated,
-    image: jsonLdImage,
+    image: new URL(ogImage, siteConfig.site.url).href,
     mainEntityOfPage: new URL(Astro.url.pathname, siteConfig.site.url).href,
   },
   {
@@ -87,7 +87,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd({
   title={post.data.title}
   description={description}
   keywords={seoKeywords}
-  ogImage={post.data.cover}
+  ogImage={ogImage}
   type="article"
   math={post.data.math !== false}
   tocHeadings={tocHeadings}

@@ -16,10 +16,10 @@ site:
   subtitle: つまみ食いの記録 # ヘッダーのサブタイトル
   name: Your Name # プロフィール名
   description: クラシックなデザインのAstroブログテンプレート # meta description・RSS の説明文
-  avatar: /assets/avatar.svg # プロフィール画像・favicon・OGP 画像のフォールバック
+  avatar: /assets/avatar.svg # プロフィール画像・favicon・OGP 画像のフォールバック・生成 OGP 画像のアイコン
   author: Your Name # meta author
   url: https://example.com # canonical / OGP / RSS の基準 URL
-  defaultOgImage: /assets/avatar.svg # カバー未指定時の既定 OGP 画像
+  defaultOgImage: /assets/avatar.svg # 記事以外のページの OGP 画像 (記事でカバー未指定なら OGP 画像を自動生成)
   startYear: 2026 # フッターのコピーライト表記の開始年
   timezone: Asia/Tokyo # IANA 形式。日付の表示・アーカイブ・コンテンツ日付に使用
   keywords: # 全ページの meta keywords に追加
