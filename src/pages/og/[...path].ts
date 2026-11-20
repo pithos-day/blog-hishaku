@@ -6,7 +6,7 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import { normalizeCategories } from '@/lib/categories';
 import { siteConfig } from '@/lib/config';
 import { renderOgImage } from '@/lib/og-image';
-import { generatedOgImagePath, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
+import { generatedOgImageFile, getPostSlug, getPublishedPosts, type PostEntry } from '@/lib/posts';
 
 /** サイトのタイムゾーンで 2026.11.20 の形にする (en-CA は言語によらず yyyy-MM-dd を返す) */
 function formatOgDate(date: Date): string {
@@ -25,8 +25,7 @@ export const getStaticPaths = (async () => {
   return posts
     .filter((post) => !post.data.cover)
     .map((post) => ({
-      // 先頭の /og/ を除いた <slug>.png
-      params: { path: generatedOgImagePath(getPostSlug(post)).slice('/og/'.length) },
+      params: { path: generatedOgImageFile(getPostSlug(post)) },
       props: { post },
     }));
 }) satisfies GetStaticPaths;

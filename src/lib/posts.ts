@@ -16,9 +16,14 @@ export function postPath(slug: string): string {
   return `/post/${slug}/`;
 }
 
+/** ビルド時に生成する OGP 画像の /og/ からの相対パス (src/pages/og/[...path].ts の path) */
+export function generatedOgImageFile(slug: string): string {
+  return `${slug}.png`;
+}
+
 /** ビルド時に生成する OGP 画像のパス (src/pages/og/[...path].ts が出力する) */
 export function generatedOgImagePath(slug: string): string {
-  return `/og/${slug}.png`;
+  return `/og/${generatedOgImageFile(slug)}`;
 }
 
 /** 記事の OGP 画像 (JSON-LD の image と共用)。cover が無ければ生成した画像を使う */
