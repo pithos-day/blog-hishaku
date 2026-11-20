@@ -79,8 +79,11 @@ export const uiStrings: DefaultUIStrings = {
   'archives.month': '{year}/{month}',
 
   // ── カレンダー ──────────────────────────────────────────────
-  /** 曜日名のカンマ区切りリスト (SidebarRight が split(',') して使う。名中にカンマ不可) */
-  'calendar.weekdays': 'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
+  /**
+   * 曜日名のカンマ区切りリスト (SidebarRight が split(',') して使う。名中にカンマ不可)。
+   * ブログのカレンダーウィジェットで一般的な 1 文字にする (T と S の重複は位置で読み分ける)。
+   */
+  'calendar.weekdays': 'S,M,T,W,T,F,S',
   'calendar.dayPosts': { one: '{count} post', other: '{count} posts' },
 
   // ── 検索 ────────────────────────────────────────────────────
