@@ -21,14 +21,25 @@ export type Locale = string;
 export type TranslationKey = keyof typeof jaStrings;
 
 /**
+ * 数量 (`count`) で語形が変わる文言。キーは Intl.PluralRules のカテゴリで、other は必須。
+ * 英語なら `{ one: '{count} post', other: '{count} posts' }` のように書く。
+ */
+export type PluralMessage = Partial<Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>> & {
+  other: string;
+};
+
+/** 辞書の値: 固定の文言か、数量で語形が変わる文言 */
+export type Message = string | PluralMessage;
+
+/**
  * UI 文字列辞書。他のロケールは既定キーの部分集合を提供すればよい
  */
-export type UIStrings = Partial<Record<TranslationKey, string>>;
+export type UIStrings = Partial<Record<TranslationKey, Message>>;
 
 /**
  * 既定ロケールの完全な辞書 (全キーを必須とする)
  */
-export type DefaultUIStrings = Record<TranslationKey, string>;
+export type DefaultUIStrings = Record<TranslationKey, Message>;
 
 /**
  * 文字列中の {param} プレースホルダの置換値

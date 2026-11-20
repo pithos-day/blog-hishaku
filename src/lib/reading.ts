@@ -67,7 +67,7 @@ export function getTextStats(post: PostEntry): TextStats {
 }
 
 export function formatCharacterCount(characters: number): string {
-  return t('post.charCount', { count: characters.toLocaleString(getDefaultLocale()) });
+  return t('post.charCount', { count: characters });
 }
 
 export function formatReadingTime(minutes: number): string {

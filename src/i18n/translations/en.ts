@@ -3,6 +3,7 @@
  *
  * ja.ts と同じキーをすべて持つ。DefaultUIStrings で型付けしているため、
  * ja.ts にキーを足したらここにも訳を足さないと型エラーになる。
+ * 数で語形が変わる文言は { one, other } で書き、t() が count から選ぶ。
  */
 
 import type { DefaultUIStrings } from '../types';
@@ -18,7 +19,7 @@ export const uiStrings: DefaultUIStrings = {
   'common.breadcrumb': 'Breadcrumb',
   'common.home': 'Home',
   'common.yearMonth': '{year}/{month}',
-  'common.postCount': '{count} posts',
+  'common.postCount': { one: '{count} post', other: '{count} posts' },
   'common.noPosts': NO_POSTS,
   'common.lightboxAria': 'Enlarge image',
   'common.noCategories': 'No categories yet.',
@@ -46,7 +47,7 @@ export const uiStrings: DefaultUIStrings = {
 
   // ── 記事 ────────────────────────────────────────────────────
   'post.updated': 'Updated {date}',
-  'post.charCount': '{count} characters',
+  'post.charCount': { one: '{count} character', other: '{count} characters' },
   'post.readingTime': '{minutes} min read',
   'post.draftNotice': 'This post is a draft.',
   'post.contextNavAria': 'Previous and next posts',
@@ -61,7 +62,7 @@ export const uiStrings: DefaultUIStrings = {
 
   // ── タグ ────────────────────────────────────────────────────
   'tag.title': 'Tags',
-  'tag.total': '{count} tags',
+  'tag.total': { one: '{count} tag', other: '{count} tags' },
   'tag.empty': 'No tagged posts yet.',
   'tag.detailTitle': 'Tag: {name}',
   'tag.listDescription': 'Posts tagged "{name}" ({count})',
@@ -78,7 +79,7 @@ export const uiStrings: DefaultUIStrings = {
    * 繋がって見えるため 2 文字にする。1 文字 (S, M, T…) は T と S が重複して読み分けにくい。
    */
   'calendar.weekdays': 'Su,Mo,Tu,We,Th,Fr,Sa',
-  'calendar.dayPosts': '{count} posts',
+  'calendar.dayPosts': { one: '{count} post', other: '{count} posts' },
 
   // ── 検索 ────────────────────────────────────────────────────
   'search.label': 'Site search',

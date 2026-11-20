@@ -11,14 +11,32 @@
 import { getDefaultLocale } from './config';
 import { translations } from './translations';
 import { uiStrings as defaultStrings } from './translations/ja';
-import type { TranslationKey, TranslationParams } from './types';
+import type { Message, TranslationKey, TranslationParams } from './types';
 
-/** 文字列中の {param} プレースホルダを値で置換する */
-function interpolate(value: string, params?: TranslationParams): string {
+/**
+ * 数量で語形が変わる文言から、`count` に合う語形を選ぶ。
+ * count が数値でなければ (整形済みの文字列など) 選べないので other を使う。
+ */
+function selectForm(message: Message, count: unknown, locale: string): string {
+  if (typeof message === 'string') return message;
+  if (typeof count !== 'number') return message.other;
+  const category = new Intl.PluralRules(locale).select(count);
+  return message[category] ?? message.other;
+}
+
+/**
+ * 文字列中の {param} プレースホルダを値で置換する。
+ * 数値の `count` はロケールの桁区切りで整形する (1200 → '1,200')。
+ */
+function interpolate(value: string, locale: string, params?: TranslationParams): string {
   if (!params) return value;
   let result = value;
   for (const [param, val] of Object.entries(params)) {
-    result = result.replaceAll(`{${param}}`, String(val));
+    const text =
+      param === 'count' && typeof val === 'number'
+        ? new Intl.NumberFormat(locale).format(val)
+        : String(val);
+    result = result.replaceAll(`{${param}}`, text);
   }
   return result;
 }
@@ -30,17 +48,21 @@ function interpolate(value: string, params?: TranslationParams): string {
  * 1. 既定ロケールの辞書 (translations[getDefaultLocale()])
  * 2. 既定辞書 (translations/ja)
  *
+ * 数量で語形が変わる文言は、数値の `count` から語形を選ぶ (Intl.PluralRules)。
+ *
  * @example
  * ```ts
- * t('post.charCount', { count: '1,200' })  // => '1,200文字'
- * t('common.search')                        // => '検索'
+ * t('post.charCount', { count: 1200 })  // => '1,200文字'
+ * t('common.postCount', { count: 1 })   // => '1 件' (en なら '1 post')
+ * t('common.search')                    // => '検索'
  * ```
  */
 export function t(key: TranslationKey, params?: TranslationParams): string {
-  const dict = translations[getDefaultLocale()];
-  const value = dict?.[key] ?? defaultStrings[key];
+  const locale = getDefaultLocale();
+  const dict = translations[locale];
+  const message = dict?.[key] ?? defaultStrings[key];
 
-  if (!value) {
+  if (!message) {
     // 開発時のみ警告 (キーは型で保証されるので通常は起きない)
     if (import.meta.env?.DEV) {
       console.warn(`[i18n] 翻訳キーが見つかりません: "${key}"`);
@@ -48,5 +70,5 @@ export function t(key: TranslationKey, params?: TranslationParams): string {
     return key;
   }
 
-  return interpolate(value, params);
+  return interpolate(selectForm(message, params?.count, locale), locale, params);
 }

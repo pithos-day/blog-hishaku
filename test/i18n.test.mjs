@@ -46,11 +46,34 @@ test('t: 既定ロケールを en にすると en 辞書の文字列を返す', 
   }
 });
 
+test('t: 数値の count で単数形と複数形を選び、桁区切りで整形する', () => {
+  const original = getDefaultLocale();
+  try {
+    configureDefaultLocale('en');
+    assert.equal(t('common.postCount', { count: 0 }), '0 posts');
+    assert.equal(t('common.postCount', { count: 1 }), '1 post');
+    assert.equal(t('common.postCount', { count: 1200 }), '1,200 posts');
+    assert.equal(
+      t('common.postCount', { count: '1' }),
+      '1 posts',
+      '文字列の count は語形を選べず other',
+    );
+  } finally {
+    configureDefaultLocale(original);
+  }
+  assert.equal(t('common.postCount', { count: 1200 }), '1,200 件', 'ja は語形が 1 つ');
+});
+
 // ── 辞書の形式 ───────────────────────────────────────────────
 // キーの有無は型で保証されるが、値の中身 (プレースホルダや区切り形式) は型では見えない。
 
 const ja = translations.ja;
 const otherLocales = Object.entries(translations).filter(([code]) => code !== 'ja');
+
+/** 辞書の値の全語形 (固定の文言ならそれ自体) */
+function formsOf(value) {
+  return typeof value === 'string' ? [value] : Object.values(value);
+}
 
 /** 文字列中の {param} の名前を、重複を除いて並べる */
 function placeholdersOf(value) {
@@ -63,9 +86,28 @@ for (const [code, dict] of otherLocales) {
     assert.deepEqual(extra, [], 'ja に無いキーは t() から参照されず、消し忘れになる');
   });
 
-  test(`辞書 ${code}: 各キーのプレースホルダが ja と一致する`, () => {
+  test(`辞書 ${code}: 各キーのプレースホルダが ja と一致する (語形ごとに確認)`, () => {
     for (const [key, value] of Object.entries(dict)) {
-      assert.deepEqual(placeholdersOf(value), placeholdersOf(ja[key]), key);
+      for (const form of formsOf(value)) {
+        assert.deepEqual(placeholdersOf(form), placeholdersOf(ja[key]), key);
+      }
+    }
+  });
+}
+
+for (const [code, dict] of Object.entries(translations)) {
+  test(`辞書 ${code}: 語形のキーはそのロケールの複数形カテゴリで、count を受け取る文言に限る`, () => {
+    const categories = new Intl.PluralRules(code).resolvedOptions().pluralCategories;
+    for (const [key, value] of Object.entries(dict)) {
+      if (typeof value === 'string') continue;
+      assert.ok('other' in value, `${key}: other は必須`);
+      for (const category of Object.keys(value)) {
+        assert.ok(categories.includes(category), `${key}: ${code} に ${category} は無い`);
+      }
+      assert.ok(
+        placeholdersOf(value.other).includes('count'),
+        `${key}: count が無いと語形を選べない`,
+      );
     }
   });
 }
