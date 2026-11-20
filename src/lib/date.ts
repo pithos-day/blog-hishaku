@@ -98,14 +98,13 @@ export function parsePostDate(value: string | Date, timeZone: string): Date {
   return reinterpretUtcAsTimezone(new Date(wallClock), timeZone);
 }
 
-/** 日付をサイトタイムゾーン基準でローカライズして整形する (locale 省略時は既定ロケール) */
+/** 日付をサイトタイムゾーン基準で、サイトの言語の書式に整形する */
 export function formatDate(
   date: Date,
   timeZone: string,
-  locale = getDefaultLocale(),
   options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' },
 ): string {
-  return new Intl.DateTimeFormat(locale, { ...options, timeZone }).format(date);
+  return new Intl.DateTimeFormat(getDefaultLocale(), { ...options, timeZone }).format(date);
 }
 
 /** アーカイブ等で使う年月パケット (サイトタイムゾーン基準) */
