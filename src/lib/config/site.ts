@@ -48,15 +48,18 @@ function warnIgnoredTopLevelKeys(doc: unknown): void {
   }
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 /** 環境変数などで `site.url` を上書きする値を検証する (http(s) の絶対 URL に限る) */
 function assertSiteUrlOverride(siteUrl: string): void {
-  let protocol = '';
-  try {
-    protocol = new URL(siteUrl).protocol;
-  } catch {
-    // 下で投げる
-  }
-  if (protocol !== 'http:' && protocol !== 'https:') {
+  if (!isHttpUrl(siteUrl)) {
     throw new Error(`SITE_URL "${siteUrl}" は http(s) の絶対 URL ではありません`);
   }
 }
