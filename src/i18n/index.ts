@@ -16,6 +16,6 @@ export {
   getDefaultLocale,
 } from './config';
 // Types — 外部で消費される型のみ
-export type { Locale, TranslationKey, TranslationParams, UIStrings } from './types';
+export type { TranslationKey, TranslationParams } from './types';
 // Utilities
 export { t } from './utils';

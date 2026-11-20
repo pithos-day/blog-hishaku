@@ -9,13 +9,6 @@
 import type { uiStrings as jaStrings } from './translations/ja';
 
 /**
- * サポートするロケールコード。
- * ロケールは site.yaml で動的に設定されるためリテラル連合は持たず、
- * `getDefaultLocale()` で現在の既定ロケールを読む。
- */
-export type Locale = string;
-
-/**
  * 翻訳キー — 既定 (ja) 辞書の全キー
  */
 export type TranslationKey = keyof typeof jaStrings;
@@ -24,7 +17,7 @@ export type TranslationKey = keyof typeof jaStrings;
  * 数量 (`count`) で語形が変わる文言。キーは Intl.PluralRules のカテゴリで、other は必須。
  * 英語なら `{ one: '{count} post', other: '{count} posts' }` のように書く。
  */
-export type PluralMessage = Partial<Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>> & {
+type PluralMessage = Partial<Record<Exclude<Intl.LDMLPluralRule, 'other'>, string>> & {
   other: string;
 };
 
@@ -32,7 +25,7 @@ export type PluralMessage = Partial<Record<Exclude<Intl.LDMLPluralRule, 'other'>
 export type Message = string | PluralMessage;
 
 /**
- * UI 文字列辞書。他のロケールは既定キーの部分集合を提供すればよい
+ * UI 文字列辞書。キーが欠けていてもよく、欠けたキーは既定辞書 (ja) にフォールバックする
  */
 export type UIStrings = Partial<Record<TranslationKey, Message>>;
 
