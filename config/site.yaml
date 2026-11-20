@@ -2,7 +2,7 @@
 # blog-hishaku サイト設定
 # =============================================================================
 # 検証スキーマ: src/lib/config/schema.ts
-# 対応トップレベルキー: site / i18n / categoryMap / social / seo / content / analytics
+# 対応トップレベルキー: site / i18n / categoryMap / social / seo / content / reading / analytics
 # 未知のキーは読み込み時に無視されます (dev server ではコンソールに警告)。
 # 変更後は dev server の再起動 (または再ビルド) が必要です。
 # =============================================================================
