@@ -111,6 +111,22 @@ if (content.enhanceCodeBlock) {
   );
 }
 
+// src/content/blog を symlink で外部のディレクトリにつなぐと、dev サーバーで本文の編集が反映されない。
+// deferRender の本文モジュールを Vite は symlink を解決した実パスで扱うが、監視はプロジェクト内の
+// パスにしか張られず、モジュールが作り直されないため。実パス側も監視に加える。
+function watchSymlinkedContent(dir) {
+  return {
+    name: 'hishaku:watch-symlinked-content',
+    apply: 'serve',
+    configureServer(server) {
+      const linkedPath = path.resolve(dir);
+      if (!fs.existsSync(linkedPath)) return;
+      const realPath = fs.realpathSync(linkedPath);
+      if (realPath !== linkedPath) server.watcher.add(realPath);
+    },
+  };
+}
+
 export default defineConfig({
   site: siteConfig.site.url,
   integrations: [sitemap(), icon(), robotsTxt(siteConfig.seo?.robots ?? {})],
@@ -135,7 +151,7 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), watchSymlinkedContent('src/content/blog')],
     // re2 は pnpm-workspace.yaml の allowBuilds でビルドを止めている (url-regex-safe が
     // try/catch で読み、失敗時は RegExp にフォールバックするため)。dev の依存最適化は
     // 静的解析なのでそのフォールバックが効かず re2.node の不在で失敗するため対象外にする。
