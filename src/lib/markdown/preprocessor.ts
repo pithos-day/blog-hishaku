@@ -78,30 +78,29 @@ const COLLAPSE_OPEN_PATTERN = /^\+\+\+(\w+)\s+(.+)$/;
 /** `;;;groupId TabName` の開始行 */
 const TAB_OPEN_PATTERN = /^;;;(\S+)\s+(.+)$/;
 
+/** コードフェンスの開き (後ろに言語名などを書ける) */
+const FENCE_OPEN_PATTERN = /^(`{3,}|~{3,})/;
+
+/** コードフェンスの閉じ (後ろは空白のみ) */
+const FENCE_CLOSE_PATTERN = /^(`{3,}|~{3,})\s*$/;
+
 /**
  * コードフェンスの開閉を 1 行ずつ追跡する関数を作る。
  * 戻り値の関数は、その行がフェンス (開き・中身・閉じ) に属するなら true を返す。
  * フェンス内の `:::` などをブロック構文の開閉と取り違えないために使う。
  */
 function createFenceTracker(): (line: string) => boolean {
-  let fenceChar = '';
-  let fenceLen = 0;
+  // 開いているフェンスの記号列 (``` や ~~~~)。空文字ならフェンスの外
+  let openFence = '';
   return (line) => {
-    const match = line.match(/^(`{3,}|~{3,})/);
-    if (!fenceChar) {
-      if (!match) return false;
-      fenceChar = match[1][0];
-      fenceLen = match[1].length;
-      return true;
+    if (!openFence) {
+      openFence = line.match(FENCE_OPEN_PATTERN)?.[1] ?? '';
+      return openFence !== '';
     }
-    if (
-      match &&
-      match[1][0] === fenceChar &&
-      match[1].length >= fenceLen &&
-      /^(`{3,}|~{3,})\s*$/.test(line)
-    ) {
-      fenceChar = '';
-      fenceLen = 0;
+    // 開きと同じ記号で、同じ数以上並んだ行だけが閉じになる
+    const closeFence = line.match(FENCE_CLOSE_PATTERN)?.[1];
+    if (closeFence?.[0] === openFence[0] && closeFence.length >= openFence.length) {
+      openFence = '';
     }
     return true;
   };
