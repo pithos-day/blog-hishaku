@@ -4,6 +4,11 @@
  * ja.ts と同じキーをすべて持つ。DefaultUIStrings で型付けしているため、
  * ja.ts にキーを足したらここにも訳を足さないと型エラーになる。
  * 数で語形が変わる文言は { one, other } で書き、t() が count から選ぶ。
+ *
+ * 大文字の使い方:
+ * - 画面に出る見出し・ナビ・ページタイトルは title case (Recent Posts, Back to Home)。
+ *   WordPress などのクラシックなブログのサイドバー見出しに合わせる。
+ * - 文・メッセージ・aria-label・ボタンの説明は sentence case (No posts yet., Toggle theme)。
  */
 
 import type { DefaultUIStrings } from '../types';
@@ -28,7 +33,7 @@ export const uiStrings: DefaultUIStrings = {
   // ── サイドバー ───────────────────────────────────────────────
   'sidebar.leftPanel': 'Side panel (left)',
   'sidebar.rightPanel': 'Side panel (right)',
-  'sidebar.recent': 'Recent posts',
+  'sidebar.recent': 'Recent Posts',
   'sidebar.archives': 'Archives',
   'sidebar.categories': 'Categories',
   'sidebar.categoriesAria': 'Category list',
@@ -36,7 +41,7 @@ export const uiStrings: DefaultUIStrings = {
   'sidebar.tagsAria': 'Tag list',
   'sidebar.profile': 'Profile',
   'sidebar.calendar': 'Calendar',
-  'sidebar.similarPosts': 'Related posts',
+  'sidebar.similarPosts': 'Related Posts',
 
   // ── 記事一覧 (トップページ) ──────────────────────────────────
   'index.listAria': 'Post list',
@@ -89,10 +94,10 @@ export const uiStrings: DefaultUIStrings = {
   'about.title': 'About',
 
   // ── 404 ─────────────────────────────────────────────────────
-  'notFound.title': 'Page not found',
+  'notFound.title': 'Page Not Found',
   'notFound.description': '404 Not Found',
   'notFound.message': 'The page you are looking for could not be found.',
-  'notFound.backHome': 'Back to home',
+  'notFound.backHome': 'Back to Home',
 
   // ── コードブロック ──────────────────────────────────────────
   'code.expand': 'Expand',
