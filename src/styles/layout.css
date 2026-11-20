@@ -150,8 +150,10 @@
 /* --------------------------------------------------------------------------
    カレンダー
    -------------------------------------------------------------------------- */
-.calendar-body {
-  padding: 6px 8px;
+/* .sidebar-module .module-body (padding: 10px) より詳細度を上げて上書きする。
+   列幅は (200px - 左右の余白) / 7 で決まるため、余白を詰めて曜日名の間隔を確保する */
+.sidebar-module .calendar-body {
+  padding: 6px 4px;
 }
 
 .calendar {
@@ -170,6 +172,8 @@
 .calendar th {
   color: var(--hishaku-fg-muted);
   font-weight: normal;
+  /* 英語の 3 文字の曜日名 (Wed など) が約 27px の列に収まり、隣と離れて見える大きさ */
+  font-size: 0.62rem;
   padding: 4px 0 3px;
 }
 
