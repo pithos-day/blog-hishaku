@@ -279,12 +279,17 @@ const seoExtend = {
     </div>
 
     <script>
+      import { configureDefaultLocale } from '@/i18n';
       import { initEmbeds } from '@/scripts/embed';
       import { initFloatingActions } from '@/scripts/floating';
       import { initImageEnhancements } from '@/scripts/image-enhancer';
       import { initLightbox } from '@/scripts/lightbox';
       import { initSearch } from '@/scripts/search';
       import { initThemeToggle } from '@/scripts/theme';
+
+      // ブラウザ側の t() はサイトの言語を知らないため、<html lang> (= i18n.defaultLocale) から渡す。
+      // site.yaml を読む @/lib/config をここで import すると、設定一式がクライアントに同梱されてしまう
+      configureDefaultLocale(document.documentElement.lang);
 
       initSearch();
       initThemeToggle();
