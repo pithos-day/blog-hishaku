@@ -110,3 +110,18 @@ test('formatDate: サイトの言語の書式になる', async () => {
     configureDefaultLocale(original);
   }
 });
+
+test('parsePostDate: YAML 1.1 のタイムスタンプ表記 (1 桁の月日時・時だけのオフセット) を受け付ける', () => {
+  assert.equal(
+    parsePostDate('2026-10-9 15:30:00', 'Asia/Tokyo').toISOString(),
+    '2026-10-09T06:30:00.000Z',
+  );
+  assert.equal(
+    parsePostDate('2026-1-2t9:05:00', 'Asia/Tokyo').toISOString(),
+    '2026-01-02T00:05:00.000Z',
+  );
+  assert.equal(
+    parsePostDate('2026-10-01 09:30:00 +9', 'UTC').toISOString(),
+    '2026-10-01T00:30:00.000Z',
+  );
+});

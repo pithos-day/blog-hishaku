@@ -1,11 +1,34 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { readFile } from 'node:fs/promises';
+import { glob, type Loader } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { siteConfig } from './lib/config';
 import { parsePostDate } from './lib/date';
+import { readRawDateFields } from './lib/frontmatter-dates';
 
 /** `_` 始まりのファイル/ディレクトリは除外 */
 const BLOG_CONTENT_GLOB_PATTERN = ['**/*.{md,mdx}', '!**/_*/**', '!**/_*.{md,mdx}'];
+
+/**
+ * スキーマ検証の前に、date / updated を YAML が Date に変換する前の文字列へ戻す。
+ * 引用符なしのオフセット付き日時 (`2026-10-01T09:30:00+09:00`) は Date になった時点で
+ * オフセットなしの日時と区別できず、サイトのタイムゾーンで二重に補正されてしまうため。
+ */
+function withRawFrontmatterDates(loader: Loader): Loader {
+  return {
+    ...loader,
+    load: (context) =>
+      loader.load({
+        ...context,
+        parseData: async (props) => {
+          const rawDates = props.filePath
+            ? readRawDateFields(await readFile(props.filePath, 'utf-8'))
+            : {};
+          return context.parseData({ ...props, data: { ...props.data, ...rawDates } });
+        },
+      }),
+  };
+}
 
 const dateInSiteTimezone = z
   .union([z.string(), z.date()])
@@ -18,11 +41,13 @@ const blogCollection = defineCollection({
   // キャッシュを無効化できず、古い HTML が再利用され続けていた。
   // レンダリングをページ描画時へ送ることで、これらのキャッシュが
   // 変わっても常に最新の HTML が生成される。
-  loader: glob({
-    pattern: BLOG_CONTENT_GLOB_PATTERN,
-    base: './src/content/blog',
-    deferRender: true,
-  }),
+  loader: withRawFrontmatterDates(
+    glob({
+      pattern: BLOG_CONTENT_GLOB_PATTERN,
+      base: './src/content/blog',
+      deferRender: true,
+    }),
+  ),
   schema: z
     .object({
       title: z.string().min(1),

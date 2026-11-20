@@ -5,8 +5,12 @@
 
 import { getDefaultLocale } from '../i18n/config';
 
+/**
+ * 受け付ける日時の表記。YAML 1.1 のタイムスタンプ (js-yaml が Date に変換していた表記) に合わせ、
+ * 月・日・時の 1 桁表記 (`2026-10-9 9:30:00`)、小文字の `t`、時だけのオフセット (`+9`) も通す。
+ */
 const TIMESTAMP_PATTERN =
-  /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{1,9}))?)?\s*(Z|[+-]\d{2}:?\d{2})?$/;
+  /^(\d{4})-(\d{1,2})-(\d{1,2})(?:(?:[Tt]|[ \t]+)(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.(\d{1,9}))?)?[ \t]*(Z|[+-]\d{1,2}(?::?\d{2})?)?$/;
 
 /** Intl の formatToParts 結果から数値パートを取り出す (無ければ 0) */
 function partNumber(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes): number {
@@ -49,17 +53,19 @@ export function reinterpretUtcAsTimezone(date: Date, timeZone: string): Date {
 
 function parseOffsetMs(offset: string): number {
   if (offset === 'Z') return 0;
-  const match = /^([+-])(\d{2}):?(\d{2})$/.exec(offset);
+  const match = /^([+-])(\d{1,2})(?::?(\d{2}))?$/.exec(offset);
   // TIMESTAMP_PATTERN が通った時点で必ず一致する。万一不一致でも 0 (UTC 扱い) に落とす
   if (!match) return 0;
   const sign = match[1] === '-' ? -1 : 1;
-  return sign * (Number(match[2]) * 60 + Number(match[3])) * 60_000;
+  return sign * (Number(match[2]) * 60 + Number(match[3] ?? '0')) * 60_000;
 }
 
 /**
  * frontmatter の date/updated をパースする。
  * 受け付ける形式:
  *  - Date オブジェクト(YAML がパース済みの値)→ サイトタイムゾーンとして再解釈
+ *    (オフセットの有無を区別できないため、ブログ記事は content.config.ts で
+ *     元の文字列に戻してから渡す。Date はそれ以外の呼び出し元向けの経路)
  *  - "YYYY-MM-DD" / "YYYY-MM-DD HH:mm:ss" → サイトタイムゾーンの壁時計時刻
  *  - オフセット付き ISO 文式 ("...+09:00", "...Z") → 絶対時刻として正しく解釈
  */
