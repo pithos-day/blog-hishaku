@@ -64,17 +64,6 @@ test('t: 数値の count で単数形と複数形を選び、桁区切りで整�
   assert.equal(t('common.postCount', { count: 1200 }), '1,200 件', 'ja は語形が 1 つ');
 });
 
-test('t: 地域付きのロケール (en-US) は言語の辞書 (en) を引く', () => {
-  const original = getDefaultLocale();
-  try {
-    configureDefaultLocale('en-US');
-    assert.equal(t('common.search'), 'Search', 'ja にフォールバックしない');
-    assert.equal(t('common.postCount', { count: 1 }), '1 post');
-  } finally {
-    configureDefaultLocale(original);
-  }
-});
-
 // ── 辞書の形式 ───────────────────────────────────────────────
 // キーの有無は型で保証されるが、値の中身 (プレースホルダや区切り形式) は型では見えない。
 

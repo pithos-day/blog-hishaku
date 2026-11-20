@@ -116,8 +116,6 @@ test('formatTextLength: 英語は語数、日本語は文字数で表示する',
     configureDefaultLocale('en');
     assert.equal(formatTextLength(stats), '1 word');
     assert.equal(formatTextLength({ ...stats, words: 230 }), '230 words');
-    configureDefaultLocale('en-US');
-    assert.equal(formatTextLength(stats), '1 word', '地域付きのタグでも語数');
     configureDefaultLocale('ja');
     assert.equal(formatTextLength(stats), '1,200文字');
   } finally {

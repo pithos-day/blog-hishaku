@@ -45,9 +45,8 @@ function interpolate(value: string, locale: string, params?: TranslationParams):
  * 翻訳キーを既定ロケールの文字列に変換する。
  *
  * 参照順:
- * 1. 既定ロケールの辞書 (translations[getDefaultLocale()]、例: en-US)
- * 2. その言語サブタグの辞書 (例: en)
- * 3. 既定辞書 (translations/ja)
+ * 1. 既定ロケールの辞書 (translations[getDefaultLocale()])
+ * 2. 既定辞書 (translations/ja)
  *
  * 数量で語形が変わる文言は、数値の `count` から語形を選ぶ (Intl.PluralRules)。
  *
@@ -60,10 +59,8 @@ function interpolate(value: string, locale: string, params?: TranslationParams):
  */
 export function t(key: TranslationKey, params?: TranslationParams): string {
   const locale = getDefaultLocale();
-  // 地域付きのタグ (en-US など) でも、言語の辞書 (en) を引けるようにする
-  const language = locale.split('-')[0].toLowerCase();
-  const message =
-    translations[locale]?.[key] ?? translations[language]?.[key] ?? defaultStrings[key];
+  const dict = translations[locale];
+  const message = dict?.[key] ?? defaultStrings[key];
 
   if (!message) {
     // 開発時のみ警告 (キーは型で保証されるので通常は起きない)
