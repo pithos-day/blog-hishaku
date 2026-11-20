@@ -77,9 +77,10 @@ export const uiStrings: DefaultUIStrings = {
   /**
    * 曜日名のカンマ区切りリスト (SidebarRight が split(',') して使う。名中にカンマ不可)。
    * カレンダーの列は 1 列 26px ほどしかなく、3 文字 (Sun, Mon…) だと隣と詰まって
-   * 繋がって見えるため 2 文字にする。1 文字 (S, M, T…) は T と S が重複して読み分けにくい。
+   * 繋がって見える。ブログのカレンダーウィジェットで一般的な 1 文字にする
+   * (T と S の重複は位置で読み分ける。正式名は読み上げ用に SidebarRight で補う)。
    */
-  'calendar.weekdays': 'Su,Mo,Tu,We,Th,Fr,Sa',
+  'calendar.weekdays': 'S,M,T,W,T,F,S',
   'calendar.dayPosts': { one: '{count} post', other: '{count} posts' },
 
   // ── 検索 ────────────────────────────────────────────────────
