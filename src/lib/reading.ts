@@ -34,57 +34,50 @@ const CJK_CHAR =
 const CJK_PUNCTUATION =
   /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\u3001-\u303F\uFF01-\uFFEF\u2014\u2015\u2026]/gu;
 
-/** 読了時間の見積もりに使う量。速度 (charsPerMinute / wordsPerMinute) で割る単位ごとに分ける */
+/** 本文の量。読了時間は速度 (charsPerMinute / wordsPerMinute) で割る単位ごとに分けて数える */
 interface ReadingUnits {
   /** 漢字・かなと和文の約物の文字数 (charsPerMinute で割る) */
   cjkChars: number;
-  /** 漢字・かなを含まない語の数 (wordsPerMinute で割る)。TextStats.words とは別物 */
+  /** 漢字・かなを含まない語の数 (wordsPerMinute で割る) */
   nonCjkWords: number;
+  /** 漢字・かなを含む語も合わせた、すべての語の数 (表示用の語数) */
+  allWords: number;
 }
 
-/** 本文を語に分け、漢字・かな・和文の約物の文字数とそれ以外の語数を数える */
+/** 本文を語に分け、漢字・かな・和文の約物の文字数と語数を数える */
 export function countReadingUnits(plain: string, locale: string): ReadingUnits {
   const segmenter = new Intl.Segmenter(locale, { granularity: 'word' });
   let cjkChars = 0;
   let nonCjkWords = 0;
+  let allWords = 0;
   for (const { segment, isWordLike } of segmenter.segment(plain)) {
     if (!isWordLike) {
       cjkChars += segment.match(CJK_PUNCTUATION)?.length ?? 0;
       continue;
     }
+    allWords += 1;
     const cjk = segment.match(CJK_CHAR)?.length ?? 0;
     if (cjk > 0) cjkChars += cjk;
     else nonCjkWords += 1;
   }
-  return { cjkChars, nonCjkWords };
+  return { cjkChars, nonCjkWords, allWords };
 }
 
-/** 本文の語数。記号や空白は数えない */
-export function countWords(plain: string, locale: string): number {
-  const segmenter = new Intl.Segmenter(locale, { granularity: 'word' });
-  let words = 0;
-  for (const { isWordLike } of segmenter.segment(plain)) {
-    if (isWordLike) words += 1;
-  }
-  return words;
-}
-
-/** プレーンテキストの読了時間 (分・端数切り上げ・最低 1 分) */
-export function estimateReadingMinutes(
-  plain: string,
-  speed: ReadingOptions,
-  locale = getDefaultLocale(),
-): number {
-  const { cjkChars, nonCjkWords } = countReadingUnits(plain, locale);
-  const minutes = cjkChars / speed.charsPerMinute + nonCjkWords / speed.wordsPerMinute;
+/** 読了時間 (分・端数切り上げ・最低 1 分) */
+export function estimateReadingMinutes(units: ReadingUnits, speed: ReadingOptions): number {
+  const minutes = units.cjkChars / speed.charsPerMinute + units.nonCjkWords / speed.wordsPerMinute;
   return Math.max(1, Math.ceil(minutes));
 }
 
 export function getTextStats(post: PostEntry): TextStats {
   const plain = toPlainText(post.body ?? '');
   const characters = plain.replace(/\s/g, '').length;
-  const words = countWords(plain, getDefaultLocale());
-  return { characters, words, minutes: estimateReadingMinutes(plain, siteConfig.reading) };
+  const units = countReadingUnits(plain, getDefaultLocale());
+  return {
+    characters,
+    words: units.allWords,
+    minutes: estimateReadingMinutes(units, siteConfig.reading),
+  };
 }
 
 /**
