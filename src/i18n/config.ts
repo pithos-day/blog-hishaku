@@ -27,7 +27,7 @@ export const defaultI18n: I18nConfig = {
   defaultLocale: 'ja',
 };
 
-/** 既定ロケールコード (辞書のフォールバック先) — site.yaml 読み込み時に上書きされる */
+/** サイトの言語 (BCP 47) — site.yaml 読み込み時に上書きされる。辞書のフォールバック先は常に ja */
 let defaultLocaleCode: string = defaultI18n.defaultLocale;
 
 /** site.yaml の `i18n.defaultLocale` を既定ロケールへ反映する (設定読み込み時に 1 回呼ぶ) */
@@ -35,7 +35,7 @@ export function configureDefaultLocale(code: string): void {
   defaultLocaleCode = code;
 }
 
-/** 現在の既定ロケールコード (辞書のフォールバック先) */
+/** 現在のサイトの言語 (BCP 47) */
 export function getDefaultLocale(): string {
   return defaultLocaleCode;
 }
