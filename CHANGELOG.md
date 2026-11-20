@@ -3,6 +3,16 @@
 このプロジェクトの主な変更点を記録する。
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に、バージョニングは [Semantic Versioning](https://semver.org/lang/ja/) に従う。
 
+## [1.2.1] - 2026-11-20
+
+### Changed
+
+- 記事の下部のシェアボタンと本文の間の余白を拡大
+
+### Fixed
+
+- `site.avatar` が webp・avif・gif・tiff の画像だと、自動生成する OGP 画像にアイコンが描かれない問題を修正（PNG に変換して描く）
+
 ## [1.2.0] - 2026-11-20
 
 ### Added
@@ -126,6 +136,7 @@
 - Umami によるアクセス解析の設定
 - Cloudflare へのデプロイ対応
 
+[1.2.1]: https://github.com/pithos-day/blog-hishaku/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pithos-day/blog-hishaku/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/pithos-day/blog-hishaku/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/pithos-day/blog-hishaku/compare/v1.0.2...v1.1.0

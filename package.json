@@ -1,6 +1,6 @@
 {
   "name": "blog-hishaku",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "クラシックなデザインのAstroブログテンプレート",
   "type": "module",
   "private": true,
