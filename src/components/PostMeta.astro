@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 import { siteConfig } from '@/lib/config';
 import { formatDate } from '@/lib/date';
 import type { PostEntry } from '@/lib/posts';
-import { formatCharacterCount, formatReadingTime, getTextStats } from '@/lib/reading';
+import { formatReadingTime, formatTextLength, getTextStats } from '@/lib/reading';
 
 interface Props {
   post: PostEntry;
@@ -31,7 +31,7 @@ const stats = getTextStats(post);
 }
 <span class="meta-item">
   <Icon name="fa7-solid:pen-nib" aria-hidden="true" />
-  {formatCharacterCount(stats.characters)}
+  {formatTextLength(stats)}
 </span>
 <span class="meta-item">
   <Icon name="fa7-solid:clock" aria-hidden="true" />

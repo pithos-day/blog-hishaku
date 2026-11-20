@@ -48,6 +48,7 @@ export const uiStrings: DefaultUIStrings = {
   // ── 記事 ────────────────────────────────────────────────────
   'post.updated': 'Updated {date}',
   'post.charCount': { one: '{count} character', other: '{count} characters' },
+  'post.wordCount': { one: '{count} word', other: '{count} words' },
   'post.readingTime': '{minutes} min read',
   'post.draftNotice': 'This post is a draft.',
   'post.contextNavAria': 'Previous and next posts',

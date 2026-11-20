@@ -47,6 +47,8 @@ export const uiStrings = {
   // ── 記事 ────────────────────────────────────────────────────
   'post.updated': '更新 {date}',
   'post.charCount': '{count}文字',
+  /** 語数で表示する言語 (reading.ts の WORD_COUNT_LANGUAGES) 用。ja では使われない */
+  'post.wordCount': '{count}語',
   'post.readingTime': '約{minutes}分',
   'post.draftNotice': 'この記事は下書きです。',
   'post.contextNavAria': '前後の記事',

@@ -6,8 +6,14 @@
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { configureDefaultLocale, getDefaultLocale } from '../src/i18n/index.ts';
 import { parseSiteYaml } from '../src/lib/config/site.ts';
-import { countReadingUnits, estimateReadingMinutes } from '../src/lib/reading.ts';
+import {
+  countReadingUnits,
+  countWords,
+  estimateReadingMinutes,
+  formatTextLength,
+} from '../src/lib/reading.ts';
 
 const speed = { charsPerMinute: 400, wordsPerMinute: 230 };
 
@@ -76,4 +82,24 @@ test('parseSiteYaml: reading の指定は言語ごとの既定値より優先す
 
 test('parseSiteYaml: reading の速度が 0 以下ならエラーにする', () => {
   assert.throws(() => parseSiteYaml(`${minimal}reading:\n  charsPerMinute: 0\n`), /reading/);
+});
+
+test('countWords: 記号を除いた語の数を数える', () => {
+  assert.equal(countWords("Hello, world! I don't use Vue 3.5.", 'en'), 7);
+});
+
+test('formatTextLength: 英語は語数、日本語は文字数で表示する', () => {
+  const stats = { characters: 1200, words: 1, minutes: 3 };
+  const original = getDefaultLocale();
+  try {
+    configureDefaultLocale('en');
+    assert.equal(formatTextLength(stats), '1 word');
+    assert.equal(formatTextLength({ ...stats, words: 230 }), '230 words');
+    configureDefaultLocale('en-US');
+    assert.equal(formatTextLength(stats), '1 word', '地域付きのタグでも語数');
+    configureDefaultLocale('ja');
+    assert.equal(formatTextLength(stats), '1,200文字');
+  } finally {
+    configureDefaultLocale(original);
+  }
 });

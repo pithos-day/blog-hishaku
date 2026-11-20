@@ -20,6 +20,8 @@ import { toPlainText } from './text';
 export interface TextStats {
   /** 空白を除いた本文の文字数 */
   characters: number;
+  /** 本文の語数 (Intl.Segmenter で切り出した語の数) */
+  words: number;
   /** 読了時間 (分・端数切り上げ・最低 1 分) */
   minutes: number;
 }
@@ -49,6 +51,16 @@ export function countReadingUnits(plain: string, locale: string): { chars: numbe
   return { chars, words };
 }
 
+/** 本文の語数。記号や空白は数えない */
+export function countWords(plain: string, locale: string): number {
+  const segmenter = new Intl.Segmenter(locale, { granularity: 'word' });
+  let words = 0;
+  for (const { isWordLike } of segmenter.segment(plain)) {
+    if (isWordLike) words += 1;
+  }
+  return words;
+}
+
 /** プレーンテキストの読了時間 (分・端数切り上げ・最低 1 分) */
 export function estimateReadingMinutes(
   plain: string,
@@ -63,11 +75,23 @@ export function estimateReadingMinutes(
 export function getTextStats(post: PostEntry): TextStats {
   const plain = toPlainText(post.body ?? '');
   const characters = plain.replace(/\s/g, '').length;
-  return { characters, minutes: estimateReadingMinutes(plain, siteConfig.reading) };
+  const words = countWords(plain, getDefaultLocale());
+  return { characters, words, minutes: estimateReadingMinutes(plain, siteConfig.reading) };
 }
 
-export function formatCharacterCount(characters: number): string {
-  return t('post.charCount', { count: characters });
+/**
+ * 本文の量を語数で表示する言語 (BCP 47 の言語サブタグ)。
+ * 空白で語を区切る言語は語数 (word count) で示すのが一般的で、
+ * それ以外 (日本語など) は文字数で示す。
+ */
+const WORD_COUNT_LANGUAGES = new Set(['en']);
+
+/** 本文の量を、サイト言語に合わせて文字数か語数で表示する */
+export function formatTextLength(stats: TextStats): string {
+  const language = new Intl.Locale(getDefaultLocale()).language;
+  return WORD_COUNT_LANGUAGES.has(language)
+    ? t('post.wordCount', { count: stats.words })
+    : t('post.charCount', { count: stats.characters });
 }
 
 export function formatReadingTime(minutes: number): string {
