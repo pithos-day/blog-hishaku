@@ -20,7 +20,7 @@ import { toPlainText } from './text';
 export interface TextStats {
   /** 空白を除いた本文の文字数 */
   characters: number;
-  /** 本文の語数 (Intl.Segmenter で切り出した語の数) */
+  /** 本文の語数 (Intl.Segmenter で切り出したすべての語の数。表示用) */
   words: number;
   /** 読了時間 (分・端数切り上げ・最低 1 分) */
   minutes: number;
@@ -34,21 +34,29 @@ const CJK_CHAR =
 const CJK_PUNCTUATION =
   /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\u3001-\u303F\uFF01-\uFFEF\u2014\u2015\u2026]/gu;
 
+/** 読了時間の見積もりに使う量。速度 (charsPerMinute / wordsPerMinute) で割る単位ごとに分ける */
+interface ReadingUnits {
+  /** 漢字・かなと和文の約物の文字数 (charsPerMinute で割る) */
+  cjkChars: number;
+  /** 漢字・かなを含まない語の数 (wordsPerMinute で割る)。TextStats.words とは別物 */
+  nonCjkWords: number;
+}
+
 /** 本文を語に分け、漢字・かな・和文の約物の文字数とそれ以外の語数を数える */
-export function countReadingUnits(plain: string, locale: string): { chars: number; words: number } {
+export function countReadingUnits(plain: string, locale: string): ReadingUnits {
   const segmenter = new Intl.Segmenter(locale, { granularity: 'word' });
-  let chars = 0;
-  let words = 0;
+  let cjkChars = 0;
+  let nonCjkWords = 0;
   for (const { segment, isWordLike } of segmenter.segment(plain)) {
     if (!isWordLike) {
-      chars += segment.match(CJK_PUNCTUATION)?.length ?? 0;
+      cjkChars += segment.match(CJK_PUNCTUATION)?.length ?? 0;
       continue;
     }
     const cjk = segment.match(CJK_CHAR)?.length ?? 0;
-    if (cjk > 0) chars += cjk;
-    else words += 1;
+    if (cjk > 0) cjkChars += cjk;
+    else nonCjkWords += 1;
   }
-  return { chars, words };
+  return { cjkChars, nonCjkWords };
 }
 
 /** 本文の語数。記号や空白は数えない */
@@ -67,8 +75,8 @@ export function estimateReadingMinutes(
   speed: ReadingOptions,
   locale = getDefaultLocale(),
 ): number {
-  const { chars, words } = countReadingUnits(plain, locale);
-  const minutes = chars / speed.charsPerMinute + words / speed.wordsPerMinute;
+  const { cjkChars, nonCjkWords } = countReadingUnits(plain, locale);
+  const minutes = cjkChars / speed.charsPerMinute + nonCjkWords / speed.wordsPerMinute;
   return Math.max(1, Math.ceil(minutes));
 }
 

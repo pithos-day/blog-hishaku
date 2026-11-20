@@ -18,26 +18,26 @@ import {
 const speed = { charsPerMinute: 400, wordsPerMinute: 230 };
 
 test('countReadingUnits: 日本語は句読点・括弧も含めた文字数で数える', () => {
-  assert.deepEqual(countReadingUnits('今日は東京へ行った。', 'ja'), { chars: 10, words: 0 });
-  assert.deepEqual(countReadingUnits('「えっ！？」……と言った', 'ja'), { chars: 12, words: 0 });
+  assert.deepEqual(countReadingUnits('今日は東京へ行った。', 'ja'), { cjkChars: 10, nonCjkWords: 0 });
+  assert.deepEqual(countReadingUnits('「えっ！？」……と言った', 'ja'), { cjkChars: 12, nonCjkWords: 0 });
 });
 
 test('countReadingUnits: 英語は語数で数え、半角の句読点は文字数に含めない', () => {
-  assert.deepEqual(countReadingUnits("I don't use Vue 3.5 yet.", 'en'), { chars: 0, words: 6 });
+  assert.deepEqual(countReadingUnits("I don't use Vue 3.5 yet.", 'en'), { cjkChars: 0, nonCjkWords: 6 });
 });
 
 test('countReadingUnits: 日英混在は文字数と語数に分けて数える', () => {
-  assert.deepEqual(countReadingUnits('Astro と Vue で作った', 'ja'), { chars: 5, words: 2 });
+  assert.deepEqual(countReadingUnits('Astro と Vue で作った', 'ja'), { cjkChars: 5, nonCjkWords: 2 });
 });
 
 test('countReadingUnits: 空白で区切らないタイ語も語に分けて数える', () => {
-  const { chars, words } = countReadingUnits('สวัสดีครับ', 'th');
-  assert.equal(chars, 0);
-  assert.equal(words, 2, '1 つの塊ではなく 2 語に分かれる');
+  const { cjkChars, nonCjkWords } = countReadingUnits('สวัสดีครับ', 'th');
+  assert.equal(cjkChars, 0);
+  assert.equal(nonCjkWords, 2, '1 つの塊ではなく 2 語に分かれる');
 });
 
 test('countReadingUnits: 韓国語 (ハングル) は語数で数える', () => {
-  assert.deepEqual(countReadingUnits('안녕하세요 반갑습니다', 'ko'), { chars: 0, words: 2 });
+  assert.deepEqual(countReadingUnits('안녕하세요 반갑습니다', 'ko'), { cjkChars: 0, nonCjkWords: 2 });
 });
 
 test('estimateReadingMinutes: 日本語 4,000 字は 10 分', () => {
