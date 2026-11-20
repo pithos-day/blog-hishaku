@@ -409,7 +409,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 2em;
 }
 
 .share-btn {
@@ -467,6 +466,12 @@
   border: none;
   border-top: 1px solid var(--hishaku-border);
   margin: 2em 0 1em;
+}
+
+/* シェアボタンの後の区切り線は余白を詰める
+   (間に ShareButtons の <script> が入るため、隣接の + ではなく ~ で拾う) */
+.share-buttons ~ .post-nav-divider {
+  margin-top: 1em;
 }
 
 .post-nav {
